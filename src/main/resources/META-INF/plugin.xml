@@ -2,7 +2,7 @@
     <vendor email="ricardo.rodcas@gmail.com" url="https://github.com/magidc">Ricardo Rodriguez</vendor>
 
     <extensions defaultExtensionNs="IdeaVIM">
-        <vimExtension implementation="com.magidc.ideavim.anyObject.AnyObject"/>
+        <vimExtension implementation="com.magidc.ideavim.anyobject.AnyObject"/>
     </extensions>
 
     <depends>com.intellij.modules.platform</depends>

@@ -1,4 +1,4 @@
-package com.magidc.ideavim.anyObject
+package com.magidc.ideavim.anyobject
 
 import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.command.MappingMode
@@ -6,12 +6,12 @@ import com.maddyhome.idea.vim.extension.VimExtension
 import com.maddyhome.idea.vim.extension.VimExtensionFacade
 import com.magidc.ideavim.anyObject.handlers.AnyBracketHandlers
 import com.magidc.ideavim.anyObject.handlers.AnyQuoteHandlers
-import com.magidc.ideavim.anyObject.handlers.BaseHandlers
+import com.magidc.ideavim.anyobject.handlers.BaseHandlers
 
 
 class AnyObject : VimExtension {
 
-    override fun getName(): String = "anyObject"
+    override fun getName(): String = "anyobject"
 
     override fun init() {
         // Matches any kind of text between quotes

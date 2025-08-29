@@ -1,4 +1,4 @@
-package com.magidc.ideavim.anyObject
+package com.magidc.ideavim.anyobject.handlers
 
 import com.maddyhome.idea.vim.api.ExecutionContext
 import com.maddyhome.idea.vim.api.VimEditor
@@ -7,6 +7,11 @@ import com.maddyhome.idea.vim.extension.ExtensionHandler
 import com.maddyhome.idea.vim.state.mode.Mode
 import com.maddyhome.idea.vim.state.mode.SelectionType
 import com.magidc.ideavim.anyObject.model.Selection
+
+interface BaseHandlers {
+    fun getInnerHandler(): DelimiterHandler
+    fun getOuterHandler(): DelimiterHandler
+}
 
 /**
  * Applies the action (pending operation or visual selection) to the smallest range of text around the cursor limited by any of the given delimiter pairs.
