@@ -5,7 +5,6 @@
 Fixes bug in when using text objects with operators. Ranges where often miscalculated.
 
 ## 1.0.0
-## Features
 
 ### AnyQuote (`q`)
 Automatically detects and selects content within any type of quotes:
