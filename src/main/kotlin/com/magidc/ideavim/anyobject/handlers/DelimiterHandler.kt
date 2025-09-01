@@ -17,6 +17,7 @@ interface BaseHandlers {
  * Applies the action (pending operation or visual selection) to the smallest range of text around the cursor limited by any of the given delimiter pairs.
  */
 class DelimiterHandler(val isInner: Boolean, val sameLine: Boolean, val delimiterPairs: Collection<Pair<String, String>>) : ExtensionHandler {
+
     fun findSelection(text: CharSequence, textOffset: Int, caretOffset: Int): Selection? {
         var bestMatch: Selection? = null
         var bestMatchLength = Int.MAX_VALUE
@@ -63,11 +64,10 @@ class DelimiterHandler(val isInner: Boolean, val sameLine: Boolean, val delimite
         val bestMatch = findSelection(text, textOffset, caretOffset) ?: return
 
         if (editor.mode is Mode.OP_PENDING) {
-            val mode = editor.mode as Mode.OP_PENDING
+            caret.vimSelectionStartClear()
             caret.moveToOffset(bestMatch.to - 1)
             editor.mode = Mode.VISUAL(SelectionType.CHARACTER_WISE)
             caret.setSelection(bestMatch.from, bestMatch.to)
-            editor.mode = mode
         } else {
             caret.moveToOffset(bestMatch.to - 1)
             caret.setSelection(bestMatch.from, bestMatch.to)
