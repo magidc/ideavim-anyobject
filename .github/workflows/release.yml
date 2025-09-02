@@ -56,14 +56,23 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew buildPlugin
 
+      - name: Extract release notes
+        id: extract-notes
+        run: |
+          # Find the first version header and extract until the next version header
+          RELEASE_NOTES=$(sed -n '/^## \[*[0-9]\+\.[0-9]\+\.[0-9]\+/,/^## \[*[0-9]\+\.[0-9]\+\.[0-9]\+/p' CHANGELOG.md | sed '$d' | tail -n +2)
+          
+          echo "RELEASE_NOTES<<EOF" >> $GITHUB_OUTPUT
+          echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.get_version.outputs.version }}
           name: v${{ steps.get_version.outputs.version }}
           files: build/distributions/*.zip
-          body: |
-            Automated release for version ${{ steps.get_version.outputs.version }}.
+          body: ${{ steps.extract-notes.outputs.release_notes }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

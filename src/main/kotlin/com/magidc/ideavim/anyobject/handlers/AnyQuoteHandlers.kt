@@ -1,15 +1,15 @@
-package com.magidc.ideavim.anyObject.handlers
+package com.magidc.ideavim.anyobject.handlers
 
-import com.magidc.ideavim.anyobject.handlers.BaseHandlers
-import com.magidc.ideavim.anyobject.handlers.DelimiterHandler
+class AnyQuoteHandlers : DelimiterHandlerFactory {
+    companion object {
+        private val delimiters = listOf("\"" to "\"", "'" to "'", "`" to "`")
+    }
 
-class AnyQuoteHandlers : BaseHandlers {
-    private val delimiters = listOf("\"" to "\"", "'" to "'", "`" to "`")
     override fun getInnerHandler(): DelimiterHandler {
-        return DelimiterHandler(true, true, delimiters)
+        return DelimiterHandler(isInner = true, sameLine = true, delimiterPairs = delimiters)
     }
 
     override fun getOuterHandler(): DelimiterHandler {
-        return DelimiterHandler(false, true, delimiters)
+        return DelimiterHandler(isInner = false, sameLine = true, delimiterPairs = delimiters)
     }
 }

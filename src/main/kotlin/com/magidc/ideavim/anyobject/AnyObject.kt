@@ -4,9 +4,12 @@ import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.extension.VimExtension
 import com.maddyhome.idea.vim.extension.VimExtensionFacade
-import com.magidc.ideavim.anyObject.handlers.AnyBracketHandlers
-import com.magidc.ideavim.anyObject.handlers.AnyQuoteHandlers
-import com.magidc.ideavim.anyobject.handlers.BaseHandlers
+import com.magidc.ideavim.anyobject.handlers.AnyArgumentHandlers
+import com.magidc.ideavim.anyobject.handlers.AnyBlockCommentHandlers
+import com.magidc.ideavim.anyobject.handlers.AnyBracketHandlers
+import com.magidc.ideavim.anyobject.handlers.AnyItemHandlers
+import com.magidc.ideavim.anyobject.handlers.AnyQuoteHandlers
+import com.magidc.ideavim.anyobject.handlers.HandlerFactory
 
 
 class AnyObject : VimExtension {
@@ -17,20 +20,21 @@ class AnyObject : VimExtension {
         // Matches any kind of text between quotes
         registerTextObjects("AnyQuote", 'q', AnyQuoteHandlers())
         registerTextObjects("AnyBracket", 'o', AnyBracketHandlers())
-
-        //TODO: "AnyItem", "Anything", "AnyTaggedValue",
+        registerTextObjects("AnyItem", 'i', AnyItemHandlers())
+        registerTextObjects("AnyBlockComment", 'c', AnyBlockCommentHandlers())
+        registerTextObjects("AnyArgument", 'a', AnyArgumentHandlers())
     }
 
     /**
      * Registers the mapping for the text objects defined by the given delimiter pairs.
      */
-    private fun registerTextObjects(command: String, mapping: Char, handlers: BaseHandlers) {
+    private fun registerTextObjects(command: String, mapping: Char, handlerFactory: HandlerFactory) {
         // Inner selection
         VimExtensionFacade.putExtensionHandlerMapping(
             MappingMode.XO,
             injector.parser.parseKeys("<Plug>Inner$command"),
             owner,
-            handlers.getInnerHandler(),
+            handlerFactory.getInnerHandler(),
             false
         )
 
@@ -46,7 +50,7 @@ class AnyObject : VimExtension {
             MappingMode.XO,
             injector.parser.parseKeys("<Plug>Outer$command"),
             owner,
-            handlers.getOuterHandler(),
+            handlerFactory.getOuterHandler(),
             false
         )
 

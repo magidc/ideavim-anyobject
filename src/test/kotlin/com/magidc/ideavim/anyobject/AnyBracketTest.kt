@@ -1,6 +1,7 @@
 package com.magidc.ideavim.anyObject
 
-import com.magidc.ideavim.anyObject.handlers.AnyBracketHandlers
+import com.magidc.ideavim.anyobject.handlers.AnyBracketHandlers
+import com.magidc.ideavim.anyobject.BaseTest
 
 class AnyBracketTest : BaseTest(AnyBracketHandlers()) {
 

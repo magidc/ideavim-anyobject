@@ -1,24 +1,24 @@
 package com.magidc.ideavim.anyobject.handlers
 
-import com.maddyhome.idea.vim.api.ExecutionContext
 import com.maddyhome.idea.vim.api.VimEditor
-import com.maddyhome.idea.vim.command.OperatorArguments
-import com.maddyhome.idea.vim.extension.ExtensionHandler
-import com.maddyhome.idea.vim.state.mode.Mode
-import com.maddyhome.idea.vim.state.mode.SelectionType
-import com.magidc.ideavim.anyObject.model.Selection
+import com.magidc.ideavim.anyobject.model.Selection
 
-interface BaseHandlers {
-    fun getInnerHandler(): DelimiterHandler
-    fun getOuterHandler(): DelimiterHandler
-}
 
 /**
  * Applies the action (pending operation or visual selection) to the smallest range of text around the cursor limited by any of the given delimiter pairs.
  */
-class DelimiterHandler(val isInner: Boolean, val sameLine: Boolean, val delimiterPairs: Collection<Pair<String, String>>) : ExtensionHandler {
+class DelimiterHandler(isInner: Boolean, val sameLine: Boolean, val delimiterPairs: Collection<Pair<String, String>>) : BaseHandler(isInner) {
 
-    fun findSelection(text: CharSequence, textOffset: Int, caretOffset: Int): Selection? {
+    override fun findSelection(editor: VimEditor): Selection? {
+        val caret = editor.currentCaret()
+        val textOffset = if (sameLine) editor.getLineRange(caret.getLine()).first else 0
+        val text = if (sameLine) editor.getLineText(caret.getLine()) else editor.text()
+
+        val caretOffset = caret.offset - textOffset
+        return findDelimiterSelection(text, textOffset, caretOffset)
+    }
+
+    fun findDelimiterSelection(text: CharSequence, textOffset: Int, caretOffset: Int): Selection? {
         var bestMatch: Selection? = null
         var bestMatchLength = Int.MAX_VALUE
 
@@ -55,24 +55,6 @@ class DelimiterHandler(val isInner: Boolean, val sameLine: Boolean, val delimite
         return bestMatch
     }
 
-    override fun execute(editor: VimEditor, context: ExecutionContext, operatorArguments: OperatorArguments) {
-        val caret = editor.currentCaret()
-        val textOffset = if (sameLine) editor.getLineRange(caret.getLine()).first else 0
-        val text = if (sameLine) editor.getLineText(caret.getLine()) else editor.text()
-
-        val caretOffset = caret.offset - textOffset
-        val bestMatch = findSelection(text, textOffset, caretOffset) ?: return
-
-        if (editor.mode is Mode.OP_PENDING) {
-            caret.vimSelectionStartClear()
-            caret.moveToOffset(bestMatch.to - 1)
-            editor.mode = Mode.VISUAL(SelectionType.CHARACTER_WISE)
-            caret.setSelection(bestMatch.from, bestMatch.to)
-        } else {
-            caret.moveToOffset(bestMatch.to - 1)
-            caret.setSelection(bestMatch.from, bestMatch.to)
-        }
-    }
 
     /**
      * Finds the smallest range of text around the caret limited by the given delimiter.
@@ -180,4 +162,9 @@ class DelimiterHandler(val isInner: Boolean, val sameLine: Boolean, val delimite
         val regex = Regex.escape(searchString).toRegex()
         return regex.findAll(text).toList()
     }
+}
+
+interface DelimiterHandlerFactory : HandlerFactory {
+    override fun getInnerHandler(): DelimiterHandler
+    override fun getOuterHandler(): DelimiterHandler
 }

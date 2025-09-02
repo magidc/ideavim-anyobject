@@ -1,8 +1,8 @@
-package com.magidc.ideavim.anyObject.model
+package com.magidc.ideavim.anyobject.model
 
 data class Selection(
     val from: Int,
     val to: Int,
-    val openDelimiter: String,
-    val closeDelimiter: String
+    val leftDelimiter: String,
+    val rightDelimiter: String
 )

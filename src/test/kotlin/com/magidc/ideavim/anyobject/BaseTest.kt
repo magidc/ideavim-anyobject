@@ -1,10 +1,10 @@
-package com.magidc.ideavim.anyObject
+package com.magidc.ideavim.anyobject
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.magidc.ideavim.anyobject.handlers.BaseHandlers
 import com.magidc.ideavim.anyobject.handlers.DelimiterHandler
+import com.magidc.ideavim.anyobject.handlers.DelimiterHandlerFactory
 
-abstract class BaseTest(val handlers: BaseHandlers) : BasePlatformTestCase() {
+abstract class BaseTest(val handlers: DelimiterHandlerFactory) : BasePlatformTestCase() {
     companion object {
         const val CARET = "#caret#"
         const val START = "#start#"
@@ -25,7 +25,7 @@ abstract class BaseTest(val handlers: BaseHandlers) : BasePlatformTestCase() {
 
         if (caretIndex == -1) return
 
-        val selection = delimiterHandler.findSelection(text, 0, caretIndex)
+        val selection = delimiterHandler.findDelimiterSelection(text, 0, caretIndex)
         if (selection == null) {
             assertTrue(!text.contains(START) && !text.contains(END))
             return

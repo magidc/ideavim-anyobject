@@ -1,6 +1,7 @@
 package com.magidc.ideavim.anyObject
 
-import com.magidc.ideavim.anyObject.handlers.AnyQuoteHandlers
+import com.magidc.ideavim.anyobject.handlers.AnyQuoteHandlers
+import com.magidc.ideavim.anyobject.BaseTest
 
 class AnyQuoteTest : BaseTest(AnyQuoteHandlers()) {
 
