@@ -10,7 +10,7 @@ import com.maddyhome.idea.vim.api.VimEditor
 import com.magidc.ideavim.anyobject.model.Selection
 import java.nio.file.Path
 
-abstract class BaseItemHandler(isInner: Boolean) : BaseHandler(isInner) {
+abstract class AbstractPSIBasedHandler(isInner: Boolean) : Handler(isInner) {
        override fun findSelection(editor: VimEditor): Selection? {
         val projectManager = ProjectManager.getInstance()
         if (null == projectManager || projectManager.openProjects.isEmpty()) return null
@@ -54,8 +54,8 @@ abstract class BaseItemHandler(isInner: Boolean) : BaseHandler(isInner) {
     private fun findItemPSIFile(psiElement: PsiElement): PsiElement? {
         var currentElement = psiElement
         while (currentElement.parent != null) {
-            val debugName = (currentElement.parent.elementType ?: break).debugName
-            if (acceptElementTypeName(debugName)) return currentElement
+            val elementName = (currentElement.parent.elementType ?: break).toString()
+            if (acceptElementTypeName(elementName)) return currentElement
             currentElement = currentElement.parent
         }
         return null

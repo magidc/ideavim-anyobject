@@ -2,7 +2,7 @@ package com.magidc.ideavim.anyobject.handlers
 
 
 class AnyArgumentHandlers : HandlerFactory {
-    private class AnyArgument(isInner: Boolean) : BaseItemHandler(isInner) {
+    private class AnyArgument(isInner: Boolean) : AbstractPSIBasedHandler(isInner) {
         companion object {
             private val SUPPORTED_COLLECTION_TYPES = setOf("ARRAY_INITIALIZER_EXPRESSION", "PARAMETER_LIST", "EXPRESSION_LIST")
         }
@@ -12,11 +12,11 @@ class AnyArgumentHandlers : HandlerFactory {
         }
     }
 
-    override fun getInnerHandler(): BaseHandler {
+    override fun getInnerHandler(): Handler {
         return AnyArgument(isInner = true)
     }
 
-    override fun getOuterHandler(): BaseHandler {
+    override fun getOuterHandler(): Handler {
         return AnyArgument(isInner = false)
     }
 }

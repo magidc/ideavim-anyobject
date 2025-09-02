@@ -7,7 +7,7 @@ import com.magidc.ideavim.anyobject.model.Selection
 /**
  * Applies the action (pending operation or visual selection) to the smallest range of text around the cursor limited by any of the given delimiter pairs.
  */
-class DelimiterHandler(isInner: Boolean, val sameLine: Boolean, val delimiterPairs: Collection<Pair<String, String>>) : BaseHandler(isInner) {
+class DelimiterHandler(isInner: Boolean, val sameLine: Boolean, val delimiterPairs: Collection<Pair<String, String>>) : Handler(isInner) {
 
     override fun findSelection(editor: VimEditor): Selection? {
         val caret = editor.currentCaret()
