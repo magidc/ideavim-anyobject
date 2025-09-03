@@ -1,7 +1,5 @@
 # Changelog
 
-## [Next]
-
 ## 1.1.0
 
 Adds support for block comments, function arguments, and collection items.

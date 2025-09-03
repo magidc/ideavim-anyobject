@@ -11,7 +11,7 @@ import com.magidc.ideavim.anyobject.model.Selection
 import java.nio.file.Path
 
 abstract class AbstractPSIBasedHandler(isInner: Boolean) : Handler(isInner) {
-       override fun findSelection(editor: VimEditor): Selection? {
+    override fun findSelection(editor: VimEditor): Selection? {
         val projectManager = ProjectManager.getInstance()
         if (null == projectManager || projectManager.openProjects.isEmpty()) return null
         val project = projectManager.openProjects[0]
