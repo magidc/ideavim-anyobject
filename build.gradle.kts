@@ -31,7 +31,6 @@ repositories {
 
 dependencies {
     implementation("org.reflections:reflections:0.10.2")
-    implementation("com.maddyhome.idea.vim:vim-engine:0.0.68")
     testImplementation("org.assertj:assertj-core:3.25.3")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:5.2.0")
