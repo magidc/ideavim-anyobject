@@ -17,7 +17,6 @@ class AnyObject : VimExtension {
     override fun getName(): String = "anyobject"
 
     override fun init() {
-        // Matches any kind of text between quotes
         registerTextObjects("AnyQuote", 'q', AnyQuoteHandlers())
         registerTextObjects("AnyBracket", 'o', AnyBracketHandlers())
         registerTextObjects("AnyItem", 'i', AnyItemHandlers())

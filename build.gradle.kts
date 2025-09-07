@@ -5,10 +5,12 @@ import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 plugins {
     id("java")
     kotlin("jvm") version "2.2.0"
-    id("org.jetbrains.intellij.platform") version "2.6.0"
+    id("org.jetbrains.intellij.platform") version "2.7.2"
     id("org.jetbrains.changelog") version "2.3.0"
     id("com.diffplug.spotless") version "6.25.0"
     id("pmd")
+    id("com.gradleup.shadow") version "9.1.0"
+
 }
 
 changelog {
@@ -29,12 +31,11 @@ repositories {
     }
 }
 
+
 dependencies {
     implementation("org.reflections:reflections:0.10.2")
     testImplementation("org.assertj:assertj-core:3.25.3")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.mockito:mockito-core:5.2.0")
-    testImplementation("org.mockito:mockito-inline:5.2.0")
     intellijPlatform {
         create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
         bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
@@ -143,5 +144,11 @@ tasks {
     publishPlugin {
         token.set(System.getenv("PUBLISH_TOKEN"))
         dependsOn(patchChangelog)
+    }
+    val runIntellij by intellijPlatformTesting.runIde.registering {
+        localPath.set(file("/opt/jetbrains/intellij"))
+    }
+    val runPycharm by intellijPlatformTesting.runIde.registering {
+        localPath.set(file("/opt/jetbrains/pycharm"))
     }
 }

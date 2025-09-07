@@ -10,7 +10,7 @@ import com.maddyhome.idea.vim.api.VimEditor
 import com.magidc.ideavim.anyobject.model.Selection
 import java.nio.file.Path
 
-abstract class AbstractPSIBasedHandler(isInner: Boolean) : Handler(isInner) {
+abstract class AbstractPSIBasedHandler(isInner: Boolean, val supportedTypesSuffixes: Set<String>) : Handler(isInner) {
     override fun findSelection(editor: VimEditor): Selection? {
         val projectManager = ProjectManager.getInstance()
         if (null == projectManager || projectManager.openProjects.isEmpty()) return null
@@ -31,10 +31,12 @@ abstract class AbstractPSIBasedHandler(isInner: Boolean) : Handler(isInner) {
 
         val itemLeftDelimiter = leftDelimiter?.text ?: ""
 
-        val itemRightDelimiter = itemElement.siblings()
+        val rightDelimiter = itemElement.siblings()
             .filter { it.startOffsetInParent > itemElement.startOffsetInParent }
             .filter { it.text.isNotBlank() }
-            .first().text?.takeIf { !collectionDelimiters.contains(it) } ?: ""
+            .firstOrNull()
+
+        val itemRightDelimiter = rightDelimiter?.text ?: ""
 
         if (isInner)
             return Selection(
@@ -43,8 +45,16 @@ abstract class AbstractPSIBasedHandler(isInner: Boolean) : Handler(isInner) {
                 itemLeftDelimiter,
                 itemRightDelimiter
             )
+        // Outer
+        if (leftDelimiter == null)
+            return Selection(
+                itemElement.textRange.startOffset,
+                rightDelimiter?.textRange?.endOffset ?: itemElement.textRange.endOffset,
+                itemLeftDelimiter,
+                itemRightDelimiter
+            )
         return Selection(
-            leftDelimiter?.textRange?.startOffset ?: itemElement.textRange.startOffset,
+            leftDelimiter.textRange.startOffset,
             itemElement.textRange.endOffset,
             itemLeftDelimiter,
             itemRightDelimiter
@@ -61,5 +71,7 @@ abstract class AbstractPSIBasedHandler(isInner: Boolean) : Handler(isInner) {
         return null
     }
 
-    protected abstract fun acceptElementTypeName(elementName: String): Boolean
+    private fun acceptElementTypeName(elementName: String): Boolean {
+        return supportedTypesSuffixes.any { elementName.uppercase().endsWith(it) }
+    }
 }

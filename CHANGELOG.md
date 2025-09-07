@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1
+
+Bug in argument selection: When using outer mode (a), if the argument was the first, the right separator was not selected too, leaving the code inconsistent
+
 ## 1.1.0
 
 Adds support for block comments, function arguments, and collection items.
