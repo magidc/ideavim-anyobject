@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.2.0
+
+Add support for selecting functions, classes, and loops.
+
+### AnyFunction (`f`)
+
+Select functions, methods, and procedures.
+
+### AnyClass (`c`)
+
+Select class, interface, struct, and similar type definitions.
+
+### AnyLoop (`l`)
+
+Select loop statements and iterative constructs (for, while, do-while, foreach, enhanced for, range-based, and language-specific constructs).
+
+### AnyDocument (`d`)
+
+Select the entire document content.
+
 ## 1.1.1
 
 Bug in argument selection: When using outer mode (a), if the argument was the first, the right separator was not selected too, leaving the code inconsistent
@@ -10,7 +30,7 @@ Adds support for block comments, function arguments, and collection items.
 
 ### AnyBlockComment (`c`)
 
-Automatically detects and selects content within any type of block comments across different programming languages:
+Block comments across different programming languages:
 
 | Comment Type | Languages                                                                               | Example                |
 |--------------|-----------------------------------------------------------------------------------------|------------------------|
@@ -31,21 +51,18 @@ Automatically detects and selects content within any type of block comments acro
 
 ### AnyItem (`i`)
 
-Automatically detects and selects individual items within collections, lists, or arrays. This text object intelligently identifies list-like structures and selects the current item
-based on the cursor position:
+Items within collections, lists, or arrays:
 
-| Structure Type      | Example                        | Selected Item                   |
-|---------------------|--------------------------------|---------------------------------|
-| Arrays              | `[item1, item2, item3]`        | Current item under cursor       |
-| Function parameters | `function(arg1, arg2, arg3)`   | Current parameter               |
-| Object properties   | `{key1: value1, key2: value2}` | Current key-value pair          |
-| List literals       | `(item1, item2, item3)`        | Current list item               |
-| For loop conditions | `for (int i = 0; i < 10; i++)` | `int i = 0`, `i < 10`, or `i++` |
+| Structure Type      | Example                        | Selected Item             |
+|---------------------|--------------------------------|---------------------------|
+| Arrays              | `[item1, item2, item3]`        | Current item under cursor |
+| Function parameters | `function(arg1, arg2, arg3)`   | Current parameter         |
+| Object properties   | `{key1: value1, key2: value2}` | Current key-value pair    |
+| List literals       | `(item1, item2, item3)`        | Current list item         |
 
 ### AnyArgument (`a`)
 
-Automatically detects and selects function arguments, method parameters, and callable expressions. This text object intelligently identifies argument lists and selects the current
-argument based on the cursor position:
+Function arguments, method parameters, and callable expressions:
 
 | Structure Type          | Example                      | Selected Argument             |
 |-------------------------|------------------------------|-------------------------------|
@@ -66,7 +83,7 @@ Fixes bug in when using text objects with operators. Ranges where often miscalcu
 
 ### AnyQuote (`q`)
 
-Automatically detects and selects content within any type of quotes:
+Content enclosed between any type of quotes:
 
 | Quote Type    | Example      | Description                       |
 |---------------|--------------|-----------------------------------|
@@ -76,7 +93,7 @@ Automatically detects and selects content within any type of quotes:
 
 ### AnyBracket (`o`)
 
-Automatically detects and selects content within any type of brackets:
+Content enclosed between any type of brackets:
 
 | Bracket Type      | Example   | Description              |
 |-------------------|-----------|--------------------------|

@@ -1,5 +1,8 @@
 package com.magidc.ideavim.anyobject.handlers
 
+import com.magidc.ideavim.anyobject.handlers.base.DelimiterHandler
+import com.magidc.ideavim.anyobject.handlers.base.DelimiterHandlerFactory
+
 class AnyQuoteHandlers : DelimiterHandlerFactory {
     companion object {
         private val delimiters = listOf("\"" to "\"", "'" to "'", "`" to "`")

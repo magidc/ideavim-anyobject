@@ -1,8 +1,8 @@
 package com.magidc.ideavim.anyobject
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.magidc.ideavim.anyobject.handlers.DelimiterHandler
-import com.magidc.ideavim.anyobject.handlers.DelimiterHandlerFactory
+import com.magidc.ideavim.anyobject.handlers.base.DelimiterHandler
+import com.magidc.ideavim.anyobject.handlers.base.DelimiterHandlerFactory
 
 abstract class BaseTest(val handlers: DelimiterHandlerFactory) : BasePlatformTestCase() {
     companion object {

@@ -7,9 +7,13 @@ import com.maddyhome.idea.vim.extension.VimExtensionFacade
 import com.magidc.ideavim.anyobject.handlers.AnyArgumentHandlers
 import com.magidc.ideavim.anyobject.handlers.AnyBlockCommentHandlers
 import com.magidc.ideavim.anyobject.handlers.AnyBracketHandlers
+import com.magidc.ideavim.anyobject.handlers.AnyClassHandlers
+import com.magidc.ideavim.anyobject.handlers.AnyDocumentHandlers
+import com.magidc.ideavim.anyobject.handlers.AnyFunctionHandlers
 import com.magidc.ideavim.anyobject.handlers.AnyItemHandlers
+import com.magidc.ideavim.anyobject.handlers.AnyLoopHandlers
 import com.magidc.ideavim.anyobject.handlers.AnyQuoteHandlers
-import com.magidc.ideavim.anyobject.handlers.HandlerFactory
+import com.magidc.ideavim.anyobject.handlers.base.HandlerFactory
 
 
 class AnyObject : VimExtension {
@@ -22,6 +26,10 @@ class AnyObject : VimExtension {
         registerTextObjects("AnyItem", 'i', AnyItemHandlers())
         registerTextObjects("AnyBlockComment", 'c', AnyBlockCommentHandlers())
         registerTextObjects("AnyArgument", 'a', AnyArgumentHandlers())
+        registerTextObjects("AnyFunction", 'f', AnyFunctionHandlers())
+        registerTextObjects("AnyClass", 'c', AnyClassHandlers())
+        registerTextObjects("AnyDocument", 'd', AnyDocumentHandlers())
+        registerTextObjects("AnyLoop", 'l', AnyLoopHandlers())
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.magidc.ideavim.anyobject.handlers
+package com.magidc.ideavim.anyobject.handlers.base
 
 import com.maddyhome.idea.vim.api.ExecutionContext
 import com.maddyhome.idea.vim.api.VimEditor
@@ -9,11 +9,11 @@ import com.maddyhome.idea.vim.state.mode.SelectionType
 import com.magidc.ideavim.anyobject.model.Selection
 
 interface HandlerFactory {
-    fun getInnerHandler(): Handler
-    fun getOuterHandler(): Handler
+    fun getInnerHandler(): BaseHandler
+    fun getOuterHandler(): BaseHandler
 }
 
-abstract class Handler(val isInner: Boolean) : ExtensionHandler {
+abstract class BaseHandler(val isInner: Boolean) : ExtensionHandler {
     abstract fun findSelection(editor: VimEditor): Selection?
 
     override fun execute(editor: VimEditor, context: ExecutionContext, operatorArguments: OperatorArguments) {

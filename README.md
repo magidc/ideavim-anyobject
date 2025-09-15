@@ -1,27 +1,30 @@
 <!-- Plugin description -->
 
-# IdeaVim AnyObject Plugin
+# Vim AnyObject
 
-A powerful text object extension for [IdeaVim](https://github.com/JetBrains/ideavim) that adds intelligent "any" text objects to enhance your Vim experience in JetBrains IDEs.
+### *Unleash the power of text objects*
 
-The AnyObject plugin extends IdeaVim with smart text objects that can automatically detect and operate on various types of delimited content, making text manipulation more
-intuitive and efficient. Instead of remembering specific quote types or bracket pairs, you can use universal text objects that work with any delimiter.
+An extension for [IdeaVim](https://github.com/JetBrains/ideavim) plugin that adds useful text objects to improve your productivity on JetBrains IDEs.
 
-## Features
+Text objects allow a more efficient way of communicating edition or selection actions in the editor. Instead of thinking in terms of characters, words, lines, or paragraphs, use
+more advance text constructs like quoted text, text between brackets, items in a collection, or programming language constructs like arguments, classes, functions, loops, or
+comments.
+
+## Provided text objects
 
 ### AnyQuote (`q`)
 
-Automatically detects and selects content within any type of quotes:
+Content enclosed between any type of quotes:
 
-| Quote Type    | Example      | Description                       |
-|---------------|--------------|-----------------------------------|
-| Single quotes | `'text'`     | Standard single-quoted strings    |
-| Double quotes | `"text"`     | Standard double-quoted strings    |
-| Backticks     | `` `text` `` | Template literals and code blocks |
+| Quote Type    | Example      | 
+|---------------|--------------|
+| Single quotes | `'text'`     |
+| Double quotes | `"text"`     |
+| Backticks     | `` `text` `` | 
 
 ### AnyBracket (`o`)
 
-Automatically detects and selects content within any type of brackets:
+Content enclosed between any type of brackets:
 
 | Bracket Type      | Example   | Description              |
 |-------------------|-----------|--------------------------|
@@ -31,9 +34,13 @@ Automatically detects and selects content within any type of brackets:
 | Angle brackets    | `<text>`  | Generics                 |
 | HTML/XML brackets | `<text/>` | HTML/XML tags, generics  |
 
+### AnyDocument (`d`)
+
+Select the entire document content.
+
 ### AnyBlockComment (`c`)
 
-Automatically detects and selects content within any type of block comments across different programming languages:
+Block comments across different programming languages:
 
 | Comment Type | Languages                                                                               | Example                |
 |--------------|-----------------------------------------------------------------------------------------|------------------------|
@@ -54,40 +61,39 @@ Automatically detects and selects content within any type of block comments acro
 
 ### AnyItem (`i`)
 
-Automatically detects and selects individual items within collections, lists, or arrays. This text object intelligently identifies list-like structures and selects the current item
-based on the cursor position:
+Items within collections, lists, or arrays:
 
-| Structure Type      | Example                        | Selected Item                   |
-|---------------------|--------------------------------|---------------------------------|
-| Arrays              | `[item1, item2, item3]`        | Current item under cursor       |
-| Function parameters | `function(arg1, arg2, arg3)`   | Current parameter               |
-| Object properties   | `{key1: value1, key2: value2}` | Current key-value pair          |
-| List literals       | `(item1, item2, item3)`        | Current list item               |
-| For loop conditions | `for (int i = 0; i < 10; i++)` | `int i = 0`, `i < 10`, or `i++` |
+| Structure Type    | Example                        |
+|-------------------|--------------------------------|
+| Arrays            | `[item1, item2, item3]`        |
+| Object properties | `{key1: value1, key2: value2}` |
+| List literals     | `(item1, item2, item3)`        |
 
 ### AnyArgument (`a`)
 
-Automatically detects and selects function arguments, method parameters, and callable expressions. This text object intelligently identifies argument lists and selects the current
-argument based on the cursor position:
+Function arguments, method parameters, and callable expressions.
 
-| Structure Type          | Example                      | Selected Argument             |
-|-------------------------|------------------------------|-------------------------------|
-| Function calls          | `func(arg1, arg2, arg3)`     | Current argument under cursor |
-| Method calls            | `obj.method(param1, param2)` | Current parameter             |
-| Constructor calls       | `new Object(value1, value2)` | Current constructor argument  |
-| Array/List constructors | `Array(item1, item2, item3)` | Current array element         |
-| Generic type parameters | `List<String, Integer>`      | Current type parameter        |
-| Lambda parameters       | `(param1, param2) => body`   | Current lambda parameter      |
-| Tuple elements          | `(first, second, third)`     | Current tuple element         |
-| Macro arguments         | `macro!(arg1, arg2)`         | Current macro argument        |
+### AnyFunction (`f`)
+
+Select functions, methods, and procedures.
+
+### AnyClass (`c`)
+
+Select class, interface, struct, and similar type definitions.
+
+### AnyLoop (`l`)
+
+Select loop statements and iterative constructs (for, while, do-while, foreach, enhanced for, range-based, and language-specific constructs).
 
 <!-- Plugin description end -->
 
 ## Usage
 
-The plugin follows standard Vim text object conventions with `i` (inner) and `a` (around) modifiers:
+The plugin follows standard Vim text object conventions with `i` (inner) and `a` (around) modifiers
 
-### AnyQuote Examples
+## Some examples
+
+#### AnyQuote
 
 - `diq` - Delete text inside any quotes
 - `daq` - Delete text including the quotes
@@ -95,7 +101,7 @@ The plugin follows standard Vim text object conventions with `i` (inner) and `a`
 - `yiq` - Yank text inside any quotes
 - `viq` - Visually select text inside any quotes
 
-### AnyBracket Examples
+#### AnyBracket
 
 - `dio` - Delete text inside any brackets
 - `dao` - Delete text including the brackets
@@ -128,7 +134,7 @@ set anyobject
 
 ### Customization
 
-You can customize the default mappings by adding the following to your `.ideavimrc`:
+You can customize the default mappings by adding the following to your `.ideavimrc`. For example:
 
 ```vimscript
 " Use 'k' instead of 'o' for any bracket text object

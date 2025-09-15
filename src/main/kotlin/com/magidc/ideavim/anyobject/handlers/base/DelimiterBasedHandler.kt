@@ -1,4 +1,4 @@
-package com.magidc.ideavim.anyobject.handlers
+package com.magidc.ideavim.anyobject.handlers.base
 
 import com.maddyhome.idea.vim.api.VimEditor
 import com.magidc.ideavim.anyobject.model.Selection
@@ -7,7 +7,7 @@ import com.magidc.ideavim.anyobject.model.Selection
 /**
  * Applies the action (pending operation or visual selection) to the smallest range of text around the cursor limited by any of the given delimiter pairs.
  */
-class DelimiterHandler(isInner: Boolean, val sameLine: Boolean, val delimiterPairs: Collection<Pair<String, String>>) : Handler(isInner) {
+class DelimiterHandler(isInner: Boolean, val sameLine: Boolean, val delimiterPairs: Collection<Pair<String, String>>) : BaseHandler(isInner) {
 
     override fun findSelection(editor: VimEditor): Selection? {
         val caret = editor.currentCaret()
@@ -41,15 +41,11 @@ class DelimiterHandler(isInner: Boolean, val sameLine: Boolean, val delimiterPai
                 Selection(
                     textOffset + match.first,
                     textOffset + match.last,
-                    openDelimiter,
-                    closeDelimiter
                 )
             else
                 Selection(
                     textOffset + match.first - openDelimiter.length,
                     textOffset + match.last + closeDelimiter.length,
-                    openDelimiter,
-                    closeDelimiter
                 )
         }
         return bestMatch
