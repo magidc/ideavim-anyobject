@@ -11,25 +11,44 @@ import java.nio.file.Path
 
 abstract class AbstractPSIBasedHandler(isInner: Boolean) : BaseHandler(isInner) {
 
+    companion object {
+        private val languageCodeBlockTypes = mapOf(
+            "JAVA" to setOf("CODE_BLOCK"),
+            "C#" to setOf("CS:BLOCK-LIST"),
+            "DART" to setOf("FUNCTION_BODY"),
+            "KOTLIN" to setOf("BLOCK"),
+            "RUST" to setOf("BLOCK"),
+            "PHP" to setOf("GROUP STATEMENT"),
+            "SCALA" to setOf("BLOCK OF EXPRESSIONS"),
+            "TYPESCRIPT" to setOf("BLOCK_STATEMENT"),
+            "JAVASCRIPT" to setOf("BLOCK_STATEMENT"),
+            "ECMASCRIPT 6" to setOf("BLOCK_STATEMENT"),
+            "PERL" to setOf("PERL5: BLOCK"),
+            "PYTHON" to setOf("PYSTATEMENTLIST"),
+            "RUBY" to setOf("BODY STATEMENT"),
+            "R" to setOf("R_BLOCK_EXPRESSION")
+        )
+    }
+
     protected open fun findInnerCodeBlock(element: PsiElement): PsiElement? {
+        val language = element.language.id.uppercase()
+        val codeBlockTypes = languageCodeBlockTypes[language] ?: emptySet()
+        
         val elementQueue = ArrayDeque<PsiElement>()
         elementQueue.add(element)
         while (elementQueue.isNotEmpty()) {
             val currentElement = elementQueue.removeFirst()
             val elementTypeName = currentElement.elementType.toString().uppercase()
-            if (elementTypeName == "CODE_BLOCK" // Java
-                || elementTypeName == "CS:BLOCK-LIST" // C#
-                || elementTypeName == "FUNCTION_BODY" // Dart
-                || elementTypeName == "BLOCK" // Kotlin, Rust
-                || elementTypeName == "GROUP STATEMENT" // PHP
-                || elementTypeName == "BLOCK OF EXPRESSIONS" // Scala
-                || elementTypeName == "BLOCK_STATEMENT" // Typescript, Javascript
-                || elementTypeName == "PERL5: BLOCK" // Perl
-                || elementTypeName == "PYSTATEMENTLIST" // Python
-                || elementTypeName == "BODY STATEMENT" // Ruby
-                || elementTypeName == "R_BLOCK_EXPRESSION" // R
-            )
+            
+            if (codeBlockTypes.any { blockType ->
+                when {
+                    blockType.contains(":") -> elementTypeName == blockType || elementTypeName.contains(blockType)
+                    blockType.contains(" ") -> elementTypeName == blockType
+                    else -> elementTypeName == blockType || elementTypeName.contains(blockType)
+                }
+            }) {
                 return currentElement
+            }
             elementQueue.addAll(currentElement.children)
         }
         return null

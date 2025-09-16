@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.1
+
+Loop inner selection bug fix: Surrounding brackets (if any) were also selected
+
+AnyBracket bug fix: Nested loops were not properly selected
+
+Performance improvements
+
 ## 1.2.0
 
 Add support for selecting functions, classes, and loops.

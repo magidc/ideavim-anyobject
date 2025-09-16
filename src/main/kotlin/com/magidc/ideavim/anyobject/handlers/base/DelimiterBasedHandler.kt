@@ -94,20 +94,21 @@ class DelimiterHandler(isInner: Boolean, val sameLine: Boolean, val delimiterPai
         val textFromCaret = text.substring(caretOffset)
 
         if (textFromCaret.startsWith(closeDelimiter)) {
-            val openDelimiterOffset = findOpenDelimiter(text.take(caretOffset), openDelimiter, closeDelimiter, bestMatchLength)
+            val openDelimiterOffset = findOpenDelimiter(text.take(caretOffset), openDelimiter, closeDelimiter, caretOffset, bestMatchLength)
             return if (openDelimiterOffset != -1) IntRange(openDelimiterOffset + openDelimiter.length, caretOffset) else null
         }
         if (textFromCaret.startsWith(openDelimiter)) {
             val closingOffset = findClosingDelimiter(textFromCaret.substring(openDelimiter.length), openDelimiter, closeDelimiter, bestMatchLength)
             return if (closingOffset != -1) IntRange(caretOffset + openDelimiter.length, closingOffset + 1 + caretOffset) else null
         }
-        val closingOffset = findClosingDelimiter(textFromCaret, openDelimiter, closeDelimiter, bestMatchLength)
+        var closingOffset = findClosingDelimiter(textFromCaret, openDelimiter, closeDelimiter, bestMatchLength)
         if (closingOffset == -1)
             return null
-        val openDelimiterOffset = findOpenDelimiter(text.take(caretOffset), openDelimiter, closeDelimiter, bestMatchLength - closingOffset)
+        closingOffset += caretOffset
+        val openDelimiterOffset = findOpenDelimiter(text.take(caretOffset), openDelimiter, closeDelimiter, closingOffset, bestMatchLength)
         if (openDelimiterOffset == -1)
             return null
-        val range = IntRange(openDelimiterOffset + openDelimiter.length, closingOffset + caretOffset)
+        val range = IntRange(openDelimiterOffset + openDelimiter.length, closingOffset)
         return if ((range.last - range.first) < bestMatchLength) range else null
     }
 
@@ -115,12 +116,11 @@ class DelimiterHandler(isInner: Boolean, val sameLine: Boolean, val delimiterPai
      * Find the first open delimiter backwards from the end of the text. It takes into consideration closing delimiters found before.
      * The range cannot exceed the best match length.
      */
-    private fun findOpenDelimiter(text: CharSequence, openDelimiter: String, closeDelimiter: String, bestMatchLength: Int): Int {
-        val allMatches = (findAllMatches(text, openDelimiter) + findAllMatches(text, closeDelimiter))
-            .sortedByDescending { it.range.first }
+    private fun findOpenDelimiter(text: CharSequence, openDelimiter: String, closeDelimiter: String, closeDelimiterOffset: Int, bestMatchLength: Int): Int {
+        val allMatches = findAllMatches(text, listOf(openDelimiter, closeDelimiter)).sortedByDescending { it.range.first }
         var level = 0
         for (match in allMatches) {
-            if (match.range.first > bestMatchLength)
+            if (closeDelimiterOffset - match.range.first > bestMatchLength)
                 return -1
             if (match.value == openDelimiter) {
                 if (level == 0)
@@ -137,8 +137,7 @@ class DelimiterHandler(isInner: Boolean, val sameLine: Boolean, val delimiterPai
      * The range cannot exceed the best match length.
      */
     private fun findClosingDelimiter(text: CharSequence, openDelimiter: String, closeDelimiter: String, bestMatchLength: Int): Int {
-        val allMatches = (findAllMatches(text, openDelimiter) + findAllMatches(text, closeDelimiter))
-            .sortedBy { it.range.first }
+        val allMatches = findAllMatches(text, listOf(openDelimiter, closeDelimiter)).sortedBy { it.range.first }
 
         var level = 0
         for (match in allMatches) {
@@ -154,8 +153,8 @@ class DelimiterHandler(isInner: Boolean, val sameLine: Boolean, val delimiterPai
         return -1
     }
 
-    private fun findAllMatches(text: CharSequence, searchString: String): List<MatchResult> {
-        val regex = Regex.escape(searchString).toRegex()
+    private fun findAllMatches(text: CharSequence, searchStrings: Collection<String>): List<MatchResult> {
+        val regex = searchStrings.joinToString("|") { Regex.escape(it) }.toRegex()
         return regex.findAll(text).toList()
     }
 }

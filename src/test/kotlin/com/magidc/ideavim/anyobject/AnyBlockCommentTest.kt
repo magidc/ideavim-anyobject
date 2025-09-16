@@ -1,7 +1,6 @@
-package com.magidc.ideavim.anyObject
+package com.magidc.ideavim.anyobject
 
 import com.magidc.ideavim.anyobject.handlers.AnyBlockCommentHandlers
-import com.magidc.ideavim.anyobject.BaseTest
 
 class AnyBlockCommentTest : BaseTest(AnyBlockCommentHandlers()) {
 

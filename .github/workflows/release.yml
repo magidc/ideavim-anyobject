@@ -60,7 +60,7 @@ jobs:
         id: extract-notes
         run: |
           # Find the first version header and extract until the next version header
-          RELEASE_NOTES=$(sed -n '/^## [0-9]/,/^## [0-9]/{/^## [0-9]/d;p}' CHANGELOG.md | sed '/^## [0-9]/,$d')
+          RELEASE_NOTES=$(awk '/^## [0-9]/ {if(found) exit; found=1; next} found' CHANGELOG.md)
           echo "RELEASE_NOTES<<EOF" >> $GITHUB_OUTPUT
           echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT

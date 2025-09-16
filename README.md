@@ -7,7 +7,7 @@
 An extension for [IdeaVim](https://github.com/JetBrains/ideavim) plugin that adds useful text objects to improve your productivity on JetBrains IDEs.
 
 Text objects allow a more efficient way of communicating edition or selection actions in the editor. Instead of thinking in terms of characters, words, lines, or paragraphs, use
-more advance text constructs like quoted text, text between brackets, items in a collection, or programming language constructs like arguments, classes, functions, loops, or
+more advanced text constructs like quoted text, text between brackets, items in a collection, or programming language constructs like arguments, classes, functions, loops, or
 comments.
 
 ## Provided text objects
@@ -36,7 +36,7 @@ Content enclosed between any type of brackets:
 
 ### AnyDocument (`d`)
 
-Select the entire document content.
+Entire document content.
 
 ### AnyBlockComment (`c`)
 
@@ -75,15 +75,15 @@ Function arguments, method parameters, and callable expressions.
 
 ### AnyFunction (`f`)
 
-Select functions, methods, and procedures.
+Functions, methods, and procedures.
 
 ### AnyClass (`c`)
 
-Select class, interface, struct, and similar type definitions.
+Class, interface, struct, and similar type definitions.
 
 ### AnyLoop (`l`)
 
-Select loop statements and iterative constructs (for, while, do-while, foreach, enhanced for, range-based, and language-specific constructs).
+Loop statements and iterative constructs like `for`, `foreach`, `while`, `until`, `do`, `repeat`, `until`, `loop`, `for`, `foreach`, `while`, `until`, `do`, `repeat`, `until`, `loop`.
 
 <!-- Plugin description end -->
 
@@ -108,6 +108,16 @@ The plugin follows standard Vim text object conventions with `i` (inner) and `a`
 - `cio` - Change text inside any brackets
 - `yio` - Yank text inside any brackets
 - `vio` - Visually select text inside any brackets
+
+#### AnyArgument
+
+- `dia` - Delete argument
+- `daa` - Delete argument and its separator
+- `cia` - Change argument
+- `caa` - Change argument and its separator
+- `yia` - Yank/Copy argument
+- `yaa` - Yank/Copy argument and its separator
+- `via` - Visually select argument
 
 ## Installation
 
