@@ -4,10 +4,19 @@ import com.maddyhome.idea.vim.api.VimEditor
 import com.magidc.ideavim.anyobject.model.Selection
 
 
+abstract class TextBasedHandler(isInner: Boolean) : BaseHandler(isInner) {
+    abstract fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int): Selection?
+
+    override fun findSelection(editor: VimEditor): Selection? {
+        val caret = editor.currentCaret()
+        return findTextSelection(editor.text(), 0, caret.offset)
+    }
+}
+
 /**
  * Applies the action (pending operation or visual selection) to the smallest range of text around the cursor limited by any of the given delimiter pairs.
  */
-class DelimiterHandler(isInner: Boolean, val sameLine: Boolean, val delimiterPairs: Collection<Pair<String, String>>) : BaseHandler(isInner) {
+class DelimiterHandler(isInner: Boolean, val sameLine: Boolean, val delimiterPairs: Collection<Pair<String, String>>) : TextBasedHandler(isInner) {
 
     override fun findSelection(editor: VimEditor): Selection? {
         val caret = editor.currentCaret()
@@ -15,10 +24,10 @@ class DelimiterHandler(isInner: Boolean, val sameLine: Boolean, val delimiterPai
         val text = if (sameLine) editor.getLineText(caret.getLine()) else editor.text()
 
         val caretOffset = caret.offset - textOffset
-        return findDelimiterSelection(text, textOffset, caretOffset)
+        return findTextSelection(text, textOffset, caretOffset)
     }
 
-    fun findDelimiterSelection(text: CharSequence, textOffset: Int, caretOffset: Int): Selection? {
+    override fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int): Selection? {
         var bestMatch: Selection? = null
         var bestMatchLength = Int.MAX_VALUE
 
@@ -157,9 +166,11 @@ class DelimiterHandler(isInner: Boolean, val sameLine: Boolean, val delimiterPai
         val regex = searchStrings.joinToString("|") { Regex.escape(it) }.toRegex()
         return regex.findAll(text).toList()
     }
+
+
 }
 
-interface DelimiterHandlerFactory : HandlerFactory {
-    override fun getInnerHandler(): DelimiterHandler
-    override fun getOuterHandler(): DelimiterHandler
+interface TextBasedHandlerFactory : HandlerFactory {
+    override fun getInnerHandler(): TextBasedHandler
+    override fun getOuterHandler(): TextBasedHandler
 }

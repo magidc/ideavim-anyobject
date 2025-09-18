@@ -28,27 +28,53 @@ abstract class AbstractPSIBasedHandler(isInner: Boolean) : BaseHandler(isInner) 
             "RUBY" to setOf("BODY STATEMENT"),
             "R" to setOf("R_BLOCK_EXPRESSION")
         )
+
+        private val languageUsesDelimiters = mapOf(
+            "JAVA" to true,
+            "KOTLIN" to true,
+            "C#" to true,
+            "PYTHON" to false,
+            "JAVASCRIPT" to true,
+            "ECMASCRIPT 6" to true,
+            "TYPESCRIPT" to true,
+            "DART" to true,
+            "GO" to true,
+            "RUST" to true,
+            "PHP" to true,
+            "RUBY" to false,
+            "SCALA" to true,
+            "R" to true,
+            "PERL" to true,
+            "F#" to false,
+            "GROOVY" to true,
+            "CLOJURE" to true,
+            "LUA" to false,
+            "CPP" to true,
+            "C" to true,
+        )
     }
 
-    protected open fun findInnerCodeBlock(element: PsiElement): PsiElement? {
+    protected open fun findInnerCodeBlock(element: PsiElement, editor: VimEditor): PsiElement? {
         val language = element.language.id.uppercase()
         val codeBlockTypes = languageCodeBlockTypes[language] ?: emptySet()
-        
+        val caretOffset = editor.currentCaret().offset
+
         val elementQueue = ArrayDeque<PsiElement>()
         elementQueue.add(element)
+
         while (elementQueue.isNotEmpty()) {
             val currentElement = elementQueue.removeFirst()
+            if (!currentElement.textRange.contains(caretOffset))
+                continue
             val elementTypeName = currentElement.elementType.toString().uppercase()
-            
             if (codeBlockTypes.any { blockType ->
-                when {
-                    blockType.contains(":") -> elementTypeName == blockType || elementTypeName.contains(blockType)
-                    blockType.contains(" ") -> elementTypeName == blockType
-                    else -> elementTypeName == blockType || elementTypeName.contains(blockType)
-                }
-            }) {
+                    when {
+                        blockType.contains(":") -> elementTypeName == blockType || elementTypeName.contains(blockType)
+                        blockType.contains(" ") -> elementTypeName == blockType
+                        else -> elementTypeName == blockType || elementTypeName.contains(blockType)
+                    }
+                })
                 return currentElement
-            }
             elementQueue.addAll(currentElement.children)
         }
         return null
@@ -64,7 +90,7 @@ abstract class AbstractPSIBasedHandler(isInner: Boolean) : BaseHandler(isInner) 
         val psiFile = PsiManager.getInstance(project).findFile(virtualFile)
         val element = psiFile?.findElementAt(editor.currentCaret().offset) ?: return null
         val itemElement = findItemPSIFile(element) ?: return null
-        return getSelection(itemElement)
+        return getSelection(itemElement, editor)
     }
 
     private fun findItemPSIFile(psiElement: PsiElement): PsiElement? {
@@ -79,16 +105,19 @@ abstract class AbstractPSIBasedHandler(isInner: Boolean) : BaseHandler(isInner) 
 
     protected abstract fun acceptElement(element: PsiElement, language: String): Boolean
 
-    protected open fun getSelection(element: PsiElement): Selection? {
+    protected open fun getSelection(element: PsiElement, editor: VimEditor): Selection? {
         if (isInner) {
-            val classBody = findInnerCodeBlock(element) ?: element
-            val openBrace = classBody.children.firstOrNull { it.elementType.toString().uppercase() == "LBRACE" }
-            if (null != openBrace) {
-                val closeBrace = classBody.children.firstOrNull { it.elementType.toString().uppercase() == "RBRACE" }
-                if (null != closeBrace)
-                    return Selection(openBrace.textRange.endOffset, closeBrace.textRange.startOffset)
+            val innerBlock = findInnerCodeBlock(element, editor) ?: element
+            if (languageUsesDelimiters.getOrDefault(element.language.id.uppercase(), false)) {
+                val openBrace = innerBlock.children.firstOrNull { it.elementType.toString().uppercase() == "LBRACE" }
+                if (null != openBrace) {
+                    val closeBrace = innerBlock.children.firstOrNull { it.elementType.toString().uppercase() == "RBRACE" }
+                    if (null != closeBrace)
+                        return Selection(openBrace.textRange.endOffset, closeBrace.textRange.startOffset)
+                }
+                return Selection(innerBlock.textRange.startOffset + 1, innerBlock.textRange.endOffset - 1)
             }
-            return Selection(classBody.textRange.startOffset, classBody.textRange.endOffset)
+            return Selection(innerBlock.textRange.startOffset, innerBlock.textRange.endOffset)
         }
         return Selection(element.textRange.startOffset, element.textRange.endOffset)
     }

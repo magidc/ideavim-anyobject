@@ -8,8 +8,10 @@ import com.magidc.ideavim.anyobject.handlers.AnyArgumentHandlers
 import com.magidc.ideavim.anyobject.handlers.AnyBlockCommentHandlers
 import com.magidc.ideavim.anyobject.handlers.AnyBracketHandlers
 import com.magidc.ideavim.anyobject.handlers.AnyClassHandlers
+import com.magidc.ideavim.anyobject.handlers.AnyConditionalHandlers
 import com.magidc.ideavim.anyobject.handlers.AnyDocumentHandlers
 import com.magidc.ideavim.anyobject.handlers.AnyFunctionHandlers
+import com.magidc.ideavim.anyobject.handlers.AnyIndentBlockHandlers
 import com.magidc.ideavim.anyobject.handlers.AnyItemHandlers
 import com.magidc.ideavim.anyobject.handlers.AnyLoopHandlers
 import com.magidc.ideavim.anyobject.handlers.AnyQuoteHandlers
@@ -24,12 +26,15 @@ class AnyObject : VimExtension {
         registerTextObjects("AnyQuote", 'q', AnyQuoteHandlers())
         registerTextObjects("AnyBracket", 'o', AnyBracketHandlers())
         registerTextObjects("AnyItem", 'i', AnyItemHandlers())
-        registerTextObjects("AnyBlockComment", 'c', AnyBlockCommentHandlers())
+        registerTextObjects("AnyBlockComment", 'k', AnyBlockCommentHandlers())
         registerTextObjects("AnyArgument", 'a', AnyArgumentHandlers())
         registerTextObjects("AnyFunction", 'f', AnyFunctionHandlers())
         registerTextObjects("AnyClass", 'c', AnyClassHandlers())
         registerTextObjects("AnyDocument", 'd', AnyDocumentHandlers())
         registerTextObjects("AnyLoop", 'l', AnyLoopHandlers())
+        registerTextObjects("AnyIndentBlock", 'n', AnyIndentBlockHandlers())
+        registerTextObjects("AnyConditional", 't', AnyConditionalHandlers())
+//        registerTextObjects("AnyField", 'p', AnyFieldHandlers())
     }
 
     /**

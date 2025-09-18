@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.3.0
+
+### AnyConditional (`t`)
+
+Conditional statements and expressions like `if-else`, `switch` or `try-catch` statements.
+
+- **Inner Selection (`it`)**: Selects only the statements within the current branch/case where the cursor is positioned
+- **Outer Selection (`at`)**: Selects the entire conditional construct including all branches and control keywords
+
+### AnyIndentBlock (`n`)
+
+Code blocks based on indentation levels. This is particularly useful for indentation-based languages like Python, YAML, or Haskell, but also works with brace-based languages to
+select logical indentation blocks.
+
 ## 1.2.1
 
 Loop inner selection bug fix: Surrounding brackets (if any) were also selected
@@ -36,7 +50,7 @@ Bug in argument selection: When using outer mode (a), if the argument was the fi
 
 Adds support for block comments, function arguments, and collection items.
 
-### AnyBlockComment (`c`)
+### AnyBlockComment (`k`)
 
 Block comments across different programming languages:
 
@@ -47,15 +61,9 @@ Block comments across different programming languages:
 | `<!-- -->`   | HTML, XML, XHTML, Markdown                                                              | `<!-- comment -->`     |
 | `""" """`    | Python (docstrings)                                                                     | `"""comment"""`        |
 | `''' '''`    | Python (docstrings)                                                                     | `'''comment'''`        |
-| `(* *)`      | Pascal, Delphi, OCaml, F#, AppleScript                                                  | `(* comment *)`        |
-| `{ }`        | Pascal, Delphi (alternative style)                                                      | `{ comment }`          |
-| `%{ %}`      | MATLAB, Octave                                                                          | `%{ comment %}`        |
 | `--[[ ]]`    | Lua                                                                                     | `--[[ comment ]]`      |
 | `--[=[ ]=]`  | Lua (custom delimiters)                                                                 | `--[=[ comment ]=]`    |
-| `<# #>`      | PowerShell                                                                              | `<# comment #>`        |
-| `{- -}`      | Haskell                                                                                 | `{- comment -}`        |
 | `#'` to `'`  | R (roxygen comments)                                                                    | `#' comment '`         |
-| `!* *!`      | Some Fortran variants                                                                   | `!* comment *!`        |
 
 ### AnyItem (`i`)
 

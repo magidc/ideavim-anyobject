@@ -1,23 +1,22 @@
 package com.magidc.ideavim.anyobject.handlers
 
-import com.maddyhome.idea.vim.api.VimEditor
-import com.magidc.ideavim.anyobject.handlers.base.BaseHandler
-import com.magidc.ideavim.anyobject.handlers.base.HandlerFactory
+import com.magidc.ideavim.anyobject.handlers.base.TextBasedHandler
+import com.magidc.ideavim.anyobject.handlers.base.TextBasedHandlerFactory
 import com.magidc.ideavim.anyobject.model.Selection
 
-class AnyDocumentHandlers : HandlerFactory {
-    override fun getInnerHandler(): BaseHandler {
+class AnyDocumentHandlers : TextBasedHandlerFactory {
+    override fun getInnerHandler(): TextBasedHandler {
         return AnyDocumentHandler()
     }
 
-    override fun getOuterHandler(): BaseHandler {
+    override fun getOuterHandler(): TextBasedHandler {
         return AnyDocumentHandler()
     }
 }
 
-class AnyDocumentHandler() : BaseHandler(false) {
+class AnyDocumentHandler() : TextBasedHandler(false) {
+    override fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int): Selection {
+        return Selection(0, text.length)
 
-    override fun findSelection(editor: VimEditor): Selection {
-        return Selection(0, editor.text().length)
     }
 }

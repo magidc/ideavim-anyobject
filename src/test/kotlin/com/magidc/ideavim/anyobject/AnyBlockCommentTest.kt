@@ -2,7 +2,7 @@ package com.magidc.ideavim.anyobject
 
 import com.magidc.ideavim.anyobject.handlers.AnyBlockCommentHandlers
 
-class AnyBlockCommentTest : BaseTest(AnyBlockCommentHandlers()) {
+class AnyBlockCommentTest : TextHandlerBaseTest(AnyBlockCommentHandlers()) {
 
     fun testJavadocBlockComment() {
         testInner(String.format("this is a /**%s te%sst %s*/", START, CARET, END))

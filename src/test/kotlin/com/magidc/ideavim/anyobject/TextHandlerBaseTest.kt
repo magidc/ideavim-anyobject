@@ -1,10 +1,10 @@
 package com.magidc.ideavim.anyobject
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.magidc.ideavim.anyobject.handlers.base.DelimiterHandler
-import com.magidc.ideavim.anyobject.handlers.base.DelimiterHandlerFactory
+import com.magidc.ideavim.anyobject.handlers.base.TextBasedHandler
+import com.magidc.ideavim.anyobject.handlers.base.TextBasedHandlerFactory
 
-abstract class BaseTest(val handlers: DelimiterHandlerFactory) : BasePlatformTestCase() {
+abstract class TextHandlerBaseTest(val handlers: TextBasedHandlerFactory) : BasePlatformTestCase() {
     companion object {
         const val CARET = "#caret#"
         const val START = "#start#"
@@ -19,13 +19,13 @@ abstract class BaseTest(val handlers: DelimiterHandlerFactory) : BasePlatformTes
         execute(text, false, handlers.getOuterHandler())
     }
 
-    private fun execute(textWithCaret: String, inner: Boolean, delimiterHandler: DelimiterHandler) {
+    private fun execute(textWithCaret: String, inner: Boolean, handler: TextBasedHandler) {
         val caretIndex = textWithCaret.indexOf(CARET)
         val text = textWithCaret.replace(CARET, "")
 
         if (caretIndex == -1) return
 
-        val selection = delimiterHandler.findDelimiterSelection(text, 0, caretIndex)
+        val selection = handler.findTextSelection(text, 0, caretIndex)
         if (selection == null) {
             assertTrue(!text.contains(START) && !text.contains(END))
             return

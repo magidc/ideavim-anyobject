@@ -1,9 +1,9 @@
 package com.magidc.ideavim.anyobject.handlers
 
 import com.magidc.ideavim.anyobject.handlers.base.DelimiterHandler
-import com.magidc.ideavim.anyobject.handlers.base.DelimiterHandlerFactory
+import com.magidc.ideavim.anyobject.handlers.base.TextBasedHandlerFactory
 
-class AnyBracketHandlers : DelimiterHandlerFactory {
+class AnyBracketHandlers : TextBasedHandlerFactory {
     companion object {
         private val delimiters = listOf("(" to ")", "[" to "]", "{" to "}", "<" to "/>", "<" to ">")
     }

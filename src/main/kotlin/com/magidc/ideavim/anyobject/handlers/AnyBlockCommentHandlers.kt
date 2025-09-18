@@ -1,9 +1,9 @@
 package com.magidc.ideavim.anyobject.handlers
 
 import com.magidc.ideavim.anyobject.handlers.base.DelimiterHandler
-import com.magidc.ideavim.anyobject.handlers.base.DelimiterHandlerFactory
+import com.magidc.ideavim.anyobject.handlers.base.TextBasedHandlerFactory
 
-class AnyBlockCommentHandlers : DelimiterHandlerFactory {
+class AnyBlockCommentHandlers : TextBasedHandlerFactory {
     companion object {
         private val delimiters = listOf(
             "/**" to "*/",          // Java
@@ -11,14 +11,9 @@ class AnyBlockCommentHandlers : DelimiterHandlerFactory {
             "\"\"\"" to "\"\"\"",   // Python triple-quoted strings
             "'''" to "'''",         // Python triple-quoted strings (single quotes)
             "<!--" to "-->",        // HTML, XML, XHTML, Markdown
-            "{" to "}",             // Pascal, Delphi (alternative style)
-            "(*" to "*)",           // Pascal, Delphi, OCaml, F#, AppleScript
-            "%{" to "%}",           // MATLAB, Octave
             "--[[" to "]]",         // Lua
             "--[=[" to "]=]",       // Lua (with custom delimiters)
-            "<#" to "#>",           // PowerShell
             "#'" to "'",            // R (roxygen comments, though not exactly block comments)
-            "!*" to "*!",           // Some Fortran variants
             "{-" to "-}",           // Haskell
         )
     }

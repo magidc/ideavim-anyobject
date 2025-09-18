@@ -3,6 +3,7 @@ package com.magidc.ideavim.anyobject.handlers
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.siblings
+import com.maddyhome.idea.vim.api.VimEditor
 import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
 import com.magidc.ideavim.anyobject.handlers.base.BaseHandler
 import com.magidc.ideavim.anyobject.handlers.base.HandlerFactory
@@ -34,23 +35,19 @@ open class AnyItemHandler(isInner: Boolean) : AbstractPSIBasedHandler(isInner) {
             "PHP" to setOf("ARRAY", "ARRAY_CREATION_EXPRESSION"),
             "RUBY" to setOf("ARRAY", "LIST", "HASH_LITERAL"),
             "SCALA" to setOf("LIST", "ARRAY", "SEQUENCE_LITERAL", "SET_LITERAL"),
-            "SWIFT" to setOf("ARRAY", "DICTIONARY", "ARRAY_LITERAL", "DICTIONARY_LITERAL"),
             "RUST" to setOf("ARRAY", "VEC", "ARRAY_EXPRESSION", "VEC_MACRO"),
             "R" to setOf("LIST", "VECTOR", "LIST_EXPRESSION"),
             "PERL" to setOf("ARRAY", "LIST", "ARRAY_REF"),
-            "OBJECTIVE-C" to setOf("ARRAY", "DICTIONARY", "NS_ARRAY_LITERAL"),
             "HASKELL" to setOf("LIST", "ARRAY", "LIST_EXPRESSION"),
             "F#" to setOf("LIST", "ARRAY", "LIST_EXPRESSION", "ARRAY_EXPRESSION"),
             "GROOVY" to setOf("LIST", "ARRAY", "LIST_EXPRESSION"),
             "CLOJURE" to setOf("VECTOR", "LIST", "MAP", "SET"),
             "LUA" to setOf("TABLE", "ARRAY"),
-            "ELIXIR" to setOf("LIST", "TUPLE", "MAP"),
-            
+
             // Data format languages
             "JSON" to setOf("ARRAY", "OBJECT", "JSON_ARRAY", "JSON_OBJECT"),
             "XML" to setOf("XML_TAG", "XML_ELEMENT", "XML_ATTRIBUTE_LIST"),
             "YAML" to setOf("SEQUENCE", "MAPPING", "YAML_SEQUENCE", "YAML_MAPPING", "YAML_ARRAY", "YAML_HASH"),
-            "CSV" to setOf("RECORD", "ROW", "CSV_RECORD", "CSV_ROW", "LINE")
         )
     }
 
@@ -60,16 +57,10 @@ open class AnyItemHandler(isInner: Boolean) : AbstractPSIBasedHandler(isInner) {
 
     override fun acceptElement(element: PsiElement, language: String): Boolean {
         val containerElementTypeName = element.parent.elementType.toString().uppercase()
-        
-        if (language == "CSV") {
-            return getLanguageTargetTypes(language).any { containerElementTypeName.endsWith(it) } ||
-                   isCsvField(element)
-        }
-        
         return getLanguageTargetTypes(language).any { containerElementTypeName.endsWith(it) }
     }
 
-    override fun getSelection(element: PsiElement): Selection? {
+    override fun getSelection(element: PsiElement, editor: VimEditor): Selection? {
         if (element.text.isBlank()) return null
 
         var leftOffset: Int = element.textRange.startOffset
@@ -89,85 +80,40 @@ open class AnyItemHandler(isInner: Boolean) : AbstractPSIBasedHandler(isInner) {
 
     open fun isItem(sourceItem: PsiElement, otherElement: PsiElement): Boolean {
         val language = sourceItem.language.id.uppercase()
-        
+
         return when (language) {
             "JSON" -> isJsonItem(sourceItem, otherElement)
             "XML" -> isXmlItem(sourceItem, otherElement)
             "YAML" -> isYamlItem(sourceItem, otherElement)
-            "CSV" -> isCsvItem(sourceItem, otherElement)
             else -> sourceItem.elementType == otherElement.elementType
         }
     }
-    
+
     private fun isJsonItem(sourceItem: PsiElement, otherElement: PsiElement): Boolean {
         val sourceType = sourceItem.elementType.toString().uppercase()
         val otherType = otherElement.elementType.toString().uppercase()
-        
+
         return sourceType == otherType ||
-               (sourceType.contains("VALUE") && otherType.contains("VALUE")) ||
-               (sourceType.contains("PROPERTY") && otherType.contains("PROPERTY"))
+                (sourceType.contains("VALUE") && otherType.contains("VALUE")) ||
+                (sourceType.contains("PROPERTY") && otherType.contains("PROPERTY"))
     }
-    
+
     private fun isXmlItem(sourceItem: PsiElement, otherElement: PsiElement): Boolean {
         val sourceType = sourceItem.elementType.toString().uppercase()
         val otherType = otherElement.elementType.toString().uppercase()
-        
+
         return sourceType == otherType ||
-               (sourceType.contains("XML_TAG") && otherType.contains("XML_TAG")) ||
-               (sourceType.contains("XML_ATTRIBUTE") && otherType.contains("XML_ATTRIBUTE"))
+                (sourceType.contains("XML_TAG") && otherType.contains("XML_TAG")) ||
+                (sourceType.contains("XML_ATTRIBUTE") && otherType.contains("XML_ATTRIBUTE"))
     }
-    
+
     private fun isYamlItem(sourceItem: PsiElement, otherElement: PsiElement): Boolean {
         val sourceType = sourceItem.elementType.toString().uppercase()
         val otherType = otherElement.elementType.toString().uppercase()
-        
+
         return sourceType == otherType ||
-               (sourceType.contains("SEQUENCE_ITEM") && otherType.contains("SEQUENCE_ITEM")) ||
-               (sourceType.contains("KEY_VALUE") && otherType.contains("KEY_VALUE")) ||
-               (sourceType.contains("MAPPING") && otherType.contains("MAPPING"))
-    }
-    
-    private fun isCsvItem(sourceItem: PsiElement, otherElement: PsiElement): Boolean {
-        val sourceType = sourceItem.elementType.toString().uppercase()
-        val otherType = otherElement.elementType.toString().uppercase()
-        
-        return sourceType == otherType ||
-               (sourceType.contains("FIELD") && otherType.contains("FIELD")) ||
-               (sourceType.contains("COLUMN") && otherType.contains("COLUMN")) ||
-               (sourceType.contains("CELL") && otherType.contains("CELL")) ||
-               isCsvFieldsInSameRow(sourceItem, otherElement)
-    }
-    
-    private fun isCsvField(element: PsiElement): Boolean {
-        val elementType = element.elementType.toString().uppercase()
-        val parentType = element.parent?.elementType?.toString()?.uppercase() ?: ""
-        
-        return elementType.contains("FIELD") ||
-               elementType.contains("COLUMN") ||
-               elementType.contains("CELL") ||
-               parentType.contains("RECORD") ||
-               parentType.contains("ROW") ||
-               parentType.contains("CSV")
-    }
-    
-    private fun isCsvFieldsInSameRow(sourceItem: PsiElement, otherElement: PsiElement): Boolean {
-        val sourceRow = findCsvRow(sourceItem)
-        val otherRow = findCsvRow(otherElement)
-        
-        return sourceRow != null && otherRow != null && sourceRow == otherRow
-    }
-    
-    private fun findCsvRow(element: PsiElement): PsiElement? {
-        var current = element
-        while (current.parent != null) {
-            val parentType = current.parent.elementType.toString().uppercase()
-            if (parentType.contains("RECORD") || 
-                parentType.contains("ROW") || 
-                parentType.contains("CSV_ROW")) {
-                return current.parent
-            }
-            current = current.parent
-        }
-        return null
+                (sourceType.contains("SEQUENCE_ITEM") && otherType.contains("SEQUENCE_ITEM")) ||
+                (sourceType.contains("KEY_VALUE") && otherType.contains("KEY_VALUE")) ||
+                (sourceType.contains("MAPPING") && otherType.contains("MAPPING"))
     }
 }

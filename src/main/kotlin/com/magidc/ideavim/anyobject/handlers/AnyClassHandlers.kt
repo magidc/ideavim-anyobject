@@ -2,13 +2,13 @@ package com.magidc.ideavim.anyobject.handlers
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
+import com.maddyhome.idea.vim.api.VimEditor
 import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
 import com.magidc.ideavim.anyobject.handlers.base.BaseHandler
 import com.magidc.ideavim.anyobject.handlers.base.HandlerFactory
 
 
 class AnyClassHandlers : HandlerFactory {
-
     override fun getInnerHandler(): BaseHandler {
         return AnyClassHandler(isInner = true)
     }
@@ -42,23 +42,31 @@ class AnyClassHandlers : HandlerFactory {
                 "PHP" to setOf("CLASS_DECLARATION", "INTERFACE_DECLARATION", "TRAIT_DECLARATION", "ENUM_DECLARATION", "ABSTRACT_CLASS_DECLARATION"),
                 "RUBY" to setOf("RUBY:CLASS", "RUBY:MODULE", "RUBY:SINGLETON_CLASS"),
                 "SCALA" to setOf("CLASS DEFINITION", "OBJECT DEFINITION", "TRAIT DEFINITION", "CASE CLASS DEFINITION", "ABSTRACT CLASS DEFINITION", "SEALED CLASS DEFINITION"),
-                "SWIFT" to setOf("CLASS_DECLARATION", "STRUCT_DECLARATION", "PROTOCOL_DECLARATION", "ENUM_DECLARATION", "EXTENSION_DECLARATION", "ACTOR_DECLARATION"),
                 "R" to setOf("R_CLASS_DEFINITION", "R_SETCLASS"),
                 "PERL" to setOf("PERL5:PACKAGE", "PERL5:NAMESPACE"),
-                "OBJECTIVE-C" to setOf("OBJC:CLASS_DECLARATION", "OBJC:PROTOCOL_DECLARATION", "OBJC:CATEGORY_DECLARATION", "OBJC:INTERFACE_DECLARATION"),
                 "HASKELL" to setOf("HS:DATA_DECLARATION", "HS:NEWTYPE_DECLARATION", "HS:TYPE_DECLARATION", "HS:CLASS_DECLARATION", "HS:INSTANCE_DECLARATION"),
                 "F#" to setOf("FS:TYPE_DEFINITION", "FS:INTERFACE_DEFINITION", "FS:MODULE_DEFINITION", "FS:RECORD_DEFINITION", "FS:UNION_DEFINITION"),
                 "GROOVY" to setOf("CLASS", "INTERFACE", "ENUM", "TRAIT_DECLARATION"),
                 "CLOJURE" to setOf("DEFTYPE", "DEFRECORD", "DEFPROTOCOL", "REIFY"),
                 "LUA" to setOf("TABLE", "METATABLE", "CLASS_DECLARATION"),
-                "ELIXIR" to setOf("DEFMODULE", "DEFPROTOCOL", "DEFIMPL", "DEFSTRUCT"),
                 "CPP" to setOf("CLASS_DECLARATION", "STRUCT_DECLARATION", "UNION_DECLARATION", "NAMESPACE_DECLARATION"),
                 "C" to setOf("STRUCT_DECLARATION", "UNION_DECLARATION", "ENUM_DECLARATION"),
-                "CRYSTAL" to setOf("CLASS", "STRUCT", "MODULE", "ENUM"),
-                "JULIA" to setOf("STRUCT", "ABSTRACT_TYPE", "PRIMITIVE_TYPE", "MODULE"),
-                "NIM" to setOf("TYPE", "OBJECT", "ENUM", "CONCEPT"),
-                "ZIG" to setOf("STRUCT", "UNION", "ENUM"),
-                "ODIN" to setOf("STRUCT", "UNION", "ENUM", "DISTINCT_TYPE")
+            )
+
+            private val languageClassStatementBlockTypes = mapOf(
+                "KOTLIN" to "CLASS_BODY",
+                "PYTHON" to "PYSTATEMENTLIST",
+                "DART" to "CLASS_BODY",
+                "PHP" to "CLASS_STATEMENT_LIST",
+                "RUBY" to "BODY_STATEMENT",
+                "SCALA" to "TEMPLATE_BODY",
+                "R" to "R_BLOCK_EXPRESSION",
+                "HASKELL" to "HS:WHERE_CLAUSES",
+                "F#" to "FS:TYPE_BODY",
+                "CLOJURE" to "VECTOR",
+                "LUA" to "CHUNK",
+                "CPP" to "COMPOUND_STATEMENT",
+                "C" to "COMPOUND_STATEMENT",
             )
         }
 
@@ -77,8 +85,19 @@ class AnyClassHandlers : HandlerFactory {
             }
         }
 
-        override fun findInnerCodeBlock(element: PsiElement): PsiElement {
-            return element
+        override fun findInnerCodeBlock(element: PsiElement, editor: VimEditor): PsiElement? {
+            val innerCodeBlockElementTypeName = languageClassStatementBlockTypes[element.language.id.uppercase()] ?: return element
+
+            val elementQueue = ArrayDeque<PsiElement>()
+            elementQueue.add(element)
+            while (elementQueue.isNotEmpty()) {
+                val currentElement = elementQueue.removeFirst()
+                val currentElementTypeName = currentElement.elementType.toString().uppercase()
+                if (currentElementTypeName == innerCodeBlockElementTypeName)
+                    return currentElement
+                elementQueue.addAll(currentElement.children)
+            }
+            return null
         }
     }
 }

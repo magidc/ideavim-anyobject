@@ -38,7 +38,7 @@ Content enclosed between any type of brackets:
 
 Entire document content.
 
-### AnyBlockComment (`c`)
+### AnyBlockComment (`k`)
 
 Block comments across different programming languages:
 
@@ -49,15 +49,9 @@ Block comments across different programming languages:
 | `<!-- -->`   | HTML, XML, XHTML, Markdown                                                              | `<!-- comment -->`     |
 | `""" """`    | Python (docstrings)                                                                     | `"""comment"""`        |
 | `''' '''`    | Python (docstrings)                                                                     | `'''comment'''`        |
-| `(* *)`      | Pascal, Delphi, OCaml, F#, AppleScript                                                  | `(* comment *)`        |
-| `{ }`        | Pascal, Delphi (alternative style)                                                      | `{ comment }`          |
-| `%{ %}`      | MATLAB, Octave                                                                          | `%{ comment %}`        |
 | `--[[ ]]`    | Lua                                                                                     | `--[[ comment ]]`      |
 | `--[=[ ]=]`  | Lua (custom delimiters)                                                                 | `--[=[ comment ]=]`    |
-| `<# #>`      | PowerShell                                                                              | `<# comment #>`        |
-| `{- -}`      | Haskell                                                                                 | `{- comment -}`        |
 | `#'` to `'`  | R (roxygen comments)                                                                    | `#' comment '`         |
-| `!* *!`      | Some Fortran variants                                                                   | `!* comment *!`        |
 
 ### AnyItem (`i`)
 
@@ -83,7 +77,41 @@ Class, interface, struct, and similar type definitions.
 
 ### AnyLoop (`l`)
 
-Loop statements and iterative constructs like `for`, `foreach`, `while`, `until`, `do`, `repeat`, `until`, `loop`, `for`, `foreach`, `while`, `until`, `do`, `repeat`, `until`, `loop`.
+Loop statements and iterative constructs like `for`, `foreach`, `while`, `until`, `do`, `repeat`, `until`, `loop`, `for`, `foreach`, `while`, `until`, `do`, `repeat`, `until`,
+`loop`.
+
+### AnyConditional (`t`)
+
+Conditional statements and expressions like `if-else`, `switch` or `try-catch` statements.
+
+- **Inner Selection (`it`)**: Selects only the statements within the current branch/case where the cursor is positioned
+- **Outer Selection (`at`)**: Selects the entire conditional construct including all branches and control keywords
+
+### AnyIndentBlock (`n`)
+
+Code blocks based on indentation levels. This is particularly useful for indentation-based languages like Python, YAML, or Haskell, but also works with brace-based languages to
+select logical indentation blocks.
+
+## Configuration
+
+Configure which transformation groups to enable in your `.ideavimrc`:
+
+```vimscript
+" Activate plugin
+set anyobject
+```
+
+### Customization
+
+You can customize the default mappings by adding the following to your `.ideavimrc`. For example:
+
+```vimscript
+" Use 'k' instead of 'o' for any bracket text object
+omap ik <Plug>InnerAnyBracket
+omap ak <Plug>OuterAnyBracket
+vmap ik <Plug>InnerAnyBracket
+vmap ak <Plug>OuterAnyBracket
+```
 
 <!-- Plugin description end -->
 
@@ -91,7 +119,7 @@ Loop statements and iterative constructs like `for`, `foreach`, `while`, `until`
 
 The plugin follows standard Vim text object conventions with `i` (inner) and `a` (around) modifiers
 
-## Some examples
+### Some examples
 
 #### AnyQuote
 
@@ -132,27 +160,6 @@ The plugin follows standard Vim text object conventions with `i` (inner) and `a`
 
 1. Download the [latest release](https://github.com/magidc/ideavim-anyobject/releases)
 2. Install manually using <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
-
-### Configuration
-
-Configure which transformation groups to enable in your `.ideavimrc`:
-
-```vimscript
-" Activate plugin
-set anyobject
-```
-
-### Customization
-
-You can customize the default mappings by adding the following to your `.ideavimrc`. For example:
-
-```vimscript
-" Use 'k' instead of 'o' for any bracket text object
-omap ik <Plug>InnerAnyBracket
-omap ak <Plug>OuterAnyBracket
-vmap ik <Plug>InnerAnyBracket
-vmap ak <Plug>OuterAnyBracket
-```
 
 ## Contributing
 
