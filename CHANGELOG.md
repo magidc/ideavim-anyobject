@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.2
+
+- **Bug fix**: Fix bug in outer argument selection. In some cases right separator was not selected.
+- 
 ## 1.3.1
 
 - **Bug fix**: Fix bug in Python literal list item selection

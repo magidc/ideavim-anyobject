@@ -52,8 +52,13 @@ private class AnyArgumentHandler(isInner: Boolean) : AnyItemHandler(isInner) {
      * There may be different kind of arguments in the same sequence, e.g., in Kotlin named and positional arguments.
      */
     override fun isItem(sourceItem: PsiElement, otherElement: PsiElement): Boolean {
-        return sourceItem.elementType == otherElement.elementType
-                || otherElement.javaClass.interfaces.flatMap { it.genericInterfaces.asSequence() }.any { it.typeName.lowercase().endsWith("referencehost") }
+        return sourceItem.elementType == otherElement.elementType || (
+                otherElement.text.isNotBlank()
+                        // Sometimes argument separators do not appear as children of the main element parent (Pycharm)
+                        && otherElement.parent.children.any { it.elementType == otherElement.elementType }
+                        // In Intellij separators implement interfaces ending with "Token"
+                        && !otherElement.javaClass.interfaces.any { it.typeName.lowercase().endsWith("token") }
+                )
     }
 
 }
