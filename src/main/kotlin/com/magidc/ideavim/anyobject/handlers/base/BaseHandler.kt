@@ -10,7 +10,8 @@ import com.magidc.ideavim.anyobject.model.Selection
 
 interface HandlerFactory {
     fun getInnerHandler(): BaseHandler
-    fun getOuterHandler(): BaseHandler
+    fun getOuterHandler(size: Int = 1): BaseHandler
+    fun supportsMultipleSelections(): Boolean = false
 }
 
 abstract class BaseHandler(val isInner: Boolean) : ExtensionHandler {

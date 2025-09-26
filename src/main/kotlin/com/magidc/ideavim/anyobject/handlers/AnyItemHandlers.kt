@@ -15,12 +15,16 @@ class AnyItemHandlers : HandlerFactory {
         return AnyItemHandler(isInner = true)
     }
 
-    override fun getOuterHandler(): BaseHandler {
-        return AnyItemHandler(isInner = false)
+    override fun getOuterHandler(size: Int): BaseHandler {
+        return AnyItemHandler(isInner = false, size = size)
+    }
+
+    override fun supportsMultipleSelections(): Boolean {
+        return true
     }
 }
 
-open class AnyItemHandler(isInner: Boolean) : AbstractPSIBasedHandler(isInner) {
+open class AnyItemHandler(isInner: Boolean, size: Int = 1) : AbstractPSIBasedHandler(isInner, size) {
     companion object {
         private val languageTargetTypes = mapOf(
             "JAVA" to setOf("LIST", "ARRAY_INITIALIZER_EXPRESSION"),
@@ -66,17 +70,22 @@ open class AnyItemHandler(isInner: Boolean) : AbstractPSIBasedHandler(isInner) {
         if (element.text.isBlank()) return null
 
         var leftOffset: Int = element.textRange.startOffset
-        var rightOffset: Int = element.textRange.endOffset
+        var rightOffset = element.textRange.endOffset
 
-        if (isInner) return Selection(leftOffset, rightOffset)
+        if (isInner) return Selection(leftOffset, element.textRange.endOffset)
 
         val elementBefore = element.siblings(forward = false, withSelf = false).filter { isItem(element, it) }.firstOrNull()
-        val elementAfter = element.siblings(withSelf = false).filter { isItem(element, it) }.firstOrNull()
+        val elementsAfter = element.siblings(withSelf = false).filter { isItem(element, it) }.take(size).toList()
+
+        rightOffset = if (elementsAfter.isNotEmpty() && elementsAfter.size < size) elementsAfter.last().textRange.endOffset else rightOffset
+
         if (null == elementBefore) {
-            if (null != elementAfter)
-                rightOffset = elementAfter.textRange.startOffset
+            val elementAfterSelection = if (elementsAfter.size == size) elementsAfter.last() else null
+            if (null != elementAfterSelection)
+                rightOffset = elementAfterSelection.textRange.startOffset
         } else
             leftOffset = elementBefore.textRange.endOffset
+
         return Selection(leftOffset, rightOffset)
     }
 

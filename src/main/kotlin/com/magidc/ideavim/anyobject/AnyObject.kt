@@ -73,6 +73,27 @@ class AnyObject : VimExtension {
             injector.parser.parseKeys("<Plug>Outer$command"),
             true
         )
+        if (!handlerFactory.supportsMultipleSelections())
+            return
+
+        for (i in 1..10) {
+            // Outer selection
+            VimExtensionFacade.putExtensionHandlerMapping(
+                MappingMode.XO,
+                injector.parser.parseKeys("<Plug>" + i + "Outer$command"),
+                owner,
+                handlerFactory.getOuterHandler(i),
+                false
+            )
+
+            VimExtensionFacade.putKeyMappingIfMissing(
+                MappingMode.XO,
+                injector.parser.parseKeys("$i$mapping"),
+                owner,
+                injector.parser.parseKeys("<Plug>" + i + "Outer$command"),
+                true
+            )
+        }
     }
 }
 

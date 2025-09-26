@@ -9,7 +9,7 @@ class AnyDocumentHandlers : TextBasedHandlerFactory {
         return AnyDocumentHandler()
     }
 
-    override fun getOuterHandler(): TextBasedHandler {
+    override fun getOuterHandler(size: Int): TextBasedHandler {
         return AnyDocumentHandler()
     }
 }

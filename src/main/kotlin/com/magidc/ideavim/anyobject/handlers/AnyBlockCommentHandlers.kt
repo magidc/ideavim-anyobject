@@ -22,7 +22,7 @@ class AnyBlockCommentHandlers : TextBasedHandlerFactory {
         return DelimiterHandler(isInner = true, sameLine = false, delimiterPairs = delimiters)
     }
 
-    override fun getOuterHandler(): DelimiterHandler {
+    override fun getOuterHandler(size: Int): DelimiterHandler {
         return DelimiterHandler(isInner = false, sameLine = false, delimiterPairs = delimiters)
     }
 }

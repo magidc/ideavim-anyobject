@@ -1,9 +1,14 @@
 # Changelog
 
+## 2.0.0
+
+- **Enabled multiple object outer selection for AnyArgument and AnyItem**: You can now select multiple objects of the same type in a single command. For example, `d2a` deletes the current and the next argument.
+
+
 ## 1.3.2
 
 - **Bug fix**: Fix bug in outer argument selection. In some cases right separator was not selected.
-- 
+
 ## 1.3.1
 
 - **Bug fix**: Fix bug in Python literal list item selection

@@ -12,7 +12,7 @@ class AnyFieldHandlers : HandlerFactory {
         return AnyFieldHandler(isInner = true)
     }
 
-    override fun getOuterHandler(): BaseHandler {
+    override fun getOuterHandler(size: Int): BaseHandler {
         return AnyFieldHandler(isInner = false)
     }
 

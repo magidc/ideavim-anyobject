@@ -11,12 +11,16 @@ open class AnyArgumentHandlers : HandlerFactory {
         return AnyArgumentHandler(isInner = true)
     }
 
-    override fun getOuterHandler(): BaseHandler {
-        return AnyArgumentHandler(isInner = false)
+    override fun getOuterHandler(size: Int): BaseHandler {
+        return AnyArgumentHandler(isInner = false, size = size)
+    }
+
+    override fun supportsMultipleSelections(): Boolean {
+        return true
     }
 }
 
-private class AnyArgumentHandler(isInner: Boolean) : AnyItemHandler(isInner) {
+private class AnyArgumentHandler(isInner: Boolean, size: Int = 1) : AnyItemHandler(isInner, size) {
     companion object {
         private val languageArgumentTypes = mapOf(
             "JAVA" to setOf("PARAMETER_LIST", "EXPRESSION_LIST", "ARGUMENT_LIST"),

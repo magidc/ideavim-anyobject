@@ -63,22 +63,41 @@ Items within collections, lists, or arrays:
 | Object properties | `{key1: value1, key2: value2}` |
 | List literals     | `(item1, item2, item3)`        |
 
+- **Inner selection (`ii`)**: Selects only the item itself
+- **Outer selection (`ai`)**: Selects the entire item including the separator and the item itself
+
+**Multiple outer selections are supported**. For example `d2i` will delete the current item and the next one
+
 ### AnyArgument (`a`)
 
 Function arguments, method parameters, and callable expressions.
+
+- **Inner selection (`ia`)**: Selects only the argument itself
+- **Outer selection (`ia`)**: Selects the entire argument including the separator and the argument itself
+
+**Multiple outer selections are supported**. For example `d2a` will delete the current argument and the next one
 
 ### AnyFunction (`f`)
 
 Functions, methods, and procedures.
 
+- **Inner selection (`if`)**: Selects only the function body
+- **Outer selection (`af`)**: Selects the entire function including the function name, decorators and the body
+
 ### AnyClass (`c`)
 
 Class, interface, struct, and similar type definitions.
+
+- **Inner selection (`ic`)**: Selects only the class body
+- **Outer selection (`ac`)**: Selects the entire class including the name, decorators and the body
 
 ### AnyLoop (`l`)
 
 Loop statements and iterative constructs like `for`, `foreach`, `while`, `until`, `do`, `repeat`, `until`, `loop`, `for`, `foreach`, `while`, `until`, `do`, `repeat`, `until`,
 `loop`.
+
+- **Inner Selection (`il`)**: Selects only the statements within the current loop/iteration where the cursor is positioned
+- **Outer Selection (`al`)**: Selects the entire loop construct including all branches and control keywords
 
 ### AnyConditional (`t`)
 
@@ -141,11 +160,14 @@ The plugin follows standard Vim text object conventions with `i` (inner) and `a`
 
 - `dia` - Delete argument
 - `daa` - Delete argument and its separator
+- `d2a` - Deletes argument and the next one including separators
 - `cia` - Change argument
 - `caa` - Change argument and its separator
+- `c2a` - Change argument and next one including separators
 - `yia` - Yank/Copy argument
 - `yaa` - Yank/Copy argument and its separator
 - `via` - Visually select argument
+- `v3a` - Visually select three arguments
 
 ## Installation
 

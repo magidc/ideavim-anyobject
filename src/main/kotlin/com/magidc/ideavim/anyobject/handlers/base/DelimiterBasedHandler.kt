@@ -172,5 +172,5 @@ class DelimiterHandler(isInner: Boolean, val sameLine: Boolean, val delimiterPai
 
 interface TextBasedHandlerFactory : HandlerFactory {
     override fun getInnerHandler(): TextBasedHandler
-    override fun getOuterHandler(): TextBasedHandler
+    override fun getOuterHandler(size: Int): TextBasedHandler
 }

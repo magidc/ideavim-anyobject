@@ -13,7 +13,7 @@ class AnyClassHandlers : HandlerFactory {
         return AnyClassHandler(isInner = true)
     }
 
-    override fun getOuterHandler(): BaseHandler {
+    override fun getOuterHandler(size: Int): BaseHandler {
         return AnyClassHandler(isInner = false)
     }
 

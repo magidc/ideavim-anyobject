@@ -13,7 +13,7 @@ class AnyConditionalHandlers : HandlerFactory {
         return AnyConditionalHandler(isInner = true)
     }
 
-    override fun getOuterHandler(): BaseHandler {
+    override fun getOuterHandler(size: Int): BaseHandler {
         return AnyConditionalHandler(isInner = false)
     }
 }

@@ -9,7 +9,7 @@ import com.maddyhome.idea.vim.api.VimEditor
 import com.magidc.ideavim.anyobject.model.Selection
 import java.nio.file.Path
 
-abstract class AbstractPSIBasedHandler(isInner: Boolean) : BaseHandler(isInner) {
+abstract class AbstractPSIBasedHandler(isInner: Boolean, val size: Int = 1) : BaseHandler(isInner) {
 
     companion object {
         private val languageCodeBlockTypes = mapOf(

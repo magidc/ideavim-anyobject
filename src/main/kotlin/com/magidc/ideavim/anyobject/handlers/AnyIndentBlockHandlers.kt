@@ -11,7 +11,7 @@ class AnyIndentBlockHandlers : TextBasedHandlerFactory {
         return AnyIndentBlockHandler(true)
     }
 
-    override fun getOuterHandler(): TextBasedHandler {
+    override fun getOuterHandler(size: Int): TextBasedHandler {
         return AnyIndentBlockHandler(false)
     }
 
