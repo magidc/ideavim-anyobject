@@ -2,25 +2,9 @@ package com.magidc.ideavim.anyobject.handlers
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
-import com.magidc.ideavim.anyobject.handlers.base.BaseHandler
-import com.magidc.ideavim.anyobject.handlers.base.HandlerFactory
 
 
-open class AnyArgumentHandlers : HandlerFactory {
-    override fun getInnerHandler(): BaseHandler {
-        return AnyArgumentHandler(isInner = true)
-    }
-
-    override fun getOuterHandler(size: Int): BaseHandler {
-        return AnyArgumentHandler(isInner = false, size = size)
-    }
-
-    override fun supportsMultipleSelections(): Boolean {
-        return true
-    }
-}
-
-private class AnyArgumentHandler(isInner: Boolean, size: Int = 1) : AnyItemHandler(isInner, size) {
+class AnyArgumentHandler : AnyItemHandler() {
     companion object {
         private val languageArgumentTypes = mapOf(
             "JAVA" to setOf("PARAMETER_LIST", "EXPRESSION_LIST", "ARGUMENT_LIST"),

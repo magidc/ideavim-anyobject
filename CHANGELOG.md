@@ -2,8 +2,8 @@
 
 ## 2.0.0
 
-- **Enabled multiple object outer selection for AnyArgument and AnyItem**: You can now select multiple objects of the same type in a single command. For example, `d2a` deletes the current and the next argument.
-
+- **Multiple object outer selection for AnyArgument and AnyItem**: You can now select multiple objects of the same type in a single command. For example, `d2a` deletes the current and the next argument.
+- **Jump**: It is possible now to jump to next or previous text object. Default mapping is ]<textObject> to jump to next, or [<textObject> to jump to previous text object.
 
 ## 1.3.2
 

@@ -2,13 +2,37 @@
 
 # Vim AnyObject
 
-### *Unleash the power of text objects*
+### *Edit code the way you think it*
 
 An extension for [IdeaVim](https://github.com/JetBrains/ideavim) plugin that adds useful text objects to improve your productivity on JetBrains IDEs.
 
-Text objects allow a more efficient way of communicating edition or selection actions in the editor. Instead of thinking in terms of characters, words, lines, or paragraphs, use
-more advanced text constructs like quoted text, text between brackets, items in a collection, or programming language constructs like arguments, classes, functions, loops, or
-comments.
+Text objects provide a more natural way to tell the editor what to edit, select or jump. Instead of working with characters, words, lines, or paragraphs, you can use the same
+concepts programmers use to think about code: classes, functions, arguments, loops, comments, quotes, brackets, and more.
+
+## Usage
+
+### Deletion, Change, Visual Selection
+
+The plugin follows standard Vim text object conventions with `i` (inner) and `a` (around) modifiers
+
+### Jumping
+
+The plugin supports jumping to the next/previous text object using `]` (next) and `[` (previous)
+
+### Example with argument text object (`a`)
+
+- `dia` - Delete argument
+- `daa` - Delete argument and its separator
+- `d2a` - Deletes argument and the next one including separators
+- `cia` - Change argument
+- `caa` - Change argument and its separator
+- `c2a` - Change argument and next one including separators
+- `yia` - Yank/Copy argument
+- `yaa` - Yank/Copy argument and its separator
+- `via` - Visually select argument
+- `v3a` - Visually select three arguments
+- `]a` - Jump to next argument
+- `[a` - Jump to previous argument
 
 ## Provided text objects
 
@@ -134,10 +158,6 @@ vmap ak <Plug>OuterAnyBracket
 
 <!-- Plugin description end -->
 
-## Usage
-
-The plugin follows standard Vim text object conventions with `i` (inner) and `a` (around) modifiers
-
 ### Some examples
 
 #### AnyQuote
@@ -168,6 +188,8 @@ The plugin follows standard Vim text object conventions with `i` (inner) and `a`
 - `yaa` - Yank/Copy argument and its separator
 - `via` - Visually select argument
 - `v3a` - Visually select three arguments
+- `]a` - Jump to next argument
+- `[a` - Jump to previous argument
 
 ## Installation
 

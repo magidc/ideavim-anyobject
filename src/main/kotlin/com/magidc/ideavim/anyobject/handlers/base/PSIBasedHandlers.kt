@@ -9,7 +9,7 @@ import com.maddyhome.idea.vim.api.VimEditor
 import com.magidc.ideavim.anyobject.model.Selection
 import java.nio.file.Path
 
-abstract class AbstractPSIBasedHandler(isInner: Boolean, val size: Int = 1) : BaseHandler(isInner) {
+abstract class AbstractPSIBasedHandler : BaseJumpHandler {
 
     companion object {
         private val languageCodeBlockTypes = mapOf(
@@ -80,7 +80,7 @@ abstract class AbstractPSIBasedHandler(isInner: Boolean, val size: Int = 1) : Ba
         return null
     }
 
-    override fun findSelection(editor: VimEditor): Selection? {
+    protected fun findCurrentElement(editor: VimEditor): PsiElement? {
         val projectManager = ProjectManager.getInstance()
         if (null == projectManager || projectManager.openProjects.isEmpty()) return null
         val project = projectManager.openProjects[0]
@@ -88,9 +88,14 @@ abstract class AbstractPSIBasedHandler(isInner: Boolean, val size: Int = 1) : Ba
         val virtualFile = VirtualFileManager.getInstance().findFileByNioPath(Path.of(vimVirtualFile.path)) ?: return null
 
         val psiFile = PsiManager.getInstance(project).findFile(virtualFile)
-        val element = psiFile?.findElementAt(editor.currentCaret().offset) ?: return null
+        return psiFile?.findElementAt(editor.currentCaret().offset)
+    }
+
+
+    override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): Selection? {
+        val element = findCurrentElement(editor) ?: return null
         val itemElement = findItemPSIFile(element) ?: return null
-        return getSelection(itemElement, editor)
+        return getSelection(itemElement, editor, isInner, size)
     }
 
     private fun findItemPSIFile(psiElement: PsiElement): PsiElement? {
@@ -105,7 +110,7 @@ abstract class AbstractPSIBasedHandler(isInner: Boolean, val size: Int = 1) : Ba
 
     protected abstract fun acceptElement(element: PsiElement, language: String): Boolean
 
-    protected open fun getSelection(element: PsiElement, editor: VimEditor): Selection? {
+    protected open fun getSelection(element: PsiElement, editor: VimEditor, isInner: Boolean, size: Int): Selection? {
         if (isInner) {
             val innerBlock = findInnerCodeBlock(element, editor) ?: element
             if (languageUsesDelimiters.getOrDefault(element.language.id.uppercase(), false)) {
@@ -121,4 +126,67 @@ abstract class AbstractPSIBasedHandler(isInner: Boolean, val size: Int = 1) : Ba
         }
         return Selection(element.textRange.startOffset, element.textRange.endOffset)
     }
+
+    open fun getPreviousElement(element: PsiElement): PsiElement? {
+        val language = element.language.id.uppercase()
+        var previous = findPreviousElement(element)
+        while (null != previous) {
+            if (acceptElement(previous, language)) return previous
+            previous = findPreviousElement(previous)
+        }
+        return null
+    }
+
+    private fun findPreviousElement(element: PsiElement): PsiElement? {
+        val prevSibling = element.prevSibling
+        if (prevSibling != null) {
+            var n = prevSibling
+            while (n.lastChild != null) {
+                n = n.lastChild
+            }
+            return n
+        }
+        if (element.parent != null) return element.parent
+        return null
+    }
+
+
+    open fun getNextElement(element: PsiElement): PsiElement? {
+        val language = element.language.id.uppercase()
+        val file = element.containingFile
+        var next = findNextElement(element)
+        while (null != next) {
+            if (next.containingFile != file) {
+                next = file
+                continue
+            }
+            if (next == element)
+                return null
+            if (acceptElement(next, language)) return next
+            next = findNextElement(next)
+        }
+        return null
+    }
+
+    private fun findNextElement(element: PsiElement): PsiElement? {
+        if (element.firstChild != null)
+            return element.firstChild
+        if (element.nextSibling != null)
+            return element.nextSibling
+        var ancestor = element.parent
+        while (ancestor != null) {
+            if (ancestor.nextSibling != null)
+                return ancestor.nextSibling
+            ancestor = ancestor.parent;
+        }
+        return null
+    }
+
+
+    override fun findJumpElementStartOffset(editor: VimEditor, next: Boolean): Int? {
+        val element = findCurrentElement(editor) ?: return null
+        val targetElement = if (next) getNextElement(element) else getPreviousElement(element)
+        return targetElement?.textRange?.startOffset
+    }
+
 }

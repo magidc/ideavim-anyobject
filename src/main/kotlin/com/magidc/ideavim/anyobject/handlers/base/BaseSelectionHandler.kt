@@ -1,24 +1,18 @@
 package com.magidc.ideavim.anyobject.handlers.base
 
-import com.maddyhome.idea.vim.api.ExecutionContext
 import com.maddyhome.idea.vim.api.VimEditor
-import com.maddyhome.idea.vim.command.OperatorArguments
-import com.maddyhome.idea.vim.extension.ExtensionHandler
 import com.maddyhome.idea.vim.state.mode.Mode
 import com.maddyhome.idea.vim.state.mode.SelectionType
 import com.magidc.ideavim.anyobject.model.Selection
 
-interface HandlerFactory {
-    fun getInnerHandler(): BaseHandler
-    fun getOuterHandler(size: Int = 1): BaseHandler
-    fun supportsMultipleSelections(): Boolean = false
-}
+interface BaseHandler
 
-abstract class BaseHandler(val isInner: Boolean) : ExtensionHandler {
-    abstract fun findSelection(editor: VimEditor): Selection?
+interface BaseSelectionHandler : BaseHandler {
+    fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): Selection?
 
-    override fun execute(editor: VimEditor, context: ExecutionContext, operatorArguments: OperatorArguments) {
-        val selection = findSelection(editor) ?: return
+
+    fun executeSelection(editor: VimEditor, isInner: Boolean, selectionSize: Int = 1) {
+        val selection = findSelection(editor, isInner, selectionSize) ?: return
         val caret = editor.currentCaret()
 
         if (editor.mode is Mode.OP_PENDING) {
@@ -32,3 +26,13 @@ abstract class BaseHandler(val isInner: Boolean) : ExtensionHandler {
         }
     }
 }
+
+interface BaseJumpHandler : BaseSelectionHandler {
+    fun findJumpElementStartOffset(editor: VimEditor, next: Boolean): Int?
+
+    fun executeJump(editor: VimEditor, next: Boolean) {
+        val jumpElementStartOffset = findJumpElementStartOffset(editor, next) ?: return
+        editor.currentCaret().moveToOffset(jumpElementStartOffset)
+    }
+}
+

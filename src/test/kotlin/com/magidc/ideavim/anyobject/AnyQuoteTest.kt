@@ -1,8 +1,8 @@
 package com.magidc.ideavim.anyobject
 
-import com.magidc.ideavim.anyobject.handlers.AnyQuoteHandlers
+import com.magidc.ideavim.anyobject.handlers.AnyQuoteHandler
 
-class AnyQuoteTest : TextHandlerBaseTest(AnyQuoteHandlers()) {
+class AnyQuoteTest : TextHandlerBaseTest(AnyQuoteHandler()) {
 
     fun testAnyQuoteCaretInside() {
         testInner(String.format("this is a '%s te%sst %s'", START, CARET, END))

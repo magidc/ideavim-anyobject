@@ -4,30 +4,30 @@ import com.maddyhome.idea.vim.api.VimEditor
 import com.magidc.ideavim.anyobject.model.Selection
 
 
-abstract class TextBasedHandler(isInner: Boolean) : BaseHandler(isInner) {
-    abstract fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int): Selection?
+abstract class TextBasedHandler() : BaseSelectionHandler {
+    abstract fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int, isInner: Boolean): Selection?
 
-    override fun findSelection(editor: VimEditor): Selection? {
+    override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): Selection? {
         val caret = editor.currentCaret()
-        return findTextSelection(editor.text(), 0, caret.offset)
+        return findTextSelection(editor.text(), 0, caret.offset, isInner)
     }
 }
 
 /**
  * Applies the action (pending operation or visual selection) to the smallest range of text around the cursor limited by any of the given delimiter pairs.
  */
-class DelimiterHandler(isInner: Boolean, val sameLine: Boolean, val delimiterPairs: Collection<Pair<String, String>>) : TextBasedHandler(isInner) {
+open class DelimiterHandler(val sameLine: Boolean, val delimiterPairs: Collection<Pair<String, String>>) : TextBasedHandler() {
 
-    override fun findSelection(editor: VimEditor): Selection? {
+    override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): Selection? {
         val caret = editor.currentCaret()
         val textOffset = if (sameLine) editor.getLineRange(caret.getLine()).first else 0
         val text = if (sameLine) editor.getLineText(caret.getLine()) else editor.text()
 
         val caretOffset = caret.offset - textOffset
-        return findTextSelection(text, textOffset, caretOffset)
+        return findTextSelection(text, textOffset, caretOffset, isInner)
     }
 
-    override fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int): Selection? {
+    override fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int, isInner: Boolean): Selection? {
         var bestMatch: Selection? = null
         var bestMatchLength = Int.MAX_VALUE
 
@@ -168,9 +168,4 @@ class DelimiterHandler(isInner: Boolean, val sameLine: Boolean, val delimiterPai
     }
 
 
-}
-
-interface TextBasedHandlerFactory : HandlerFactory {
-    override fun getInnerHandler(): TextBasedHandler
-    override fun getOuterHandler(size: Int): TextBasedHandler
 }

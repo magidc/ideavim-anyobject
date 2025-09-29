@@ -1,8 +1,8 @@
 package com.magidc.ideavim.anyobject
 
-import com.magidc.ideavim.anyobject.handlers.AnyBracketHandlers
+import com.magidc.ideavim.anyobject.handlers.AnyBracketHandler
 
-class AnyBracketTest : TextHandlerBaseTest(AnyBracketHandlers()) {
+class AnyBracketTest : TextHandlerBaseTest(AnyBracketHandler()) {
 
     fun testAnyBracketCaretInside() {
         testInner(String.format("this is a {%s te%sst %s}", START, CARET, END))

@@ -3,22 +3,9 @@ package com.magidc.ideavim.anyobject.handlers
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
 import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
-import com.magidc.ideavim.anyobject.handlers.base.BaseHandler
-import com.magidc.ideavim.anyobject.handlers.base.HandlerFactory
 
 
-class AnyLoopHandlers : HandlerFactory {
-
-    override fun getInnerHandler(): BaseHandler {
-        return AnyLoopHandler(isInner = true)
-    }
-
-    override fun getOuterHandler(size: Int): BaseHandler {
-        return AnyLoopHandler(isInner = false)
-    }
-}
-
-private class AnyLoopHandler(isInner: Boolean) : AbstractPSIBasedHandler(isInner) {
+class AnyLoopHandler : AbstractPSIBasedHandler() {
     companion object {
         private val languageLoopTypes = mapOf(
             "JAVA" to setOf("FOR_STATEMENT", "FOREACH_STATEMENT", "WHILE_STATEMENT", "DO_WHILE_STATEMENT", "ENHANCED_FOR_STATEMENT"),

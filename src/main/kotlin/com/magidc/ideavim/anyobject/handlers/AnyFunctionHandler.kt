@@ -3,22 +3,9 @@ package com.magidc.ideavim.anyobject.handlers
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
 import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
-import com.magidc.ideavim.anyobject.handlers.base.BaseHandler
-import com.magidc.ideavim.anyobject.handlers.base.HandlerFactory
 
 
-class AnyFunctionHandlers : HandlerFactory {
-
-    override fun getInnerHandler(): BaseHandler {
-        return AnyFunctionHandler(isInner = true)
-    }
-
-    override fun getOuterHandler(size: Int): BaseHandler {
-        return AnyFunctionHandler(isInner = false)
-    }
-}
-
-private class AnyFunctionHandler(isInner: Boolean) : AbstractPSIBasedHandler(isInner) {
+class AnyFunctionHandler : AbstractPSIBasedHandler() {
     companion object {
         private val languageFunctionTypes = mapOf(
             "JAVA" to setOf("METHOD"),
@@ -51,7 +38,7 @@ private class AnyFunctionHandler(isInner: Boolean) : AbstractPSIBasedHandler(isI
     override fun acceptElement(element: PsiElement, language: String): Boolean {
         val elementTypeName = element.elementType.toString().uppercase()
         val functionTypes = languageFunctionTypes[language] ?: emptySet()
-        
+
         return functionTypes.any { functionType ->
             when {
                 functionType.contains("-") -> elementTypeName.endsWith(functionType)

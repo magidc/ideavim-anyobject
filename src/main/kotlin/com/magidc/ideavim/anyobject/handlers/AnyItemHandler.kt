@@ -5,26 +5,11 @@ import com.intellij.psi.util.elementType
 import com.intellij.psi.util.siblings
 import com.maddyhome.idea.vim.api.VimEditor
 import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
-import com.magidc.ideavim.anyobject.handlers.base.BaseHandler
-import com.magidc.ideavim.anyobject.handlers.base.HandlerFactory
+import com.magidc.ideavim.anyobject.handlers.base.BaseJumpHandler
 import com.magidc.ideavim.anyobject.model.Selection
 
 
-class AnyItemHandlers : HandlerFactory {
-    override fun getInnerHandler(): BaseHandler {
-        return AnyItemHandler(isInner = true)
-    }
-
-    override fun getOuterHandler(size: Int): BaseHandler {
-        return AnyItemHandler(isInner = false, size = size)
-    }
-
-    override fun supportsMultipleSelections(): Boolean {
-        return true
-    }
-}
-
-open class AnyItemHandler(isInner: Boolean, size: Int = 1) : AbstractPSIBasedHandler(isInner, size) {
+open class AnyItemHandler : AbstractPSIBasedHandler(), BaseJumpHandler {
     companion object {
         private val languageTargetTypes = mapOf(
             "JAVA" to setOf("LIST", "ARRAY_INITIALIZER_EXPRESSION"),
@@ -66,7 +51,7 @@ open class AnyItemHandler(isInner: Boolean, size: Int = 1) : AbstractPSIBasedHan
         return getLanguageTargetTypes(language).any { containerElementTypeName.endsWith(it) }
     }
 
-    override fun getSelection(element: PsiElement, editor: VimEditor): Selection? {
+    override fun getSelection(element: PsiElement, editor: VimEditor, isInner: Boolean, size: Int): Selection? {
         if (element.text.isBlank()) return null
 
         var leftOffset: Int = element.textRange.startOffset
@@ -74,8 +59,8 @@ open class AnyItemHandler(isInner: Boolean, size: Int = 1) : AbstractPSIBasedHan
 
         if (isInner) return Selection(leftOffset, element.textRange.endOffset)
 
-        val elementBefore = element.siblings(forward = false, withSelf = false).filter { isItem(element, it) }.firstOrNull()
-        val elementsAfter = element.siblings(withSelf = false).filter { isItem(element, it) }.take(size).toList()
+        val elementBefore = getPreviousElement(element)
+        val elementsAfter = getNextElements(element, size)
 
         rightOffset = if (elementsAfter.isNotEmpty() && elementsAfter.size < size) elementsAfter.last().textRange.endOffset else rightOffset
 
@@ -87,6 +72,18 @@ open class AnyItemHandler(isInner: Boolean, size: Int = 1) : AbstractPSIBasedHan
             leftOffset = elementBefore.textRange.endOffset
 
         return Selection(leftOffset, rightOffset)
+    }
+
+    override fun getPreviousElement(element: PsiElement): PsiElement? {
+        return element.siblings(forward = false, withSelf = false).filter { isItem(element, it) }.firstOrNull()
+    }
+
+    override fun getNextElement(element: PsiElement): PsiElement? {
+        return getNextElements(element, 1).firstOrNull()
+    }
+
+    private fun getNextElements(element: PsiElement, size: Int): List<PsiElement> {
+        return element.siblings(withSelf = false).filter { isItem(element, it) }.take(size).toList()
     }
 
     open fun isItem(sourceItem: PsiElement, otherElement: PsiElement): Boolean {

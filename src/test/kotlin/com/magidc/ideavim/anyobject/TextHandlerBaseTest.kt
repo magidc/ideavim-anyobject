@@ -2,9 +2,8 @@ package com.magidc.ideavim.anyobject
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.magidc.ideavim.anyobject.handlers.base.TextBasedHandler
-import com.magidc.ideavim.anyobject.handlers.base.TextBasedHandlerFactory
 
-abstract class TextHandlerBaseTest(val handlers: TextBasedHandlerFactory) : BasePlatformTestCase() {
+abstract class TextHandlerBaseTest(val handler: TextBasedHandler) : BasePlatformTestCase() {
     companion object {
         const val CARET = "#caret#"
         const val START = "#start#"
@@ -12,11 +11,11 @@ abstract class TextHandlerBaseTest(val handlers: TextBasedHandlerFactory) : Base
     }
 
     protected fun testInner(text: String) {
-        execute(text, true, handlers.getInnerHandler())
+        execute(text, true, handler)
     }
 
     protected fun testOuter(text: String) {
-        execute(text, false, handlers.getOuterHandler())
+        execute(text, false, handler)
     }
 
     private fun execute(textWithCaret: String, inner: Boolean, handler: TextBasedHandler) {
@@ -25,7 +24,7 @@ abstract class TextHandlerBaseTest(val handlers: TextBasedHandlerFactory) : Base
 
         if (caretIndex == -1) return
 
-        val selection = handler.findTextSelection(text, 0, caretIndex)
+        val selection = handler.findTextSelection(text, 0, caretIndex, inner)
         if (selection == null) {
             assertTrue(!text.contains(START) && !text.contains(END))
             return

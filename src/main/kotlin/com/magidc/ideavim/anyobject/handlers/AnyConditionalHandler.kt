@@ -3,22 +3,9 @@ package com.magidc.ideavim.anyobject.handlers
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
 import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
-import com.magidc.ideavim.anyobject.handlers.base.BaseHandler
-import com.magidc.ideavim.anyobject.handlers.base.HandlerFactory
 
 
-class AnyConditionalHandlers : HandlerFactory {
-
-    override fun getInnerHandler(): BaseHandler {
-        return AnyConditionalHandler(isInner = true)
-    }
-
-    override fun getOuterHandler(size: Int): BaseHandler {
-        return AnyConditionalHandler(isInner = false)
-    }
-}
-
-private class AnyConditionalHandler(isInner: Boolean) : AbstractPSIBasedHandler(isInner) {
+class AnyConditionalHandler : AbstractPSIBasedHandler() {
     companion object {
         private val languageConditionalTypes = mapOf(
             "JAVA" to setOf("IF_STATEMENT", "SWITCH_STATEMENT", "SWITCH_EXPRESSION", "CONDITIONAL_EXPRESSION", "TERNARY_EXPRESSION", "TRY_STATEMENT"),
