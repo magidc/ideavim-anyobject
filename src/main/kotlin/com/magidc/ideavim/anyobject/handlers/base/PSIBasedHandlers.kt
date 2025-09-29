@@ -129,8 +129,14 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
 
     open fun getPreviousElement(element: PsiElement): PsiElement? {
         val language = element.language.id.uppercase()
+        val file = element.containingFile
         var previous = findPreviousElement(element)
         while (null != previous) {
+            if (previous.containingFile != file) {
+                previous = file
+                continue
+            }
+            if (previous == element) return null
             if (acceptElement(previous, language)) return previous
             previous = findPreviousElement(previous)
         }
@@ -160,8 +166,7 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
                 next = file
                 continue
             }
-            if (next == element)
-                return null
+            if (next == element) return null
             if (acceptElement(next, language)) return next
             next = findNextElement(next)
         }
