@@ -5,10 +5,14 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.elementType
+import com.intellij.psi.util.startOffset
 import com.maddyhome.idea.vim.api.VimEditor
 import com.magidc.ideavim.anyobject.model.Selection
 import java.nio.file.Path
 
+/**
+ * Base class for all handlers that operate on Intellij PSI DOM
+ */
 abstract class AbstractPSIBasedHandler : BaseJumpHandler {
 
     companion object {
@@ -54,9 +58,11 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
         )
     }
 
+    /**
+     * Finds the inner code block for the given element (for inner selections)
+     */
     protected open fun findInnerCodeBlock(element: PsiElement, editor: VimEditor): PsiElement? {
-        val language = element.language.id.uppercase()
-        val codeBlockTypes = languageCodeBlockTypes[language] ?: emptySet()
+        val codeBlockTypes = getCodeBlockTypes(element)
         val caretOffset = editor.currentCaret().offset
 
         val elementQueue = ArrayDeque<PsiElement>()
@@ -80,7 +86,19 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
         return null
     }
 
-    protected fun findCurrentElement(editor: VimEditor): PsiElement? {
+    /**
+     * Getting the element types that represent code blocks for the given language.
+     */
+    protected open fun getCodeBlockTypes(element: PsiElement): Set<String> = languageCodeBlockTypes[element.language.id.uppercase()] ?: emptySet()
+
+
+    override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): Selection? {
+        val currentElement = findCurrentElement(editor) ?: return null
+        val objectElement = findObjectElement(currentElement) ?: return null
+        return getSelection(objectElement, editor, isInner, size)
+    }
+
+    private fun findCurrentElement(editor: VimEditor): PsiElement? {
         val projectManager = ProjectManager.getInstance()
         if (null == projectManager || projectManager.openProjects.isEmpty()) return null
         val project = projectManager.openProjects[0]
@@ -91,23 +109,19 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
         return psiFile?.findElementAt(editor.currentCaret().offset)
     }
 
-
-    override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): Selection? {
-        val element = findCurrentElement(editor) ?: return null
-        val itemElement = findItemPSIFile(element) ?: return null
-        return getSelection(itemElement, editor, isInner, size)
-    }
-
-    private fun findItemPSIFile(psiElement: PsiElement): PsiElement? {
-        val language = psiElement.language.id.uppercase()
-        var currentElement = psiElement
-        while (currentElement.parent != null) {
-            if (acceptElement(currentElement, language)) return currentElement
-            currentElement = currentElement.parent
+    private fun findObjectElement(currentElement: PsiElement): PsiElement? {
+        val language = currentElement.language.id.uppercase()
+        var objectElement = currentElement
+        while (objectElement.parent != null) {
+            if (acceptElement(objectElement, language)) return objectElement
+            objectElement = objectElement.parent
         }
         return null
     }
 
+    /**
+     * Evaluates whether the given element matches the type the handler is looking for.
+     */
     protected abstract fun acceptElement(element: PsiElement, language: String): Boolean
 
     protected open fun getSelection(element: PsiElement, editor: VimEditor, isInner: Boolean, size: Int): Selection? {
@@ -120,7 +134,7 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
                     if (null != closeBrace)
                         return Selection(openBrace.textRange.endOffset, closeBrace.textRange.startOffset)
                 }
-                return Selection(innerBlock.textRange.startOffset + 1, innerBlock.textRange.endOffset - 1)
+                return Selection(innerBlock.textRange.startOffset, innerBlock.textRange.endOffset)
             }
             return Selection(innerBlock.textRange.startOffset, innerBlock.textRange.endOffset)
         }
@@ -133,11 +147,12 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
         var previous = findPreviousElement(element)
         while (null != previous) {
             if (previous.containingFile != file) {
-                previous = file
+                previous = getNestedLastChild(file)
                 continue
             }
             if (previous == element) return null
-            if (acceptElement(previous, language)) return previous
+            // It is necessary to validate that we are not repeatedly returning the same effective position unless the same element is found (when there is only one)
+            if (acceptElement(previous, language) && previous.textRange.startOffset != element.startOffset) return previous
             previous = findPreviousElement(previous)
         }
         return null
@@ -145,13 +160,8 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
 
     private fun findPreviousElement(element: PsiElement): PsiElement? {
         val prevSibling = element.prevSibling
-        if (prevSibling != null) {
-            var n = prevSibling
-            while (n.lastChild != null) {
-                n = n.lastChild
-            }
-            return n
-        }
+        if (prevSibling != null)
+            return getNestedLastChild(prevSibling)
         if (element.parent != null) return element.parent
         return null
     }
@@ -167,7 +177,8 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
                 continue
             }
             if (next == element) return null
-            if (acceptElement(next, language)) return next
+            // It is necessary to validate that we are not repeatedly returning the same effective position unless the same element is found (when there is only one)
+            if (acceptElement(next, language) && next.textRange.startOffset != element.startOffset) return next
             next = findNextElement(next)
         }
         return null
@@ -188,10 +199,17 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
     }
 
 
+    private fun getNestedLastChild(element: PsiElement): PsiElement {
+        var lastChild = element
+        while (lastChild.lastChild != null) {
+            lastChild = lastChild.lastChild
+        }
+        return lastChild
+    }
+
     override fun findJumpElementStartOffset(editor: VimEditor, next: Boolean): Int? {
-        val element = findCurrentElement(editor) ?: return null
-        val targetElement = if (next) getNextElement(element) else getPreviousElement(element)
-        return targetElement?.textRange?.startOffset
+        val currentElement = findCurrentElement(editor) ?: return null
+        return (if (next) getNextElement(currentElement) else getPreviousElement(currentElement))?.textRange?.startOffset
     }
 
 }

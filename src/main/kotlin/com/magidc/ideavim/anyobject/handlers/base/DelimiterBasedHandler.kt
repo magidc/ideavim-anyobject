@@ -3,7 +3,9 @@ package com.magidc.ideavim.anyobject.handlers.base
 import com.maddyhome.idea.vim.api.VimEditor
 import com.magidc.ideavim.anyobject.model.Selection
 
-
+/**
+ * Base class for all handlers that are based on raw text analysis
+ */
 abstract class TextBasedHandler() : BaseSelectionHandler {
     abstract fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int, isInner: Boolean): Selection?
 
@@ -14,7 +16,7 @@ abstract class TextBasedHandler() : BaseSelectionHandler {
 }
 
 /**
- * Applies the action (pending operation or visual selection) to the smallest range of text around the cursor limited by any of the given delimiter pairs.
+ * Handler that operates on text delimited by a pair of delimiters.
  */
 open class DelimiterHandler(val sameLine: Boolean, val delimiterPairs: Collection<Pair<String, String>>) : TextBasedHandler() {
 

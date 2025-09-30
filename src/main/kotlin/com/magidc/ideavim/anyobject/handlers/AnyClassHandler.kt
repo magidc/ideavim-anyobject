@@ -9,7 +9,7 @@ import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
 class AnyClassHandler : AbstractPSIBasedHandler() {
     companion object {
         private val languageClassTypes = mapOf(
-            "JAVA" to setOf("CLASS", "INTERFACE", "ENUM", "ANNOTATION_TYPE", "RECORD"),
+            "JAVA" to setOf("CLASS", "INTERFACE", "ENUM", "ANNOTATION_TYPE"),
             "KOTLIN" to setOf("CLASS", "INTERFACE", "OBJECT_DECLARATION", "ENUM_ENTRY", "ANNOTATION_CLASS"),
             "C#" to setOf(
                 "CLASS-DECLARATION",
