@@ -146,7 +146,7 @@ class AnyObject : VimExtension {
                 MappingMode.N,
                 injector.parser.parseKeys("<Plug>Next$command"),
                 owner,
-                createMotion(handler, true),
+                createMotionAction(handler, true),
                 false
             )
 
@@ -163,7 +163,7 @@ class AnyObject : VimExtension {
                 MappingMode.N,
                 injector.parser.parseKeys("<Plug>Prev$command"),
                 owner,
-                createMotion(handler, false),
+                createMotionAction(handler, false),
                 false
             )
 
@@ -196,14 +196,13 @@ class AnyObject : VimExtension {
         }
     }
 
-    private fun createMotion(handler: BaseJumpHandler, next: Boolean): ExtensionHandler = object : ExtensionHandler {
+    private fun createMotionAction(handler: BaseJumpHandler, next: Boolean): ExtensionHandler = object : ExtensionHandler {
         override fun execute(editor: VimEditor, context: ExecutionContext, operatorArguments: OperatorArguments) {
             val action = object : MotionActionHandler.SingleExecution() {
+                override val motionType: MotionType = MotionType.EXCLUSIVE
                 override fun getOffset(editor: VimEditor, context: ExecutionContext, argument: Argument?, operatorArguments: OperatorArguments): Motion {
                     return handler.findJumpElementStartOffset(editor, next)?.toMotion() ?: Motion.Error
                 }
-
-                override val motionType: MotionType = MotionType.EXCLUSIVE
             }
             KeyHandler.getInstance().keyHandlerState.commandBuilder.addAction(action)
         }
