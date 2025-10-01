@@ -1,7 +1,6 @@
 package com.magidc.ideavim.anyobject.handlers
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.elementType
 
 
 class AnyArgumentHandler : AnyItemHandler() {
@@ -40,13 +39,7 @@ class AnyArgumentHandler : AnyItemHandler() {
      * There may be different kind of arguments in the same sequence, e.g., in Kotlin named and positional arguments.
      */
     override fun isItem(sourceItem: PsiElement, otherElement: PsiElement): Boolean {
-        return sourceItem.elementType == otherElement.elementType || (
-                otherElement.text.isNotBlank()
-                        // Sometimes argument separators do not appear as children of the main element parent (Pycharm)
-                        && otherElement.parent.children.any { it.elementType == otherElement.elementType }
-                        // In Intellij separators implement interfaces ending with "Token"
-                        && !otherElement.javaClass.interfaces.any { it.typeName.lowercase().endsWith("token") }
-                )
+        return checkIsItem(sourceItem, otherElement)
     }
 
 }
