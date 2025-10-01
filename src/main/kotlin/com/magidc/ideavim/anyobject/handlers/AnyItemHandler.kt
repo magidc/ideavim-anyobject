@@ -4,9 +4,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.siblings
 import com.maddyhome.idea.vim.api.VimEditor
+import com.maddyhome.idea.vim.common.TextRange
 import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
 import com.magidc.ideavim.anyobject.handlers.base.BaseJumpHandler
-import com.magidc.ideavim.anyobject.model.Selection
 
 
 open class AnyItemHandler : AbstractPSIBasedHandler(), BaseJumpHandler {
@@ -47,17 +47,18 @@ open class AnyItemHandler : AbstractPSIBasedHandler(), BaseJumpHandler {
     }
 
     override fun acceptElement(element: PsiElement, language: String): Boolean {
+        if (element.text.isBlank()) return false
         val containerElementTypeName = element.parent.elementType.toString().uppercase()
         return getLanguageTargetTypes(language).any { containerElementTypeName.endsWith(it) }
     }
 
-    override fun getSelection(element: PsiElement, editor: VimEditor, isInner: Boolean, size: Int): Selection? {
+    override fun getSelection(element: PsiElement, editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
         if (element.text.isBlank()) return null
 
         var leftOffset: Int = element.textRange.startOffset
         var rightOffset = element.textRange.endOffset
 
-        if (isInner) return Selection(leftOffset, element.textRange.endOffset)
+        if (isInner) return TextRange(leftOffset, element.textRange.endOffset)
 
         val elementBefore = getPreviousElement(element)
         val elementsAfter = getNextElements(element, size)
@@ -71,15 +72,23 @@ open class AnyItemHandler : AbstractPSIBasedHandler(), BaseJumpHandler {
         } else
             leftOffset = elementBefore.textRange.endOffset
 
-        return Selection(leftOffset, rightOffset)
+        return TextRange(leftOffset, rightOffset)
     }
 
     override fun getPreviousElement(element: PsiElement): PsiElement? {
-        return element.siblings(forward = false, withSelf = false).filter { isItem(element, it) }.firstOrNull()
+        val objectElement = findObjectElement(element) ?: return null
+        val siblings = objectElement.parent.children.filter { isItem(objectElement, it) }.toList()
+        if (siblings.isEmpty()) return null
+        if (siblings.first() == objectElement) return siblings.last()
+        return siblings[siblings.indexOf(objectElement) - 1]
     }
 
     override fun getNextElement(element: PsiElement): PsiElement? {
-        return getNextElements(element, 1).firstOrNull()
+        val objectElement = findObjectElement(element) ?: return null
+        val siblings = objectElement.parent.children.filter { isItem(objectElement, it) }.toList()
+        if (siblings.isEmpty()) return null
+        if (siblings.last() == objectElement) return siblings.first()
+        return siblings[siblings.indexOf(objectElement) + 1]
     }
 
     private fun getNextElements(element: PsiElement, size: Int): List<PsiElement> {

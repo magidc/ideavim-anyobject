@@ -15,7 +15,7 @@ concepts programmers use to think about code: classes, functions, arguments, loo
 
 The plugin follows standard Vim text object conventions with `i` (inner) and `a` (around) modifiers
 
-### Jumping
+### Jump
 
 The plugin supports jumping to the next/previous text object using `]` (next) and `[` (previous)
 
@@ -146,15 +146,34 @@ set anyobject
 
 ### Customization
 
-You can customize the default mappings by adding the following to your `.ideavimrc`. For example:
+Don't want to use all the provided text objects? Specify which ones to enable using `anyobject_included` variable in your `.ideavimrc`:
+```vimscript
+let g:anyobject_included = "anyDocument,anyFunction"
+```
+If you prefer to specify which ones to exclude, use the `anyobject_excluded` variable instead:
+```vimscript
+let g:anyobject_excluded = "anyDocument,anyFunction"
+```
+You can also customize the mappings by adding the following to your `.ideavimrc`. For example:
 
 ```vimscript
-" Use 'k' instead of 'o' for any bracket text object
-omap ik <Plug>InnerAnyBracket
-omap ak <Plug>OuterAnyBracket
-vmap ik <Plug>InnerAnyBracket
-vmap ak <Plug>OuterAnyBracket
+" Use 'm' instead of default 'f' for any function text object
+let g:anyobject_map_anyfunction = "m"
+
+" Use 's' instead of default 'd' for any document text object
+let g:anyobject_map_anydocument = "s"
 ```
+In case of mapping conflicts, the custom mappings will take precedence and invalidate any other handler using the same mapping.
+
+Jump motion can be also customized:
+```vimscript
+" Use '<' instead of default '[' for jumping to the previous text object
+let g:anyobject_map_jump_prev = "<" 
+
+" Use '>' instead of default ']' for jumping to the next text object
+let g:anyobject_map_jump_next = ">" 
+```
+
 
 <!-- Plugin description end -->
 

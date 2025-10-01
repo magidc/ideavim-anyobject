@@ -2,8 +2,45 @@
 
 ## 2.0.0
 
+### Jump!!
+It is possible now to jump to the next or previous text object.
+
+Default mapping is `]<textObject>` to jump to next and `[<textObject>` to jump to previous text object.
+
+### New way of customization
+
+Don't want to use all the provided text objects? Specify which ones to enable using `anyobject_included` variable in your `.ideavimrc`:
+```vimscript
+let g:anyobject_included = "anyDocument,anyFunction"
+```
+If you prefer to specify which ones to exclude, use the `anyobject_excluded` variable instead:
+```vimscript
+let g:anyobject_excluded = "anyDocument,anyFunction"
+```
+You can also customize the mappings by adding the following to your `.ideavimrc`. For example:
+
+```vimscript
+" Use 'm' instead of default 'f' for any function text object
+let g:anyobject_map_anyfunction = "m"
+
+" Use 's' instead of default 'd' for any document text object
+let g:anyobject_map_anydocument = "s"
+```
+In case of mapping conflicts, the custom mappings will take precedence and invalidate any other handler using the same mapping.
+
+Jump motion can be also customized:
+```vimscript
+" Use '<' instead of default '[' for jumping to the previous text object
+let g:anyobject_map_jump_prev = "<" 
+
+" Use '>' instead of default ']' for jumping to the next text object
+let g:anyobject_map_jump_next = ">" 
+```
+
+### Other changes
 - **Multiple object outer selection for AnyArgument and AnyItem**: You can now select multiple objects of the same type in a single command. For example, `d2a` deletes the current and the next argument.
-- **Jump**: It is possible now to jump to next or previous text object. Default mapping is ]<textObject> to jump to next, or [<textObject> to jump to previous text object.
+- **Curson won't change positions on yank actions**
+
 
 ## 1.3.2
 

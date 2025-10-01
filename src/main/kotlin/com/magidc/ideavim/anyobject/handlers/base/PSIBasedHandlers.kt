@@ -7,7 +7,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.startOffset
 import com.maddyhome.idea.vim.api.VimEditor
-import com.magidc.ideavim.anyobject.model.Selection
+import com.maddyhome.idea.vim.common.TextRange
 import java.nio.file.Path
 
 /**
@@ -92,7 +92,7 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
     protected open fun getCodeBlockTypes(element: PsiElement): Set<String> = languageCodeBlockTypes[element.language.id.uppercase()] ?: emptySet()
 
 
-    override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): Selection? {
+    override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
         val currentElement = findCurrentElement(editor) ?: return null
         val objectElement = findObjectElement(currentElement) ?: return null
         return getSelection(objectElement, editor, isInner, size)
@@ -109,7 +109,7 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
         return psiFile?.findElementAt(editor.currentCaret().offset)
     }
 
-    private fun findObjectElement(currentElement: PsiElement): PsiElement? {
+    protected fun findObjectElement(currentElement: PsiElement): PsiElement? {
         val language = currentElement.language.id.uppercase()
         var objectElement = currentElement
         while (objectElement.parent != null) {
@@ -124,7 +124,7 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
      */
     protected abstract fun acceptElement(element: PsiElement, language: String): Boolean
 
-    protected open fun getSelection(element: PsiElement, editor: VimEditor, isInner: Boolean, size: Int): Selection? {
+    protected open fun getSelection(element: PsiElement, editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
         if (isInner) {
             val innerBlock = findInnerCodeBlock(element, editor) ?: element
             if (languageUsesDelimiters.getOrDefault(element.language.id.uppercase(), false)) {
@@ -132,13 +132,13 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
                 if (null != openBrace) {
                     val closeBrace = innerBlock.children.firstOrNull { it.elementType.toString().uppercase() == "RBRACE" }
                     if (null != closeBrace)
-                        return Selection(openBrace.textRange.endOffset, closeBrace.textRange.startOffset)
+                        return TextRange(openBrace.textRange.endOffset, closeBrace.textRange.startOffset)
                 }
-                return Selection(innerBlock.textRange.startOffset, innerBlock.textRange.endOffset)
+                return TextRange(innerBlock.textRange.startOffset, innerBlock.textRange.endOffset)
             }
-            return Selection(innerBlock.textRange.startOffset, innerBlock.textRange.endOffset)
+            return TextRange(innerBlock.textRange.startOffset, innerBlock.textRange.endOffset)
         }
-        return Selection(element.textRange.startOffset, element.textRange.endOffset)
+        return TextRange(element.textRange.startOffset, element.textRange.endOffset)
     }
 
     open fun getPreviousElement(element: PsiElement): PsiElement? {
@@ -193,7 +193,7 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
         while (ancestor != null) {
             if (ancestor.nextSibling != null)
                 return ancestor.nextSibling
-            ancestor = ancestor.parent;
+            ancestor = ancestor.parent
         }
         return null
     }

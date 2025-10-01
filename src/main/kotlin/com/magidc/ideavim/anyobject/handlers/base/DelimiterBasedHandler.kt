@@ -1,15 +1,15 @@
 package com.magidc.ideavim.anyobject.handlers.base
 
 import com.maddyhome.idea.vim.api.VimEditor
-import com.magidc.ideavim.anyobject.model.Selection
+import com.maddyhome.idea.vim.common.TextRange
 
 /**
  * Base class for all handlers that are based on raw text analysis
  */
 abstract class TextBasedHandler() : BaseSelectionHandler {
-    abstract fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int, isInner: Boolean): Selection?
+    abstract fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int, isInner: Boolean): TextRange?
 
-    override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): Selection? {
+    override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
         val caret = editor.currentCaret()
         return findTextSelection(editor.text(), 0, caret.offset, isInner)
     }
@@ -20,7 +20,7 @@ abstract class TextBasedHandler() : BaseSelectionHandler {
  */
 open class DelimiterHandler(val sameLine: Boolean, val delimiterPairs: Collection<Pair<String, String>>) : TextBasedHandler() {
 
-    override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): Selection? {
+    override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
         val caret = editor.currentCaret()
         val textOffset = if (sameLine) editor.getLineRange(caret.getLine()).first else 0
         val text = if (sameLine) editor.getLineText(caret.getLine()) else editor.text()
@@ -29,8 +29,8 @@ open class DelimiterHandler(val sameLine: Boolean, val delimiterPairs: Collectio
         return findTextSelection(text, textOffset, caretOffset, isInner)
     }
 
-    override fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int, isInner: Boolean): Selection? {
-        var bestMatch: Selection? = null
+    override fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int, isInner: Boolean): TextRange? {
+        var bestMatch: TextRange? = null
         var bestMatchLength = Int.MAX_VALUE
 
         for (delimiterPair in delimiterPairs) {
@@ -49,12 +49,12 @@ open class DelimiterHandler(val sameLine: Boolean, val delimiterPairs: Collectio
             bestMatchLength = match.last - match.first
 
             bestMatch = if (isInner)
-                Selection(
+                TextRange(
                     textOffset + match.first,
                     textOffset + match.last,
                 )
             else
-                Selection(
+                TextRange(
                     textOffset + match.first - openDelimiter.length,
                     textOffset + match.last + closeDelimiter.length,
                 )

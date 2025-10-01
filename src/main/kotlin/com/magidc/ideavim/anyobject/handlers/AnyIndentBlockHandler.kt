@@ -1,16 +1,16 @@
 package com.magidc.ideavim.anyobject.handlers
 
 import com.maddyhome.idea.vim.api.VimEditor
+import com.maddyhome.idea.vim.common.TextRange
 import com.magidc.ideavim.anyobject.handlers.base.TextBasedHandler
-import com.magidc.ideavim.anyobject.model.Selection
 import kotlin.math.max
 
 class AnyIndentBlockHandler : TextBasedHandler() {
-    override fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int, isInner: Boolean): Selection {
+    override fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int, isInner: Boolean): TextRange {
         TODO("Not yet implemented")
     }
 
-    override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): Selection {
+    override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): TextRange {
         val lineNumber = editor.currentCaret().getLine()
         val lineIndentation = editor.getLineText(lineNumber).takeWhile { it.isWhitespace() }
         var fromLine = lineNumber
@@ -29,7 +29,7 @@ class AnyIndentBlockHandler : TextBasedHandler() {
                 break
             }
         }
-        return Selection(
+        return TextRange(
             editor.getLineStartOffset(if (isInner) fromLine else max(0, fromLine - 1)),
             editor.getLineEndOffset(toLine)
         )
