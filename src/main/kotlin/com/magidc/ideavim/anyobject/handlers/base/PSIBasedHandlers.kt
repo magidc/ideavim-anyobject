@@ -211,5 +211,4 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
         val currentElement = findCurrentElement(editor) ?: return null
         return (if (next) getNextElement(currentElement) else getPreviousElement(currentElement))?.textRange?.startOffset
     }
-
 }

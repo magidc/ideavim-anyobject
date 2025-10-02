@@ -34,12 +34,4 @@ class AnyArgumentHandler : AnyItemHandler() {
     override fun getLanguageTargetTypes(language: String): Set<String> {
         return languageArgumentTypes[language] ?: emptySet()
     }
-
-    /**
-     * There may be different kind of arguments in the same sequence, e.g., in Kotlin named and positional arguments.
-     */
-    override fun isItem(sourceItem: PsiElement, otherElement: PsiElement): Boolean {
-        return checkIsItem(sourceItem, otherElement)
-    }
-
 }

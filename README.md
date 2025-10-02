@@ -9,6 +9,27 @@ An extension for [IdeaVim](https://github.com/JetBrains/ideavim) plugin that add
 Text objects provide a more natural way to tell the editor what to edit, select or jump. Instead of working with characters, words, lines, or paragraphs, you can use the same
 concepts programmers use to think about code: classes, functions, arguments, loops, comments, quotes, brackets, and more.
 
+
+## Available Text Objects
+
+| Text Object         | Description                                                                             | Default mapping | Inner/Outer motions | Jump | Count motions |
+|---------------------|-----------------------------------------------------------------------------------------|-----------------|---------------------|------|---------------|
+| **AnyArgument**     | Function arguments, method parameters, and callable expressions                         | `a`             | ✓                   | ✓    | ✓             |
+| **AnyFunction**     | Functions, methods, and procedures                                                      | `f`             | ✓                   | ✓    | ✓             |
+| **AnyClass**        | Class, interface, struct, and similar type definitions                                  | `c`             | ✓                   | ✓    | ✓             |
+| **AnyLoop**         | Loop statements (`for`, `while`, `do`, `repeat`, `until`, `loop`, etc.)                 | `l`             | ✓                   | ✓    | ✓             |
+| **AnyConditional**  | Conditional statements (`if-else`, `switch`, `try-catch`)                               | `t`             | ✓                   | ✓    | ✓             |
+| **AnyItem**         | Items within collections, lists, or arrays                                              | `i`             | ✓                   | ✓    | ✓             |
+| **AnyQuote**        | Content enclosed between any type of quotes (single, double, backticks)                 | `q`             | ✓                   | ✗    | ✗             |
+| **AnyBracket**      | Content enclosed between any type of brackets (parentheses, square, curly, angle, etc.) | `o`             | ✓                   | ✗    | ✗             |
+| **AnyDocument**     | Entire document content                                                                 | `d`             | ✓                   | ✗    | ✗             |
+| **AnyBlockComment** | Block comments across different programming languages (`/* */`, `<!-- -->`, etc.)       | `k`             | ✓                   | ✗    | ✗             |
+| **AnyIndentBlock**  | Code blocks based on indentation levels                                                 | `n`             | ✓                   | ✗    | ✗             |
+
+- **Inner/Outer**: All text objects support both `i` (inner) and `a` (around/outer) selection modes following standard Vim conventions
+- **Jump**: Text objects with jump support allow navigation using `]` (next) and `[` (previous) motions unless other mappings are specified (see [Customization](#customization))
+- **Count motions**: Text objects with count support allow selecting multiple consecutive instances. For example `d2a` will delete two arguments
+
 ## Usage
 
 ### Deletion, Change, Visual Selection

@@ -34,7 +34,6 @@ open class AnyItemHandler : AbstractPSIBasedHandler(), BaseJumpHandler {
             "GROOVY" to setOf("LIST", "ARRAY", "LIST_EXPRESSION"),
             "CLOJURE" to setOf("VECTOR", "LIST", "MAP", "SET"),
             "LUA" to setOf("TABLE", "ARRAY"),
-
             // Data format languages
             "JSON" to setOf("ARRAY", "OBJECT", "JSON_ARRAY", "JSON_OBJECT"),
             "XML" to setOf("XML_TAG", "XML_ELEMENT", "XML_ATTRIBUTE_LIST"),
@@ -81,6 +80,7 @@ open class AnyItemHandler : AbstractPSIBasedHandler(), BaseJumpHandler {
     }
 
     private fun getPreviousElement(element: PsiElement, loop: Boolean): PsiElement? {
+        // If the current element is not an item, fallback to the default handler behavior to find the previous one in the document from the current position
         val objectElement = findObjectElement(element) ?: return super.getPreviousElement(element)
         val siblings = objectElement.parent.children.filter { isItem(objectElement, it) }.toList()
         val idx = siblings.indexOf(objectElement)
@@ -102,6 +102,7 @@ open class AnyItemHandler : AbstractPSIBasedHandler(), BaseJumpHandler {
      * For jumps, items iterated in loop
      */
     override fun getNextElement(element: PsiElement): PsiElement? {
+        // If the current element is not an item, fallback to the default handler behavior to find the first one in the document from the current position
         val objectElement = findObjectElement(element) ?: return super.getNextElement(element)
         val siblings = objectElement.parent.children.filter { isItem(objectElement, it) }.toList()
         val idx = siblings.indexOf(objectElement)
@@ -118,25 +119,23 @@ open class AnyItemHandler : AbstractPSIBasedHandler(), BaseJumpHandler {
     /**
      * Given an element (sourceItem) that is an item targeted by this handler, check if the given element (otherElement) is also an item.
      */
-    protected fun checkIsItem(sourceItem: PsiElement, otherElement: PsiElement): Boolean {
-        val elementTypeName = otherElement.elementType.toString().lowercase()
-        return sourceItem.elementType == otherElement.elementType || (
-                otherElement.text.isNotBlank()
-                        // Sometimes argument separators do not appear as children of the main element parent (Pycharm)
-                        && otherElement.parent.children.any { it.elementType == otherElement.elementType }
-                        && !elementTypeName.contains("comma")
-                        && !elementTypeName.contains("lpar")
-                        && !elementTypeName.contains("rpar")
-                )
-    }
-
-    open fun isItem(sourceItem: PsiElement, otherElement: PsiElement): Boolean {
+    private fun isItem(sourceItem: PsiElement, otherElement: PsiElement): Boolean {
         val language = sourceItem.language.id.uppercase()
         return when (language) {
             "JSON" -> isJsonItem(sourceItem, otherElement)
             "XML" -> isXmlItem(sourceItem, otherElement)
             "YAML" -> isYamlItem(sourceItem, otherElement)
-            else -> checkIsItem(sourceItem, otherElement)
+            else -> {
+                val elementTypeName = otherElement.elementType.toString().lowercase()
+                return sourceItem.elementType == otherElement.elementType || (
+                        otherElement.text.isNotBlank()
+                                // Sometimes argument separators do not appear as children of the main element parent (Pycharm)
+                                && otherElement.parent.children.any { it.elementType == otherElement.elementType }
+                                && !elementTypeName.contains("comma")
+                                && !elementTypeName.contains("lpar")
+                                && !elementTypeName.contains("rpar")
+                        )
+            }
         }
     }
 
