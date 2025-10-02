@@ -15,10 +15,10 @@ concepts programmers use to think about code: classes, functions, arguments, loo
 | Text Object         | Description                                                                             | Default mapping | Inner/Outer motions | Jump | Count motions |
 |---------------------|-----------------------------------------------------------------------------------------|-----------------|---------------------|------|---------------|
 | **AnyArgument**     | Function arguments, method parameters, and callable expressions                         | `a`             | ✓                   | ✓    | ✓             |
-| **AnyFunction**     | Functions, methods, and procedures                                                      | `f`             | ✓                   | ✓    | ✓             |
-| **AnyClass**        | Class, interface, struct, and similar type definitions                                  | `c`             | ✓                   | ✓    | ✓             |
-| **AnyLoop**         | Loop statements (`for`, `while`, `do`, `repeat`, `until`, `loop`, etc.)                 | `l`             | ✓                   | ✓    | ✓             |
-| **AnyConditional**  | Conditional statements (`if-else`, `switch`, `try-catch`)                               | `t`             | ✓                   | ✓    | ✓             |
+| **AnyFunction**     | Functions, methods, and procedures                                                      | `f`             | ✓                   | ✓    | x             |
+| **AnyClass**        | Class, interface, struct, and similar type definitions                                  | `c`             | ✓                   | ✓    | x             |
+| **AnyLoop**         | Loop statements (`for`, `while`, `do`, `repeat`, `until`, `loop`, etc.)                 | `l`             | ✓                   | ✓    | x             |
+| **AnyConditional**  | Conditional statements (`if-else`, `switch`, `try-catch`)                               | `t`             | ✓                   | ✓    | x             |
 | **AnyItem**         | Items within collections, lists, or arrays                                              | `i`             | ✓                   | ✓    | ✓             |
 | **AnyQuote**        | Content enclosed between any type of quotes (single, double, backticks)                 | `q`             | ✓                   | ✗    | ✗             |
 | **AnyBracket**      | Content enclosed between any type of brackets (parentheses, square, curly, angle, etc.) | `o`             | ✓                   | ✗    | ✗             |
