@@ -10,7 +10,6 @@ plugins {
     id("com.diffplug.spotless") version "6.25.0"
     id("pmd")
     id("com.gradleup.shadow") version "9.1.0"
-
 }
 
 changelog {

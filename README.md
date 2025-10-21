@@ -18,7 +18,7 @@ concepts programmers use to think about code: classes, functions, arguments, loo
 | **AnyFunction**     | Functions, methods, and procedures                                                      | `f`             | ✓                   | ✓    | x             |
 | **AnyClass**        | Class, interface, struct, and similar type definitions                                  | `c`             | ✓                   | ✓    | x             |
 | **AnyLoop**         | Loop statements (`for`, `while`, `do`, `repeat`, `until`, `loop`, etc.)                 | `l`             | ✓                   | ✓    | x             |
-| **AnyConditional**  | Conditional statements (`if-else`, `switch`, `try-catch`)                               | `t`             | ✓                   | ✓    | x             |
+| **AnyConditional**  | Conditional statements (`if-else`, `switch`, `try-catch`)                               | `y`             | ✓                   | ✓    | x             |
 | **AnyItem**         | Items within collections, lists, or arrays                                              | `i`             | ✓                   | ✓    | ✓             |
 | **AnyQuote**        | Content enclosed between any type of quotes (single, double, backticks)                 | `q`             | ✓                   | ✗    | ✗             |
 | **AnyBracket**      | Content enclosed between any type of brackets (parentheses, square, curly, angle, etc.) | `o`             | ✓                   | ✗    | ✗             |
@@ -144,12 +144,12 @@ Loop statements and iterative constructs like `for`, `foreach`, `while`, `until`
 - **Inner Selection (`il`)**: Selects only the statements within the current loop/iteration where the cursor is positioned
 - **Outer Selection (`al`)**: Selects the entire loop construct including all branches and control keywords
 
-### AnyConditional (`t`)
+### AnyConditional (`y`)
 
 Conditional statements and expressions like `if-else`, `switch` or `try-catch` statements.
 
-- **Inner Selection (`it`)**: Selects only the statements within the current branch/case where the cursor is positioned
-- **Outer Selection (`at`)**: Selects the entire conditional construct including all branches and control keywords
+- **Inner Selection (`iy`)**: Selects only the statements within the current branch/case where the cursor is positioned
+- **Outer Selection (`ay`)**: Selects the entire conditional construct including all branches and control keywords
 
 ### AnyIndentBlock (`n`)
 

@@ -1,5 +1,6 @@
 package com.magidc.ideavim.anyobject
 
+import com.intellij.openapi.diagnostic.Logger
 import com.maddyhome.idea.vim.KeyHandler
 import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.api.ExecutionContext
@@ -46,10 +47,16 @@ val handlerSupplierMap = mapOf(
     "anydocument" to Pair("d", ::AnyDocumentHandler),
     "anyloop" to Pair("l", ::AnyLoopHandler),
     "anyindentblock" to Pair("n", ::AnyIndentBlockHandler),
-    "anyconditional" to Pair("t", ::AnyConditionalHandler)
+    "anyconditional" to Pair("y", ::AnyConditionalHandler)
 )
 
+val builtInVimTextObjectsMappings = setOf("w", "p", "t", "b", "s")
+
 class AnyObject : VimExtension {
+    companion object {
+        private val LOG = Logger.getInstance(AnyObject::class.java)
+    }
+
     fun getGlobalVariableSet(variableName: String): Set<String>? {
         return VimPlugin.getVariableService().getGlobalVariableValue(variableName)?.asString()
             ?.split(",")
@@ -78,7 +85,14 @@ class AnyObject : VimExtension {
             if (!usedHandlersSet.add(handlerName)) continue
             val (defaultMapping, handlerSupplier) = handlerSupplierMap[handlerName] ?: continue
             val mapping = customMappingMap.getOrDefault(handlerName, defaultMapping)
-            if (!usedMappingsSet.add(mapping)) continue
+            if (mapping in builtInVimTextObjectsMappings) {
+                LOG.warn("Mapping $mapping for $handlerName conflicts with built-in mapping. Skipping")
+                continue
+            }
+            if (!usedMappingsSet.add(mapping)) {
+                LOG.warn("Mapping $mapping for $handlerName is already used. Skipping")
+                continue
+            }
             registerTextObjects(handlerName, mapping, handlerSupplier(), jumpNextMapping, jumpPrevMapping)
         }
 //        registerTextObjects("AnyField", 'p', AnyFieldHandler())

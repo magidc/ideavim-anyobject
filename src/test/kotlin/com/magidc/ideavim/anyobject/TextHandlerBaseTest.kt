@@ -31,9 +31,9 @@ abstract class TextHandlerBaseTest(val handler: TextBasedHandler) : BasePlatform
         }
 
         val selectedText = if (inner)
-            text.substring(selection.from, selection.to)
+            text.substring(selection.startOffset, selection.endOffset)
         else
-            text.substring(selection.from - START.length, selection.to + END.length)
+            text.substring(selection.startOffset - START.length, selection.endOffset + END.length)
 
         assertTrue(selectedText, selectedText.startsWith(START))
         assertTrue(selectedText, selectedText.endsWith(END))

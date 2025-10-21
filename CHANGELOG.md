@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.1
+Changed default mappings for AnyConditional to `y` to avoid confusion with Vim default text object for tags `t`
+
 ## 2.0.0
 
 ### Jump!!
