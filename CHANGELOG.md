@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.0.2
+
+### AnySubword (`u`)
+
+Nested words in different case styles:
+
+| Case type  | Example   | 
+|------------|-----------|
+| Camel case | `fooBar`  |
+| Snake case | `foo_bar` |
+| Dash case  | `foo-bar` | 
+
+
 ## 2.0.1
 Changed default mappings for AnyConditional to `y` to avoid confusion with Vim default text object for tags `t`
 

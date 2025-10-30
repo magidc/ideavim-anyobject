@@ -8,40 +8,31 @@ import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
 
 class AnyClassHandler : AbstractPSIBasedHandler() {
     companion object {
+        private val commonClassTypes = setOf("CLASS", "INTERFACE", "ENUM")
         private val languageClassTypes = mapOf(
-            "JAVA" to setOf("CLASS", "INTERFACE", "ENUM", "ANNOTATION_TYPE"),
-            "KOTLIN" to setOf("CLASS", "INTERFACE", "OBJECT_DECLARATION", "ENUM_ENTRY", "ANNOTATION_CLASS"),
-            "C#" to setOf(
-                "CLASS-DECLARATION",
-                "INTERFACE-DECLARATION",
-                "STRUCT-DECLARATION",
-                "ENUM-DECLARATION",
-                "RECORD-DECLARATION",
-                "CS:CLASS-DECLARATION",
-                "CS:INTERFACE-DECLARATION",
-                "CS:STRUCT-DECLARATION"
-            ),
-            "PYTHON" to setOf("PYCLASS", "CLASS_DECLARATION"),
-            "JAVASCRIPT" to setOf("JS:CLASS", "CLASS_EXPRESSION", "ES6_CLASS", "CLASS_DECLARATION"),
-            "ECMASCRIPT 6" to setOf("JS:CLASS", "CLASS_EXPRESSION", "ES6_CLASS", "CLASS_DECLARATION"),
-            "TYPESCRIPT" to setOf("JS:TYPESCRIPT_CLASS", "JS:TYPESCRIPT_INTERFACE", "JS:TYPESCRIPT_ENUM", "JS:TYPESCRIPT_NAMESPACE", "JS:TYPESCRIPT_MODULE"),
-            "DART" to setOf("CLASS_DECLARATION", "MIXIN_DECLARATION", "ENUM_DECLARATION", "EXTENSION_DECLARATION", "ABSTRACT_CLASS_DECLARATION"),
-            "GO" to setOf("TYPE_DECLARATION", "STRUCT_TYPE", "INTERFACE_TYPE", "TYPE_SPEC"),
-            "RUST" to setOf("STRUCT", "ENUM", "TRAIT", "IMPL", "UNION", "STRUCT_ITEM", "ENUM_ITEM", "TRAIT_ITEM"),
-            "PHP" to setOf("CLASS_DECLARATION", "INTERFACE_DECLARATION", "TRAIT_DECLARATION", "ENUM_DECLARATION", "ABSTRACT_CLASS_DECLARATION"),
-            "RUBY" to setOf("RUBY:CLASS", "RUBY:MODULE", "RUBY:SINGLETON_CLASS"),
-            "SCALA" to setOf("CLASS DEFINITION", "OBJECT DEFINITION", "TRAIT DEFINITION", "CASE CLASS DEFINITION", "ABSTRACT CLASS DEFINITION", "SEALED CLASS DEFINITION"),
-            "SWIFT" to setOf("CLASS_DECLARATION", "STRUCT_DECLARATION", "PROTOCOL_DECLARATION", "ENUM_DECLARATION", "EXTENSION_DECLARATION", "ACTOR_DECLARATION"),
-            "R" to setOf("R_CLASS_DEFINITION", "R_SETCLASS"),
-            "PERL" to setOf("PERL5:PACKAGE", "PERL5:NAMESPACE"),
-            "OBJECTIVE-C" to setOf("OBJC:CLASS_DECLARATION", "OBJC:PROTOCOL_DECLARATION", "OBJC:CATEGORY_DECLARATION", "OBJC:INTERFACE_DECLARATION"),
-            "HASKELL" to setOf("HS:DATA_DECLARATION", "HS:NEWTYPE_DECLARATION", "HS:TYPE_DECLARATION", "HS:CLASS_DECLARATION", "HS:INSTANCE_DECLARATION"),
-            "F#" to setOf("FS:TYPE_DEFINITION", "FS:INTERFACE_DEFINITION", "FS:MODULE_DEFINITION", "FS:RECORD_DEFINITION", "FS:UNION_DEFINITION"),
-            "GROOVY" to setOf("CLASS", "INTERFACE", "ENUM", "TRAIT_DECLARATION"),
+            "JAVA" to setOf("ANNOTATIONTYPE"),
+            "KOTLIN" to setOf("OBJECT", "ENUMENTRY", "ANNOTATIONCLASS"),
+            "C#" to setOf("STRUCT", "RECORD"),
+            "JAVASCRIPT" to setOf("ES6"),
+            "ECMASCRIPT 6" to setOf("ES6"),
+            "TYPESCRIPT" to setOf("NAMESPACE", "MODULE"),
+            "DART" to setOf("MIXIN", "EXTENSION", "ABSTRACTCLASS"),
+            "GO" to setOf("TYPE", "STRUCTTYPE", "INTERFACETYPE", "TYPESPEC"),
+            "RUST" to setOf("STRUCT", "TRAIT", "IMPL", "UNION", "STRUCTITEM", "ENUMITEM", "TRAITITEM"),
+            "PHP" to setOf("TRAIT", "ABSTRACTCLASS"),
+            "RUBY" to setOf("MODULE", "SINGLETONCLASS"),
+            "SCALA" to setOf("OBJECT", "TRAIT", "CASECLASS", "ABSTRACTCLASS", "SEALEDCLASS"),
+            "SWIFT" to setOf("STRUCT", "PROTOCOL", "EXTENSION", "ACTOR"),
+            "R" to setOf("SETCLASS"),
+            "PERL" to setOf("PACKAGE", "NAMESPACE"),
+            "OBJECTIVE-C" to setOf("PROTOCOL", "CATEGORY"),
+            "HASKELL" to setOf("DATA", "NEWTYPE", "TYPE", "INSTANCE"),
+            "F#" to setOf("TYPE", "MODULE", "RECORD", "UNION"),
+            "GROOVY" to setOf("TRAIT"),
             "CLOJURE" to setOf("DEFTYPE", "DEFRECORD", "DEFPROTOCOL", "REIFY"),
-            "LUA" to setOf("TABLE", "METATABLE", "CLASS_DECLARATION"),
-            "CPP" to setOf("CLASS_DECLARATION", "STRUCT_DECLARATION", "UNION_DECLARATION", "NAMESPACE_DECLARATION"),
-            "C" to setOf("STRUCT_DECLARATION", "UNION_DECLARATION", "ENUM_DECLARATION"),
+            "LUA" to setOf("TABLE", "METATABLE"),
+            "CPP" to setOf("STRUCT", "UNION", "NAMESPACE"),
+            "C" to setOf("STRUCT", "UNION"),
         )
 
         private val languageClassStatementBlockTypes = mapOf(
@@ -64,20 +55,16 @@ class AnyClassHandler : AbstractPSIBasedHandler() {
         )
     }
 
-    override fun acceptElement(element: PsiElement, language: String): Boolean {
-        val elementTypeName = element.elementType.toString().uppercase()
-        val classTypes = languageClassTypes[language] ?: emptySet()
-
-        return classTypes.any { classType ->
-            when {
-                classType.contains("-") -> elementTypeName.endsWith(classType)
-                classType.contains(":") -> elementTypeName == classType
-                classType.contains("_") -> elementTypeName.endsWith(classType) || elementTypeName.startsWith(classType)
-                classType.contains(" ") -> elementTypeName.endsWith(classType)
-                else -> elementTypeName == classType || elementTypeName.endsWith(classType)
-            }
-        }
+    override fun cleanPrefix(text: String, language: String): String {
+        if (language == "TYPESCRIPT") return text.substringAfter("TYPESCRIPT")
+        return super.cleanPrefix(text, language)
     }
+
+    override fun getCommonTypes(): Set<String> = commonClassTypes
+
+    override fun getSuffixes(): Set<String> = super.getSuffixes() + setOf("DECLARATION", "DEFINITION")
+
+    override fun getLanguageSpecificTypes(): Map<String, Set<String>> = languageClassTypes
 
     override fun findInnerCodeBlock(element: PsiElement, editor: VimEditor): PsiElement? {
         val innerCodeBlockElementTypeName = languageClassStatementBlockTypes[element.language.id.uppercase()] ?: return element

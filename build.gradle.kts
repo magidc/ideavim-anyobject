@@ -150,4 +150,7 @@ tasks {
     val runPycharm by intellijPlatformTesting.runIde.registering {
         localPath.set(file("/opt/jetbrains/pycharm"))
     }
+    val runPHPstorm by intellijPlatformTesting.runIde.registering {
+        localPath.set(file("/opt/jetbrains/phpstorm"))
+    }
 }

@@ -11,41 +11,43 @@ import com.magidc.ideavim.anyobject.handlers.base.BaseJumpHandler
 
 open class AnyItemHandler : AbstractPSIBasedHandler(), BaseJumpHandler {
     companion object {
+        private val commonTargetTypes = setOf("LIST", "ARRAY", "COLLECTION", "MAP", "SET", "SEQUENCE", "TUPLE")
         private val languageTargetTypes = mapOf(
-            "JAVA" to setOf("LIST", "ARRAY_INITIALIZER_EXPRESSION"),
-            "KOTLIN" to setOf("LIST", "ARRAY", "COLLECTION_LITERAL_EXPRESSION"),
-            "PYTHON" to setOf("LIST", "DICT_LITERAL_EXPRESSION", "ARRAY", "SET_LITERAL_EXPRESSION", "LIST_LITERAL_EXPRESSION"),
-            "JAVASCRIPT" to setOf("ARRAY", "LIST", "OBJECT_LITERAL", "ARRAY_LITERAL_EXPRESSION"),
-            "ECMASCRIPT 6" to setOf("ARRAY", "LIST", "OBJECT_LITERAL", "ARRAY_LITERAL_EXPRESSION"),
-            "TYPESCRIPT" to setOf("ARRAY", "LIST", "OBJECT_LITERAL", "ARRAY_LITERAL_EXPRESSION", "TUPLE_TYPE"),
-            "C#" to setOf("ARRAY_INITIALIZER_EXPRESSION", "LIST", "COLLECTION_INITIALIZER"),
-            "DART" to setOf("LIST", "ARRAY", "LIST_LITERAL", "SET_LITERAL", "MAP_LITERAL"),
-            "GO" to setOf("ARRAY", "SLICE", "COMPOSITE_LIT"),
-            "PHP" to setOf("ARRAY", "ARRAY_CREATION_EXPRESSION"),
-            "RUBY" to setOf("ARRAY", "LIST", "HASH_LITERAL"),
-            "SCALA" to setOf("LIST", "ARRAY", "SEQUENCE_LITERAL", "SET_LITERAL"),
-            "SWIFT" to setOf("ARRAY", "DICTIONARY", "ARRAY_LITERAL", "DICTIONARY_LITERAL"),
-            "RUST" to setOf("ARRAY", "VEC", "ARRAY_EXPRESSION", "VEC_MACRO"),
-            "R" to setOf("LIST", "VECTOR", "LIST_EXPRESSION"),
-            "PERL" to setOf("ARRAY", "LIST", "ARRAY_REF"),
-            "OBJECTIVE-C" to setOf("ARRAY", "DICTIONARY", "NS_ARRAY_LITERAL"),
-            "HASKELL" to setOf("LIST", "ARRAY", "LIST_EXPRESSION"),
-            "F#" to setOf("LIST", "ARRAY", "LIST_EXPRESSION", "ARRAY_EXPRESSION"),
-            "GROOVY" to setOf("LIST", "ARRAY", "LIST_EXPRESSION"),
-            "CLOJURE" to setOf("VECTOR", "LIST", "MAP", "SET"),
-            "LUA" to setOf("TABLE", "ARRAY"),
+            "JAVA" to setOf("ARRAYINITIALIZER"),
+            "JAVASCRIPT" to setOf("OBJECT"),
+            "TYPESCRIPT" to setOf("TUPLETYPE"),
+            "C#" to setOf("ARRAYINITIALIZER", "COLLECTIONINITIALIZER"),
+            "GO" to setOf("SLICE", "COMPOSITELIT"),
+            "PHP" to setOf("ARRAYCREATION"),
+            "RUBY" to setOf("HASH"),
+            "SWIFT" to setOf("DICTIONARY"),
+            "RUST" to setOf("VEC", "VECMACRO"),
+            "R" to setOf("VECTOR"),
+            "PERL" to setOf("ARRAYREF"),
+            "OBJECTIVE-C" to setOf("DICTIONARY", "NSARRAY"),
+            "CLOJURE" to setOf("VECTOR"),
+            "LUA" to setOf("TABLE"),
             // Data format languages
-            "JSON" to setOf("ARRAY", "OBJECT", "JSON_ARRAY", "JSON_OBJECT"),
-            "XML" to setOf("XML_TAG", "XML_ELEMENT", "XML_ATTRIBUTE_LIST"),
-            "YAML" to setOf("SEQUENCE", "MAPPING", "YAML_SEQUENCE", "YAML_MAPPING", "YAML_ARRAY", "YAML_HASH"),
+            "JSON" to setOf("OBJECT"),
+            "XML" to setOf("TAG", "ELEMENT", "ATTRIBUTELIST"),
+            "YAML" to setOf("MAPPING", "MAPPING", "HASH"),
         )
     }
 
-    open fun getLanguageTargetTypes(language: String): Set<String> {
-        return languageTargetTypes[language] ?: emptySet()
+    override fun getLanguageSpecificTypes(): Map<String, Set<String>> = languageTargetTypes
+
+    override fun cleanPrefix(text: String, language: String): String {
+        if (language == "XML") return text.replace("XML_", "")
+        if (language == "YAML") return text.replace("YAML_", "")
+        if (language == "JSON") return text.replace("JSON_", "")
+        return super.cleanPrefix(text, language)
     }
 
-    override fun acceptElement(element: PsiElement, language: String): Boolean {
+    override fun getSuffixes(): Set<String> = super.getSuffixes() + setOf("LITERAL")
+
+    override fun getCommonTypes(): Set<String> = commonTargetTypes
+
+    override fun acceptElement(element: PsiElement, language: String, acceptedNormalizedTypes: Set<String>): Boolean {
         if (element.text.isBlank()) return false
         val elementTypeName = element.elementType.toString().lowercase()
         if (elementTypeName.contains("comma")) return false
@@ -53,7 +55,7 @@ open class AnyItemHandler : AbstractPSIBasedHandler(), BaseJumpHandler {
         if (elementTypeName.contains("rpar")) return false
 
         val containerElementTypeName = element.parent.elementType.toString().uppercase()
-        return getLanguageTargetTypes(language).any { containerElementTypeName.endsWith(it) }
+        return acceptedNormalizedTypes.contains(normalizeElementType(containerElementTypeName, language))
     }
 
     override fun getSelection(element: PsiElement, editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
@@ -120,7 +122,7 @@ open class AnyItemHandler : AbstractPSIBasedHandler(), BaseJumpHandler {
      * Given an element (sourceItem) that is an item targeted by this handler, check if the given element (otherElement) is also an item.
      */
     private fun isItem(sourceItem: PsiElement, otherElement: PsiElement): Boolean {
-        val language = sourceItem.language.id.uppercase()
+        val language = getLanguage(sourceItem)
         return when (language) {
             "JSON" -> isJsonItem(sourceItem, otherElement)
             "XML" -> isXmlItem(sourceItem, otherElement)

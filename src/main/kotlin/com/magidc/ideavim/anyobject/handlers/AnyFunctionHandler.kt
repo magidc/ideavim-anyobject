@@ -1,51 +1,33 @@
 package com.magidc.ideavim.anyobject.handlers
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.util.elementType
 import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
 
 
 class AnyFunctionHandler : AbstractPSIBasedHandler() {
     companion object {
+        private val commonFunctionTypes = setOf("METHOD", "FUNCTION", "CONSTRUCTOR", "FUNCTION")
         private val languageFunctionTypes = mapOf(
-            "JAVA" to setOf("METHOD"),
             "KOTLIN" to setOf("FUN"),
-            "C#" to setOf("METHOD-DECLARATION", "CS:METHOD-DECLARATION"),
-            "PYTHON" to setOf("FUNCTION_DECLARATION", "PYFUNCTION"),
-            "JAVASCRIPT" to setOf("FUNCTION_DECLARATION", "FUNCTION", "FUNCTION_EXPRESSION", "ARROW_FUNCTION"),
-            "ECMASCRIPT 6" to setOf("FUNCTION_DECLARATION", "FUNCTION", "FUNCTION_EXPRESSION", "ARROW_FUNCTION"),
-            "TYPESCRIPT" to setOf("JS:TYPESCRIPT_FUNCTION", "FUNCTION_DECLARATION", "FUNCTION", "ARROW_FUNCTION", "METHOD_SIGNATURE"),
-            "DART" to setOf("FUNCTION_DECLARATION", "METHOD_DECLARATION"),
-            "GO" to setOf("FUNCTION_DECLARATION", "METHOD_DECLARATION", "FUNC_DECLARATION"),
-            "PERL" to setOf("SUB_DEFINITION", "PERL5:SUB_DEFINITION"),
-            "RUBY" to setOf("RUBY:METHOD", "RUBY:FUNCTION"),
-            "SCALA" to setOf("FUNCTION DEFINITION", "METHOD_DEFINITION", "DEF_DEFINITION"),
-            "PHP" to setOf("FUNCTION", "CLASS_METHOD", "FUNCTION_DECLARATION", "METHOD_DECLARATION"),
-            "R" to setOf("R_FUNCTION_EXPRESSION", "R_FUNCTION_DEFINITION"),
-            "SWIFT" to setOf("FUNCTION_DECLARATION", "METHOD_DECLARATION", "INIT_DECLARATION", "SUBSCRIPT_DECLARATION"),
-            "RUST" to setOf("FUNCTION", "FN", "FUNCTION_ITEM", "ASSOCIATED_FUNCTION"),
-            "OBJECTIVE-C" to setOf("OBJC:METHOD_DECLARATION", "OBJC:FUNCTION_DECLARATION"),
-            "HASKELL" to setOf("HS:FUNCTION_DECLARATION", "HS:BINDING", "HS:FUNCTION_DEFINITION"),
-            "F#" to setOf("FS:FUNCTION_DEFINITION", "FS:METHOD_DEFINITION", "FS:MEMBER_DEFINITION"),
-            "GROOVY" to setOf("METHOD", "FUNCTION", "CLOSURE_EXPRESSION"),
-            "CLOJURE" to setOf("FUNCTION", "DEFN", "FN"),
-            "LUA" to setOf("FUNCTION", "FUNCTION_DECLARATION", "LOCAL_FUNCTION"),
-            "CPP" to setOf("FUNCTION_DECLARATION", "FUNCTION_DEFINITION", "METHOD_DECLARATION"),
-            "C" to setOf("FUNCTION_DECLARATION", "FUNCTION_DEFINITION")
+            "JAVASCRIPT" to setOf("ARROWFUNCTION"),
+            "ECMASCRIPT 6" to setOf("ARROWFUNCTION"),
+            "TYPESCRIPT" to setOf("TYPESCRIPTFUNCTION", "ARROWFUNCTION", "METHODSIGNATURE"),
+            "GO" to setOf("FUNC"),
+            "PERL" to setOf("SUB"),
+            "SCALA" to setOf("DEF"),
+            "PHP" to setOf("CLASSMETHOD"),
+            "SWIFT" to setOf("INIT", "SUBSCRIPT"),
+            "RUST" to setOf("FN", "FUNCTIONITEM", "ASSOCIATEDFUNCTION"),
+            "HASKELL" to setOf("BINDING"),
+            "F#" to setOf("MEMBER"),
+            "GROOVY" to setOf("CLOSURE"),
+            "CLOJURE" to setOf("DEFN", "FN"),
+            "LUA" to setOf("LOCALFUNCTION", "ANONYMOUSFUNCTION"),
         )
     }
 
-    override fun acceptElement(element: PsiElement, language: String): Boolean {
-        val elementTypeName = element.elementType.toString().uppercase()
-        val functionTypes = languageFunctionTypes[language] ?: emptySet()
+    override fun getCommonTypes(): Set<String> = commonFunctionTypes
 
-        return functionTypes.any { functionType ->
-            when {
-                functionType.contains("-") -> elementTypeName.endsWith(functionType)
-                functionType.contains(":") -> elementTypeName == functionType
-                functionType.contains("_") -> elementTypeName.endsWith(functionType) || elementTypeName.startsWith(functionType)
-                else -> elementTypeName == functionType || elementTypeName.endsWith(functionType)
-            }
-        }
-    }
+    override fun getLanguageSpecificTypes(): Map<String, Set<String>> = languageFunctionTypes
+
+    override fun getSuffixes(): Set<String> = super.getSuffixes() + setOf("DECLARATION", "DEFINITION")
 }

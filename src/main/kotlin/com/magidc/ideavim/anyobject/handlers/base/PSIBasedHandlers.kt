@@ -16,6 +16,8 @@ import java.nio.file.Path
 abstract class AbstractPSIBasedHandler : BaseJumpHandler {
 
     companion object {
+        private val cleanDelimitersRegex = "[_,-]".toRegex()
+        private val commonSuffixes = setOf("STATEMENT", "EXPRESSION")
         private val languageCodeBlockTypes = mapOf(
             "JAVA" to setOf("CODE_BLOCK"),
             "C#" to setOf("CS:BLOCK-LIST"),
@@ -58,6 +60,12 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
         )
     }
 
+    protected open fun getLanguageSpecificTypes(): Map<String, Set<String>> = emptyMap()
+    protected abstract fun getCommonTypes(): Set<String>
+    protected open fun getSuffixes(): Set<String> = commonSuffixes
+
+    private val cleanSuffixesRegex = "(${getSuffixes().joinToString("|")})\$".toRegex()
+
     /**
      * Finds the inner code block for the given element (for inner selections)
      */
@@ -89,7 +97,7 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
     /**
      * Getting the element types that represent code blocks for the given language.
      */
-    protected open fun getCodeBlockTypes(element: PsiElement): Set<String> = languageCodeBlockTypes[element.language.id.uppercase()] ?: emptySet()
+    protected open fun getCodeBlockTypes(element: PsiElement): Set<String> = languageCodeBlockTypes[getLanguage(element)] ?: emptySet()
 
 
     override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
@@ -110,24 +118,39 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
     }
 
     protected fun findObjectElement(currentElement: PsiElement): PsiElement? {
-        val language = currentElement.language.id.uppercase()
+        val language = getLanguage(currentElement)
+        val types = getAcceptedNormalizedTypes(language)
         var objectElement = currentElement
         while (objectElement.parent != null) {
-            if (acceptElement(objectElement, language)) return objectElement
+            if (acceptElement(objectElement, language, types)) return objectElement
             objectElement = objectElement.parent
         }
         return null
     }
 
+    protected fun normalizeElementType(text: String, language: String): String {
+        var normalizedText = text.uppercase().trim()
+        if (normalizedText.contains(":"))
+            normalizedText = normalizedText.substringAfter(":")
+        normalizedText = cleanPrefix(normalizedText, language)
+        return normalizedText.replace(cleanDelimitersRegex, "").replace(cleanSuffixesRegex, "").trim()
+    }
+
+    private fun getAcceptedNormalizedTypes(language: String): Set<String> =
+        getCommonTypes() + (getLanguageSpecificTypes()[language] ?: emptySet())
+
     /**
      * Evaluates whether the given element matches the type the handler is looking for.
      */
-    protected abstract fun acceptElement(element: PsiElement, language: String): Boolean
+    protected open fun acceptElement(element: PsiElement, language: String, acceptedNormalizedTypes: Set<String>): Boolean {
+        val elementTypeName = element.elementType.toString().uppercase()
+        return acceptedNormalizedTypes.contains(normalizeElementType(elementTypeName, language))
+    }
 
     protected open fun getSelection(element: PsiElement, editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
         if (isInner) {
             val innerBlock = findInnerCodeBlock(element, editor) ?: element
-            if (languageUsesDelimiters.getOrDefault(element.language.id.uppercase(), false)) {
+            if (languageUsesDelimiters.getOrDefault(getLanguage(element), false)) {
                 val openBrace = innerBlock.children.firstOrNull { it.elementType.toString().uppercase() == "LBRACE" }
                 if (null != openBrace) {
                     val closeBrace = innerBlock.children.firstOrNull { it.elementType.toString().uppercase() == "RBRACE" }
@@ -142,7 +165,8 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
     }
 
     open fun getPreviousElement(element: PsiElement): PsiElement? {
-        val language = element.language.id.uppercase()
+        val language = getLanguage(element)
+        val acceptedNormalizedTypes = getAcceptedNormalizedTypes(language)
         val file = element.containingFile
         var previous = findPreviousElement(element)
         while (null != previous) {
@@ -152,7 +176,7 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
             }
             if (previous == element) return null
             // It is necessary to validate that we are not repeatedly returning the same effective position unless the same element is found (when there is only one)
-            if (acceptElement(previous, language) && previous.textRange.startOffset != element.startOffset) return previous
+            if (acceptElement(previous, language, acceptedNormalizedTypes) && previous.textRange.startOffset != element.startOffset) return previous
             previous = findPreviousElement(previous)
         }
         return null
@@ -166,9 +190,15 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
         return null
     }
 
+    protected open fun cleanPrefix(text: String, language: String): String {
+        if (language == "R") return text.substringAfter("R_")
+        if (language == "PYTHON") return text.substringAfter("PY")
+        return text
+    }
 
     open fun getNextElement(element: PsiElement): PsiElement? {
-        val language = element.language.id.uppercase()
+        val language = getLanguage(element)
+        val acceptedNormalizedTypes = getAcceptedNormalizedTypes(language)
         val file = element.containingFile
         var next = findNextElement(element)
         while (null != next) {
@@ -178,11 +208,13 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
             }
             if (next == element) return null
             // It is necessary to validate that we are not repeatedly returning the same effective position unless the same element is found (when there is only one)
-            if (acceptElement(next, language) && next.textRange.startOffset != element.startOffset) return next
+            if (acceptElement(next, language, acceptedNormalizedTypes) && next.textRange.startOffset != element.startOffset) return next
             next = findNextElement(next)
         }
         return null
     }
+
+    protected fun getLanguage(currentElement: PsiElement): String = currentElement.language.id.uppercase()
 
     private fun findNextElement(element: PsiElement): PsiElement? {
         if (element.firstChild != null)

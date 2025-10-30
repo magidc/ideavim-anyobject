@@ -7,8 +7,7 @@
 An extension for [IdeaVim](https://github.com/JetBrains/ideavim) plugin that adds useful text objects to improve your productivity on JetBrains IDEs.
 
 Text objects provide a more natural way to tell the editor what to edit, select or jump. Instead of working with characters, words, lines, or paragraphs, you can use the same
-concepts programmers use to think about code: classes, functions, arguments, loops, comments, quotes, brackets, and more.
-
+concepts programmers use to think about code: classes, functions, arguments, loops, comments, quotes, brackets, subwords, and more.
 
 ## Available Text Objects
 
@@ -22,6 +21,7 @@ concepts programmers use to think about code: classes, functions, arguments, loo
 | **AnyItem**         | Items within collections, lists, or arrays                                              | `i`             | ✓                   | ✓    | ✓             |
 | **AnyQuote**        | Content enclosed between any type of quotes (single, double, backticks)                 | `q`             | ✓                   | ✗    | ✗             |
 | **AnyBracket**      | Content enclosed between any type of brackets (parentheses, square, curly, angle, etc.) | `o`             | ✓                   | ✗    | ✗             |
+| **AnySubword**      | Words nested in longer words (`camel case`, `snake case`, `dash case`)                  | `u`             | ✓                   | ✓    | x             |
 | **AnyDocument**     | Entire document content                                                                 | `d`             | ✓                   | ✗    | ✗             |
 | **AnyBlockComment** | Block comments across different programming languages (`/* */`, `<!-- -->`, etc.)       | `k`             | ✓                   | ✗    | ✗             |
 | **AnyIndentBlock**  | Code blocks based on indentation levels                                                 | `n`             | ✓                   | ✗    | ✗             |
@@ -56,6 +56,16 @@ The plugin supports jumping to the next/previous text object using `]` (next) an
 - `[a` - Jump to previous argument
 
 ## Provided text objects
+
+### AnySubword (`u`)
+
+Nested words in different case styles:
+
+| Case type  | Example   | 
+|------------|-----------|
+| Camel case | `fooBar`  |
+| Snake case | `foo_bar` |
+| Dash case  | `foo-bar` | 
 
 ### AnyQuote (`q`)
 
@@ -168,13 +178,17 @@ set anyobject
 ### Customization
 
 Don't want to use all the provided text objects? Specify which ones to enable using `anyobject_included` variable in your `.ideavimrc`:
+
 ```vimscript
 let g:anyobject_included = "anyDocument,anyFunction"
 ```
+
 If you prefer to specify which ones to exclude, use the `anyobject_excluded` variable instead:
+
 ```vimscript
 let g:anyobject_excluded = "anyDocument,anyFunction"
 ```
+
 You can also customize the mappings by adding the following to your `.ideavimrc`. For example:
 
 ```vimscript
@@ -184,9 +198,11 @@ let g:anyobject_map_anyfunction = "m"
 " Use 's' instead of default 'd' for any document text object
 let g:anyobject_map_anydocument = "s"
 ```
+
 In case of mapping conflicts, the custom mappings will take precedence and invalidate any other handler using the same mapping.
 
 Jump motion can be also customized:
+
 ```vimscript
 " Use '<' instead of default '[' for jumping to the previous text object
 let g:anyobject_map_jump_prev = "<" 
@@ -194,7 +210,6 @@ let g:anyobject_map_jump_prev = "<"
 " Use '>' instead of default ']' for jumping to the next text object
 let g:anyobject_map_jump_next = ">" 
 ```
-
 
 <!-- Plugin description end -->
 
