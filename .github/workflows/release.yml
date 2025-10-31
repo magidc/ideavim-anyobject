@@ -55,6 +55,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Create Git tag (only if not existing)
+        id: create-tag
         run: |
           BRANCH="${{ github.ref_name }}"
           if [[ "$BRANCH" == "release" ]]; then
@@ -66,7 +67,8 @@ jobs:
           fi
 
           TAG="${{ steps.get_version.outputs.version }}-${ SUFFIX }"
-          echo "TAG_NAME=${TAG}" >> $GITHUB_ENV
+          echo "$TAG" >> $GITHUB_OUTPUT
+
           if git rev-parse "$TAG" >/dev/null 2>&1; then
             echo "Tag $TAG already exists. Skipping."
           else
@@ -79,8 +81,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ env.TAG_NAME }}
-          name: ${{ env.TAG_NAME }}
+          tag_name: ${{ steps.create-tag.outputs.tag }}
+          name: ${{ steps.create-tag.outputs.tag }}
           files: build/distributions/*.zip
           body: ${{ steps.extract-notes.outputs.release_notes }}
         env:
