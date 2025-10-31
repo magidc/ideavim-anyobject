@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - release
+      - beta
 
 jobs:
   build-and-release:
@@ -65,18 +66,46 @@ jobs:
           echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Create GitHub Release
+  stable-release:
+      if: github.ref == 'refs/heads/release'
+      runs-on: ubuntu-latest
+      permissions:
+        contents: write
+        pull-requests: write
+        checks: write
+
+      steps:
+        - name: Create GitHub Stable Release
+          uses: softprops/action-gh-release@v2
+          with:
+            tag_name: ${{ format('{0}-stable', steps.get_version.outputs.version) }}
+            name: ${{ format('{0}-stable', steps.get_version.outputs.version) }}
+            files: build/distributions/*.zip
+            body: ${{ steps.extract-notes.outputs.release_notes }}
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Publish to Jetbrains Plugin Marketplace
+          env:
+            PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
+          run: ./gradlew publishPlugin
+
+  beta-release:
+    if: github.ref == 'refs/heads/beta'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: write
+    
+    steps:
+      - name: Create GitHub Beta Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.get_version.outputs.version }}
-          name: v${{ steps.get_version.outputs.version }}
+          tag_name: ${{ format('{0}-beta', steps.get_version.outputs.version) }}
+          name: ${{ format('{0}-beta', steps.get_version.outputs.version) }}
           files: build/distributions/*.zip
           body: ${{ steps.extract-notes.outputs.release_notes }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish to Jetbrains Plugin Marketplace
-        env:
-          PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
-        run: ./gradlew publishPlugin
 

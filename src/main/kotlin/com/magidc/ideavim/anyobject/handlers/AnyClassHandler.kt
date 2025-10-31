@@ -8,33 +8,6 @@ import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
 
 class AnyClassHandler : AbstractPSIBasedHandler() {
     companion object {
-        private val commonClassTypes = setOf("CLASS", "INTERFACE", "ENUM")
-        private val languageClassTypes = mapOf(
-            "JAVA" to setOf("ANNOTATIONTYPE"),
-            "KOTLIN" to setOf("OBJECT", "ENUMENTRY", "ANNOTATIONCLASS"),
-            "C#" to setOf("STRUCT", "RECORD"),
-            "JAVASCRIPT" to setOf("ES6"),
-            "ECMASCRIPT 6" to setOf("ES6"),
-            "TYPESCRIPT" to setOf("NAMESPACE", "MODULE"),
-            "DART" to setOf("MIXIN", "EXTENSION", "ABSTRACTCLASS"),
-            "GO" to setOf("TYPE", "STRUCTTYPE", "INTERFACETYPE", "TYPESPEC"),
-            "RUST" to setOf("STRUCT", "TRAIT", "IMPL", "UNION", "STRUCTITEM", "ENUMITEM", "TRAITITEM"),
-            "PHP" to setOf("TRAIT", "ABSTRACTCLASS"),
-            "RUBY" to setOf("MODULE", "SINGLETONCLASS"),
-            "SCALA" to setOf("OBJECT", "TRAIT", "CASECLASS", "ABSTRACTCLASS", "SEALEDCLASS"),
-            "SWIFT" to setOf("STRUCT", "PROTOCOL", "EXTENSION", "ACTOR"),
-            "R" to setOf("SETCLASS"),
-            "PERL" to setOf("PACKAGE", "NAMESPACE"),
-            "OBJECTIVE-C" to setOf("PROTOCOL", "CATEGORY"),
-            "HASKELL" to setOf("DATA", "NEWTYPE", "TYPE", "INSTANCE"),
-            "F#" to setOf("TYPE", "MODULE", "RECORD", "UNION"),
-            "GROOVY" to setOf("TRAIT"),
-            "CLOJURE" to setOf("DEFTYPE", "DEFRECORD", "DEFPROTOCOL", "REIFY"),
-            "LUA" to setOf("TABLE", "METATABLE"),
-            "CPP" to setOf("STRUCT", "UNION", "NAMESPACE"),
-            "C" to setOf("STRUCT", "UNION"),
-        )
-
         private val languageClassStatementBlockTypes = mapOf(
             "KOTLIN" to "CLASS_BODY",
             "PYTHON" to "PYSTATEMENTLIST",
@@ -55,16 +28,40 @@ class AnyClassHandler : AbstractPSIBasedHandler() {
         )
     }
 
+    override fun getCommonSuffixes(): Set<String> = super.getCommonSuffixes() + setOf("DECLARATION", "DEFINITION")
+
+    override val commonTypes: Set<String> = setOf("CLASS", "INTERFACE", "ENUM")
+
+    override val languageSpecificTypes: Map<String, Set<String>> = mapOf(
+        "JAVA" to setOf("ANNOTATIONTYPE"),
+        "KOTLIN" to setOf("OBJECT", "ENUMENTRY", "ANNOTATIONCLASS"),
+        "C#" to setOf("STRUCT", "RECORD"),
+        "JAVASCRIPT" to setOf("ES6"),
+        "ECMASCRIPT 6" to setOf("ES6"),
+        "TYPESCRIPT" to setOf("NAMESPACE", "MODULE"),
+        "DART" to setOf("MIXIN", "EXTENSION", "ABSTRACTCLASS"),
+        "GO" to setOf("TYPE", "STRUCTTYPE", "INTERFACETYPE", "TYPESPEC"),
+        "RUST" to setOf("STRUCT", "TRAIT", "IMPL", "UNION", "STRUCTITEM", "ENUMITEM", "TRAITITEM"),
+        "PHP" to setOf("TRAIT", "ABSTRACTCLASS"),
+        "RUBY" to setOf("MODULE", "SINGLETONCLASS"),
+        "SCALA" to setOf("OBJECT", "TRAIT", "CASECLASS", "ABSTRACTCLASS", "SEALEDCLASS"),
+        "SWIFT" to setOf("STRUCT", "PROTOCOL", "EXTENSION", "ACTOR"),
+        "R" to setOf("SETCLASS"),
+        "PERL" to setOf("PACKAGE", "NAMESPACE"),
+        "OBJECTIVE-C" to setOf("PROTOCOL", "CATEGORY"),
+        "HASKELL" to setOf("DATA", "NEWTYPE", "TYPE", "INSTANCE"),
+        "F#" to setOf("TYPE", "MODULE", "RECORD", "UNION"),
+        "GROOVY" to setOf("TRAIT"),
+        "CLOJURE" to setOf("DEFTYPE", "DEFRECORD", "DEFPROTOCOL", "REIFY"),
+        "LUA" to setOf("TABLE", "METATABLE"),
+        "CPP" to setOf("STRUCT", "UNION", "NAMESPACE"),
+        "C" to setOf("STRUCT", "UNION"),
+    )
+
     override fun cleanPrefix(text: String, language: String): String {
         if (language == "TYPESCRIPT") return text.substringAfter("TYPESCRIPT")
         return super.cleanPrefix(text, language)
     }
-
-    override fun getCommonTypes(): Set<String> = commonClassTypes
-
-    override fun getSuffixes(): Set<String> = super.getSuffixes() + setOf("DECLARATION", "DEFINITION")
-
-    override fun getLanguageSpecificTypes(): Map<String, Set<String>> = languageClassTypes
 
     override fun findInnerCodeBlock(element: PsiElement, editor: VimEditor): PsiElement? {
         val innerCodeBlockElementTypeName = languageClassStatementBlockTypes[element.language.id.uppercase()] ?: return element

@@ -17,7 +17,6 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
 
     companion object {
         private val cleanDelimitersRegex = "[_,-]".toRegex()
-        private val commonSuffixes = setOf("STATEMENT", "EXPRESSION")
         private val languageCodeBlockTypes = mapOf(
             "JAVA" to setOf("CODE_BLOCK"),
             "C#" to setOf("CS:BLOCK-LIST"),
@@ -60,11 +59,10 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
         )
     }
 
-    protected open fun getLanguageSpecificTypes(): Map<String, Set<String>> = emptyMap()
-    protected abstract fun getCommonTypes(): Set<String>
-    protected open fun getSuffixes(): Set<String> = commonSuffixes
-
-    private val cleanSuffixesRegex = "(${getSuffixes().joinToString("|")})\$".toRegex()
+    protected open val commonTypes: Set<String> = emptySet()
+    protected open fun getCommonSuffixes() = setOf("STATEMENT", "EXPRESSION")
+    protected open val languageSpecificTypes: Map<String, Set<String>> = emptyMap()
+    private val cleanSuffixesRegex = "(${getCommonSuffixes().joinToString("|")})\$".toRegex()
 
     /**
      * Finds the inner code block for the given element (for inner selections)
@@ -80,7 +78,7 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
             val currentElement = elementQueue.removeFirst()
             if (!currentElement.textRange.contains(caretOffset))
                 continue
-            val elementTypeName = currentElement.elementType.toString().uppercase()
+            val elementTypeName = getElementTypeName(currentElement)
             if (codeBlockTypes.any { blockType ->
                     when {
                         blockType.contains(":") -> elementTypeName == blockType || elementTypeName.contains(blockType)
@@ -121,7 +119,7 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
         val language = getLanguage(currentElement)
         val types = getAcceptedNormalizedTypes(language)
         var objectElement = currentElement
-        while (objectElement.parent != null) {
+        while (!getElementTypeName(objectElement).endsWith("FILE") && objectElement.parent != null) {
             if (acceptElement(objectElement, language, types)) return objectElement
             objectElement = objectElement.parent
         }
@@ -137,13 +135,13 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
     }
 
     private fun getAcceptedNormalizedTypes(language: String): Set<String> =
-        getCommonTypes() + (getLanguageSpecificTypes()[language] ?: emptySet())
+        commonTypes + (languageSpecificTypes[language] ?: emptySet())
 
     /**
      * Evaluates whether the given element matches the type the handler is looking for.
      */
     protected open fun acceptElement(element: PsiElement, language: String, acceptedNormalizedTypes: Set<String>): Boolean {
-        val elementTypeName = element.elementType.toString().uppercase()
+        val elementTypeName = getElementTypeName(element)
         return acceptedNormalizedTypes.contains(normalizeElementType(elementTypeName, language))
     }
 
@@ -151,9 +149,9 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
         if (isInner) {
             val innerBlock = findInnerCodeBlock(element, editor) ?: element
             if (languageUsesDelimiters.getOrDefault(getLanguage(element), false)) {
-                val openBrace = innerBlock.children.firstOrNull { it.elementType.toString().uppercase() == "LBRACE" }
+                val openBrace = innerBlock.children.firstOrNull { getElementTypeName(it) == "LBRACE" }
                 if (null != openBrace) {
-                    val closeBrace = innerBlock.children.firstOrNull { it.elementType.toString().uppercase() == "RBRACE" }
+                    val closeBrace = innerBlock.children.firstOrNull { getElementTypeName(it) == "RBRACE" }
                     if (null != closeBrace)
                         return TextRange(openBrace.textRange.endOffset, closeBrace.textRange.startOffset)
                 }
@@ -163,6 +161,8 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
         }
         return TextRange(element.textRange.startOffset, element.textRange.endOffset)
     }
+
+    protected fun getElementTypeName(element: PsiElement): String = element.elementType.toString().uppercase()
 
     open fun getPreviousElement(element: PsiElement): PsiElement? {
         val language = getLanguage(element)
@@ -191,7 +191,7 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
     }
 
     protected open fun cleanPrefix(text: String, language: String): String {
-        if (language == "R") return text.substringAfter("R_")
+        if (language == "R") return text.substringAfter("R")
         if (language == "PYTHON") return text.substringAfter("PY")
         return text
     }

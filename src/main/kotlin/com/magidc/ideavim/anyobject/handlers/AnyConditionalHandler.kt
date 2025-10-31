@@ -5,28 +5,22 @@ import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
 
 
 class AnyConditionalHandler : AbstractPSIBasedHandler() {
+    override val commonTypes: Set<String> = setOf("IF", "SWITCH", "CONDITIONAL", "TERNARY", "TRY", "TRYEXCEPT", "CASE")
 
-    companion object {
-        private val commonTypes = setOf("IF", "SWITCH", "CONDITIONAL", "TERNARY", "TRY", "TRYEXCEPT", "CASE")
-        private val languageConditionalTypes = mapOf(
-            "KOTLIN" to setOf("WHEN", "ELVIS"),
-            "GO" to setOf("SELECT"),
-            "PHP" to setOf("MATCH"),
-            "RUBY" to setOf("UNLESS", "BEGIN"),
-            "SWIFT" to setOf("GUARD", "DO_CATCH"),
-            "RUST" to setOf("IFEXPR", "MATCHEXPR", "IFLETEXPR", "MATCHARM"),
-            "PERL" to setOf("UNLESS", "GIVEN", "EVAL"),
-            "OBJECTIVE-C" to setOf("@TRY"),
-            "HASKELL" to setOf("GUARD"),
-            "GROOVY" to setOf("ELVIS"),
-            "CLOJURE" to setOf("COND", "WHEN", "IFNOT"),
-            "LUA" to setOf("ELSEIF"),
-        )
-    }
-
-    override fun getCommonTypes(): Set<String> = commonTypes
-
-    override fun getLanguageSpecificTypes(): Map<String, Set<String>> = languageConditionalTypes
+    override val languageSpecificTypes: Map<String, Set<String>> = mapOf(
+        "KOTLIN" to setOf("WHEN", "ELVIS"),
+        "GO" to setOf("SELECT"),
+        "PHP" to setOf("MATCH"),
+        "RUBY" to setOf("UNLESS", "BEGIN"),
+        "SWIFT" to setOf("GUARD", "DO_CATCH"),
+        "RUST" to setOf("IFEXPR", "MATCHEXPR", "IFLETEXPR", "MATCHARM"),
+        "PERL" to setOf("UNLESS", "GIVEN", "EVAL"),
+        "OBJECTIVE-C" to setOf("@TRY"),
+        "HASKELL" to setOf("GUARD"),
+        "GROOVY" to setOf("ELVIS"),
+        "CLOJURE" to setOf("COND", "WHEN", "IFNOT"),
+        "LUA" to setOf("ELSEIF"),
+    )
 
     override fun getCodeBlockTypes(element: PsiElement): Set<String> {
         val language = element.language.id.uppercase()

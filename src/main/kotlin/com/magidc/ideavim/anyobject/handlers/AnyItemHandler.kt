@@ -10,52 +10,31 @@ import com.magidc.ideavim.anyobject.handlers.base.BaseJumpHandler
 
 
 open class AnyItemHandler : AbstractPSIBasedHandler(), BaseJumpHandler {
-    companion object {
-        private val commonTargetTypes = setOf("LIST", "ARRAY", "COLLECTION", "MAP", "SET", "SEQUENCE", "TUPLE")
-        private val languageTargetTypes = mapOf(
-            "JAVA" to setOf("ARRAYINITIALIZER"),
-            "JAVASCRIPT" to setOf("OBJECT"),
-            "TYPESCRIPT" to setOf("TUPLETYPE"),
-            "C#" to setOf("ARRAYINITIALIZER", "COLLECTIONINITIALIZER"),
-            "GO" to setOf("SLICE", "COMPOSITELIT"),
-            "PHP" to setOf("ARRAYCREATION"),
-            "RUBY" to setOf("HASH"),
-            "SWIFT" to setOf("DICTIONARY"),
-            "RUST" to setOf("VEC", "VECMACRO"),
-            "R" to setOf("VECTOR"),
-            "PERL" to setOf("ARRAYREF"),
-            "OBJECTIVE-C" to setOf("DICTIONARY", "NSARRAY"),
-            "CLOJURE" to setOf("VECTOR"),
-            "LUA" to setOf("TABLE"),
-            // Data format languages
-            "JSON" to setOf("OBJECT"),
-            "XML" to setOf("TAG", "ELEMENT", "ATTRIBUTELIST"),
-            "YAML" to setOf("MAPPING", "MAPPING", "HASH"),
-        )
-    }
-
-    override fun getLanguageSpecificTypes(): Map<String, Set<String>> = languageTargetTypes
+    override fun getCommonSuffixes(): Set<String> = setOf("LIST", "ARRAY", "COLLECTION", "MAP", "SET", "SEQUENCE", "TUPLE", "INITIALIZER_EXPRESSION")
 
     override fun cleanPrefix(text: String, language: String): String {
-        if (language == "XML") return text.replace("XML_", "")
-        if (language == "YAML") return text.replace("YAML_", "")
-        if (language == "JSON") return text.replace("JSON_", "")
+        if (language == "XML") return text.replace("XML", "")
+        if (language == "YAML") return text.replace("YAML", "")
+        if (language == "JSON") return text.replace("JSON", "")
         return super.cleanPrefix(text, language)
     }
 
-    override fun getSuffixes(): Set<String> = super.getSuffixes() + setOf("LITERAL")
+    private fun isDelimiter(element: PsiElement): Boolean {
+        val elementTypeName = getElementTypeName(element)
+        if (elementTypeName.endsWith("COMMA")) return true
+        if (elementTypeName.contains("LPAR")) return true
+        if (elementTypeName.contains("RPAR")) return true
+        if (elementTypeName.endsWith("BRACE")) return true
 
-    override fun getCommonTypes(): Set<String> = commonTargetTypes
+        // Sometimes argument separators do not appear as children of the main element parent (Pycharm)
+        if (element.parent.children.none { it.elementType == element.elementType }) return true
+        return false
+    }
 
     override fun acceptElement(element: PsiElement, language: String, acceptedNormalizedTypes: Set<String>): Boolean {
-        if (element.text.isBlank()) return false
-        val elementTypeName = element.elementType.toString().lowercase()
-        if (elementTypeName.contains("comma")) return false
-        if (elementTypeName.contains("lpar")) return false
-        if (elementTypeName.contains("rpar")) return false
-
-        val containerElementTypeName = element.parent.elementType.toString().uppercase()
-        return acceptedNormalizedTypes.contains(normalizeElementType(containerElementTypeName, language))
+        if (element.text.isBlank() || isDelimiter(element)) return false
+        val containerElementTypeName = getElementTypeName(element.parent)
+        return getCommonSuffixes().any { containerElementTypeName.endsWith(it) }
     }
 
     override fun getSelection(element: PsiElement, editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
@@ -115,6 +94,7 @@ open class AnyItemHandler : AbstractPSIBasedHandler(), BaseJumpHandler {
     }
 
     private fun getNextElements(element: PsiElement, size: Int): List<PsiElement> {
+        if (size <= 0) return emptyList()
         return element.siblings(withSelf = false).filter { isItem(element, it) }.take(size).toList()
     }
 
@@ -127,23 +107,13 @@ open class AnyItemHandler : AbstractPSIBasedHandler(), BaseJumpHandler {
             "JSON" -> isJsonItem(sourceItem, otherElement)
             "XML" -> isXmlItem(sourceItem, otherElement)
             "YAML" -> isYamlItem(sourceItem, otherElement)
-            else -> {
-                val elementTypeName = otherElement.elementType.toString().lowercase()
-                return sourceItem.elementType == otherElement.elementType || (
-                        otherElement.text.isNotBlank()
-                                // Sometimes argument separators do not appear as children of the main element parent (Pycharm)
-                                && otherElement.parent.children.any { it.elementType == otherElement.elementType }
-                                && !elementTypeName.contains("comma")
-                                && !elementTypeName.contains("lpar")
-                                && !elementTypeName.contains("rpar")
-                        )
-            }
+            else -> return sourceItem.elementType == otherElement.elementType || (otherElement.text.isNotBlank() && !isDelimiter(otherElement))
         }
     }
 
     private fun isJsonItem(sourceItem: PsiElement, otherElement: PsiElement): Boolean {
-        val sourceType = sourceItem.elementType.toString().uppercase()
-        val otherType = otherElement.elementType.toString().uppercase()
+        val sourceType = getElementTypeName(sourceItem)
+        val otherType = getElementTypeName(otherElement)
 
         return sourceType == otherType ||
                 (sourceType.contains("VALUE") && otherType.contains("VALUE")) ||
@@ -151,8 +121,8 @@ open class AnyItemHandler : AbstractPSIBasedHandler(), BaseJumpHandler {
     }
 
     private fun isXmlItem(sourceItem: PsiElement, otherElement: PsiElement): Boolean {
-        val sourceType = sourceItem.elementType.toString().uppercase()
-        val otherType = otherElement.elementType.toString().uppercase()
+        val sourceType = getElementTypeName(sourceItem)
+        val otherType = getElementTypeName(otherElement)
 
         return sourceType == otherType ||
                 (sourceType.contains("XML_TAG") && otherType.contains("XML_TAG")) ||
@@ -160,8 +130,8 @@ open class AnyItemHandler : AbstractPSIBasedHandler(), BaseJumpHandler {
     }
 
     private fun isYamlItem(sourceItem: PsiElement, otherElement: PsiElement): Boolean {
-        val sourceType = sourceItem.elementType.toString().uppercase()
-        val otherType = otherElement.elementType.toString().uppercase()
+        val sourceType = getElementTypeName(sourceItem)
+        val otherType = getElementTypeName(otherElement)
 
         return sourceType == otherType ||
                 (sourceType.contains("SEQUENCE_ITEM") && otherType.contains("SEQUENCE_ITEM")) ||
