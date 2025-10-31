@@ -69,7 +69,7 @@ jobs:
 
       - name: Create Git tag (only if not existing)
         run: |
-          TAG: ${{ format('v{0}-{1}', steps.get_version.outputs.version, steps.release_suffix.outputs.suffix) }}
+          TAG="${{ steps.get_version.outputs.version }}-${{ steps.release_suffix.outputs.suffix }}"
           echo "TAG_NAME=${TAG}" >> $GITHUB_ENV
           if git rev-parse "$TAG" >/dev/null 2>&1; then
             echo "Tag $TAG already exists. Skipping."
