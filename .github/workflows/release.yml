@@ -67,16 +67,16 @@ jobs:
             git tag "$TAG"
             git push origin "$TAG"
           fi
-          echo "$TAG" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
 
       - name: Extract release notes
         id: extract-notes
         run: |
           # Find the first version header and extract until the next version header
           RELEASE_NOTES=$(awk '/^## [0-9]/ {if(found) exit; found=1; next} found' CHANGELOG.md)
-          echo "RELEASE_NOTES<<EOF" >> $GITHUB_OUTPUT
-          echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          echo "RELEASE_NOTES<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$RELEASE_NOTES" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
