@@ -40,19 +40,7 @@ jobs:
         id: get_version
         run: |
           VERSION=$(./gradlew properties -q | grep "^pluginVersion:" | awk '{print $2}')
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Create Git tag  (only if not existing)
-        run: |
-          TAG="v${{ steps.get_version.outputs.version }}"
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "Tag $TAG already exists. Skipping."
-          else
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git tag "$TAG"
-            git push origin "$TAG"
-          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT 
 
       - name: Build with Gradle
         run: ./gradlew buildPlugin
@@ -75,6 +63,18 @@ jobs:
         checks: write
 
       steps:
+        - name: Create Git tag  (only if not existing)
+          run: |
+            tag_name: ${{ format('{0}-stable', steps.get_version.outputs.version) }}
+            if git rev-parse "$TAG" >/dev/null 2>&1; then
+              echo "Tag $TAG already exists. Skipping."
+            else
+              git config user.name "github-actions[bot]"
+              git config user.email "github-actions[bot]@users.noreply.github.com"
+              git tag "$TAG"
+              git push origin "$TAG"
+            fi
+            
         - name: Create GitHub Stable Release
           uses: softprops/action-gh-release@v2
           with:
@@ -99,6 +99,18 @@ jobs:
       checks: write
     
     steps:
+      - name: Create Git tag  (only if not existing)
+        run: |
+          tag_name: ${{ format('{0}-beta', steps.get_version.outputs.version) }}
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists. Skipping."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git tag "$TAG"
+            git push origin "$TAG"
+          fi
+
       - name: Create GitHub Beta Release
         uses: softprops/action-gh-release@v2
         with:
