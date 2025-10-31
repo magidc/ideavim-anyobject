@@ -54,55 +54,22 @@ jobs:
           echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-  stable-release:
-      if: github.ref == 'refs/heads/release'
-      runs-on: ubuntu-latest
-      permissions:
-        contents: write
-        pull-requests: write
-        checks: write
-
-      steps:
-        - name: Create Git tag  (only if not existing)
-          run: |
-            tag_name: ${{ format('{0}-stable', steps.get_version.outputs.version) }}
-            echo "TAG_NAME=${tag_name}" >> $GITHUB_ENV
-            if git rev-parse "$TAG" >/dev/null 2>&1; then
-              echo "Tag $TAG already exists. Skipping."
-            else
-              git config user.name "github-actions[bot]"
-              git config user.email "github-actions[bot]@users.noreply.github.com"
-              git tag "$TAG"
-              git push origin "$TAG"
-            fi
-            
-        - name: Create GitHub Stable Release
-          uses: softprops/action-gh-release@v2
-          with:
-            tag_name: ${{ env.TAG_NAME }}
-            name: ${{ env.TAG_NAME }}
-            files: build/distributions/*.zip
-            body: ${{ steps.extract-notes.outputs.release_notes }}
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-        - name: Publish to Jetbrains Plugin Marketplace
-          env:
-            PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
-          run: ./gradlew publishPlugin
-
-  beta-release:
-    if: github.ref == 'refs/heads/beta'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      checks: write
-    
-    steps:
-      - name: Create Git tag  (only if not existing)
+      - name: Set release suffix based on branch
+        id: release_suffix
         run: |
-          tag_name: ${{ format('{0}-beta', steps.get_version.outputs.version) }}
+          BRANCH="${{ github.ref_name }}"
+          if [[ "$BRANCH" == "release" ]]; then
+            RELEASE_SUFFIX="stable"
+          elif [[ "$BRANCH" == "beta" ]]; then
+            RELEASEO_SUFFIX="beta"
+          else
+            RELEASE_SUFFIX="${BRANCH}"
+          fi
+          echo "suffix=${RELEASE_SUFFIX}" >> $GITHUB_OUTPUT
+
+      - name: Create Git tag (only if not existing)
+        run: |
+          tag_name: ${{ format('v{0}-{1}', steps.get_version.outputs.version, steps.release_suffix.outputs.suffix) }}
           echo "TAG_NAME=${tag_name}" >> $GITHUB_ENV
           if git rev-parse "$TAG" >/dev/null 2>&1; then
             echo "Tag $TAG already exists. Skipping."
@@ -112,8 +79,8 @@ jobs:
             git tag "$TAG"
             git push origin "$TAG"
           fi
-
-      - name: Create GitHub Beta Release
+          
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG_NAME }}
@@ -122,4 +89,20 @@ jobs:
           body: ${{ steps.extract-notes.outputs.release_notes }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+  stable-release:
+      if: github.ref == 'refs/heads/release'
+      runs-on: ubuntu-latest
+      permissions:
+        contents: write
+        pull-requests: write
+        checks: write
+
+      steps:
+        - name: Publish to Jetbrains Plugin Marketplace
+          env:
+            PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
+          run: ./gradlew publishPlugin
+
 
