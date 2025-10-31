@@ -66,6 +66,7 @@ jobs:
         - name: Create Git tag  (only if not existing)
           run: |
             tag_name: ${{ format('{0}-stable', steps.get_version.outputs.version) }}
+            echo "TAG_NAME=${tag_name}" >> $GITHUB_ENV
             if git rev-parse "$TAG" >/dev/null 2>&1; then
               echo "Tag $TAG already exists. Skipping."
             else
@@ -78,8 +79,8 @@ jobs:
         - name: Create GitHub Stable Release
           uses: softprops/action-gh-release@v2
           with:
-            tag_name: ${{ format('{0}-stable', steps.get_version.outputs.version) }}
-            name: ${{ format('{0}-stable', steps.get_version.outputs.version) }}
+            tag_name: ${{ env.TAG_NAME }}
+            name: ${{ env.TAG_NAME }}
             files: build/distributions/*.zip
             body: ${{ steps.extract-notes.outputs.release_notes }}
           env:
@@ -102,6 +103,7 @@ jobs:
       - name: Create Git tag  (only if not existing)
         run: |
           tag_name: ${{ format('{0}-beta', steps.get_version.outputs.version) }}
+          echo "TAG_NAME=${tag_name}" >> $GITHUB_ENV
           if git rev-parse "$TAG" >/dev/null 2>&1; then
             echo "Tag $TAG already exists. Skipping."
           else
@@ -114,8 +116,8 @@ jobs:
       - name: Create GitHub Beta Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ format('{0}-beta', steps.get_version.outputs.version) }}
-          name: ${{ format('{0}-beta', steps.get_version.outputs.version) }}
+          tag_name: ${{ env.TAG_NAME }}
+          name: ${{ env.TAG_NAME }}
           files: build/distributions/*.zip
           body: ${{ steps.extract-notes.outputs.release_notes }}
         env:
