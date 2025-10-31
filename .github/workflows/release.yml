@@ -88,7 +88,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-
   stable-release:
       if: github.ref == 'refs/heads/release'
       runs-on: ubuntu-latest
