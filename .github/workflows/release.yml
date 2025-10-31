@@ -58,7 +58,6 @@ jobs:
           fi
 
           TAG="${{ steps.get_version.outputs.version }}-${SUFFIX}"
-          echo "$TAG" >> $GITHUB_OUTPUT
 
           if git rev-parse "$TAG" >/dev/null 2>&1; then
             echo "Tag $TAG already exists. Skipping."
@@ -68,6 +67,7 @@ jobs:
             git tag "$TAG"
             git push origin "$TAG"
           fi
+          echo "$TAG" >> $GITHUB_OUTPUT
 
       - name: Extract release notes
         id: extract-notes
