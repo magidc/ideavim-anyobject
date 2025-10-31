@@ -54,22 +54,18 @@ jobs:
           echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Set release suffix based on branch
-        id: release_suffix
+      - name: Create Git tag (only if not existing)
         run: |
           BRANCH="${{ github.ref_name }}"
           if [[ "$BRANCH" == "release" ]]; then
-            RELEASE_SUFFIX="stable"
+            SUFFIX="stable"
           elif [[ "$BRANCH" == "beta" ]]; then
-            RELEASE_SUFFIX="beta"
+            SUFFIX="beta"
           else
-            RELEASE_SUFFIX="${BRANCH}"
+            SUFFIX="${BRANCH}"
           fi
-          echo "suffix=${RELEASE_SUFFIX}" >> $GITHUB_OUTPUT
 
-      - name: Create Git tag (only if not existing)
-        run: |
-          TAG="${{ steps.get_version.outputs.version }}-${{ steps.release_suffix.outputs.suffix }}"
+          TAG="${{ steps.get_version.outputs.version }}-${ SUFFIX }"
           echo "TAG_NAME=${TAG}" >> $GITHUB_ENV
           if git rev-parse "$TAG" >/dev/null 2>&1; then
             echo "Tag $TAG already exists. Skipping."
