@@ -37,6 +37,10 @@ open class AnyItemHandler : AbstractPSIBasedHandler(), BaseJumpHandler {
         return getCommonSuffixes().any { containerElementTypeName.endsWith(it) }
     }
 
+    private fun <T> List<T>.getOrLast(index: Int): T {
+        return getOrElse(index) { last() }
+    }
+
     override fun getSelection(element: PsiElement, editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
         if (element.text.isBlank()) return null
 
@@ -48,7 +52,7 @@ open class AnyItemHandler : AbstractPSIBasedHandler(), BaseJumpHandler {
         val elementBefore = getPreviousElement(element, false)
         val elementsAfter = getNextElements(element, size)
 
-        rightOffset = if (elementsAfter.isNotEmpty() && elementsAfter.size < size) elementsAfter.last().textRange.endOffset else rightOffset
+        rightOffset = if (size > 1 && elementsAfter.isNotEmpty()) elementsAfter.getOrLast(size - 2).textRange.endOffset else rightOffset
 
         if (null == elementBefore) {
             val elementAfterSelection = if (elementsAfter.size == size) elementsAfter.last() else null
