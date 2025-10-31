@@ -61,7 +61,7 @@ jobs:
           if [[ "$BRANCH" == "release" ]]; then
             RELEASE_SUFFIX="stable"
           elif [[ "$BRANCH" == "beta" ]]; then
-            RELEASEO_SUFFIX="beta"
+            RELEASE_SUFFIX="beta"
           else
             RELEASE_SUFFIX="${BRANCH}"
           fi
