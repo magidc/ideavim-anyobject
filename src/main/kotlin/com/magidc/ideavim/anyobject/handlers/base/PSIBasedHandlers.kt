@@ -4,6 +4,7 @@ import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
+import com.intellij.psi.util.childLeafs
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.startOffset
 import com.maddyhome.idea.vim.api.VimEditor
@@ -149,9 +150,9 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
         if (isInner) {
             val innerBlock = findInnerCodeBlock(element, editor) ?: element
             if (languageUsesDelimiters.getOrDefault(getLanguage(element), false)) {
-                val openBrace = innerBlock.children.firstOrNull { getElementTypeName(it) == "LBRACE" }
+                val openBrace = innerBlock.parent.childLeafs().firstOrNull { it.text =="{" || getElementTypeName(it) == "LBRACE" }
                 if (null != openBrace) {
-                    val closeBrace = innerBlock.children.firstOrNull { getElementTypeName(it) == "RBRACE" }
+                    val closeBrace = innerBlock.parent.childLeafs().lastOrNull { it.text =="}" || getElementTypeName(it) == "RBRACE" }
                     if (null != closeBrace)
                         return TextRange(openBrace.textRange.endOffset, closeBrace.textRange.startOffset)
                 }

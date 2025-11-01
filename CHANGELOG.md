@@ -3,6 +3,7 @@
 ## 2.0.2
 
 - **New approach to identify PSI target elements**
+- **Improved PHPStorm support**
 
 ### AnySubword (`u`)
 

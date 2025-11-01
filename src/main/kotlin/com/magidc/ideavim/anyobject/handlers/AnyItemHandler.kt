@@ -25,9 +25,6 @@ open class AnyItemHandler : AbstractPSIBasedHandler(), BaseJumpHandler {
         if (elementTypeName.contains("LPAR")) return true
         if (elementTypeName.contains("RPAR")) return true
         if (elementTypeName.endsWith("BRACE")) return true
-
-        // Sometimes argument separators do not appear as children of the main element parent (Pycharm)
-        if (element.parent.children.none { it.elementType == element.elementType }) return true
         return false
     }
 
