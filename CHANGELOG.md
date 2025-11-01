@@ -2,9 +2,9 @@
 
 ## 2.0.2
 
-### AnySubword (`u`)
+- **New approach to identify PSI target elements**
 
-- ** New approach to identify PSI target elements **
+### AnySubword (`u`)
 
 Nested words in different case styles:
 
