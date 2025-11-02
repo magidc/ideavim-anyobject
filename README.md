@@ -21,7 +21,7 @@ concepts programmers use to think about code: classes, functions, arguments, loo
 | **AnyItem**         | Items within collections, lists, or arrays                                              | `i`             | ✓                   | ✓    | ✓             |
 | **AnyQuote**        | Content enclosed between any type of quotes (single, double, backticks)                 | `q`             | ✓                   | ✗    | ✗             |
 | **AnyBracket**      | Content enclosed between any type of brackets (parentheses, square, curly, angle, etc.) | `o`             | ✓                   | ✗    | ✗             |
-| **AnySubword**      | Words nested in longer words (`camel case`, `snake case`, `dash case`)                  | `u`             | ✓                   | ✓    | x             |
+| **AnySubword**      | Words nested in longer words (`camel case`, `snake case`, `dash case`)                  | `u`             | ✓                   | ✓    | ✓             |
 | **AnyDocument**     | Entire document content                                                                 | `d`             | ✓                   | ✗    | ✗             |
 | **AnyBlockComment** | Block comments across different programming languages (`/* */`, `<!-- -->`, etc.)       | `k`             | ✓                   | ✗    | ✗             |
 | **AnyIndentBlock**  | Code blocks based on indentation levels                                                 | `n`             | ✓                   | ✗    | ✗             |

@@ -15,8 +15,8 @@ class AnySubwordHandler : TextBasedHandler(), BaseJumpHandler {
         val supportedDelimiters = setOf('-', '_')
     }
 
-    override fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int, isInner: Boolean): TextRange? {
-        return if (isInner) findInnerTextSelection(text, caretOffset) else findOuterTextSelection(text, caretOffset)
+    override fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int, isInner: Boolean, size: Int): TextRange? {
+        return if (isInner) findInnerTextSelection(text, caretOffset) else findOuterTextSelection(text, caretOffset, size)
     }
 
     private fun findInnerTextSelection(text: CharSequence, caretOffset: Int): TextRange? {
@@ -30,11 +30,25 @@ class AnySubwordHandler : TextBasedHandler(), BaseJumpHandler {
         return null
     }
 
-    private fun findOuterTextSelection(text: CharSequence, caretOffset: Int): TextRange? {
+    private fun findOuterTextSelection(text: CharSequence, caretOffset: Int, size: Int): TextRange? {
+        var firstRange: IntRange? = null
+        var lastRange: IntRange? = null
+        var count = 0
         for (m in outerSelectionRegex.findAll(text)) {
-            if (caretOffset in m.range) return TextRange(m.range.first, m.range.last + 1)
+            val range = m.range
+            if (caretOffset in range) {
+                if (null == firstRange)
+                    firstRange = range
+                lastRange = range
+                count = 1
+            } else if (count > 0) {
+                count++
+                lastRange = range
+            }
+            if (count == size) break
         }
-        return null
+        if (null == firstRange || null == lastRange) return null
+        return TextRange(firstRange.first, lastRange.last + 1)
     }
 
     override fun findJumpElementStartOffset(editor: VimEditor, next: Boolean): Int? {

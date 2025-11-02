@@ -6,7 +6,7 @@ import com.magidc.ideavim.anyobject.handlers.base.TextBasedHandler
 import kotlin.math.max
 
 class AnyIndentBlockHandler : TextBasedHandler() {
-    override fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int, isInner: Boolean): TextRange {
+    override fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int, isInner: Boolean, size: Int): TextRange {
         TODO("Not yet implemented")
     }
 

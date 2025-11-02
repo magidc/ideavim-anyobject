@@ -7,11 +7,11 @@ import com.maddyhome.idea.vim.common.TextRange
  * Base class for all handlers that are based on raw text analysis
  */
 abstract class TextBasedHandler() : BaseSelectionHandler {
-    abstract fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int, isInner: Boolean): TextRange?
+    abstract fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int, isInner: Boolean, size: Int = 1): TextRange?
 
     override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
         val caret = editor.currentCaret()
-        return findTextSelection(editor.text(), 0, caret.offset, isInner)
+        return findTextSelection(editor.text(), 0, caret.offset, isInner, size)
     }
 }
 
@@ -29,7 +29,7 @@ open class DelimiterHandler(val sameLine: Boolean, val delimiterPairs: Collectio
         return findTextSelection(text, textOffset, caretOffset, isInner)
     }
 
-    override fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int, isInner: Boolean): TextRange? {
+    override fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int, isInner: Boolean, size: Int): TextRange? {
         var bestMatch: TextRange? = null
         var bestMatchLength = Int.MAX_VALUE
 
