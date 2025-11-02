@@ -34,5 +34,4 @@ class AnyIndentBlockHandler : TextBasedHandler() {
             editor.getLineEndOffset(toLine)
         )
     }
-
 }

@@ -44,14 +44,15 @@ The plugin supports jumping to the next/previous text object using `]` (next) an
 
 - `dia` - Delete argument
 - `daa` - Delete argument and its separator
-- `d2a` - Deletes argument and the next one including separators
+- `d2ia` - Deletes argument and the next without including separators
 - `cia` - Change argument
 - `caa` - Change argument and its separator
-- `c2a` - Change argument and next one including separators
+- `c2aa` - Change argument and next one including separators
 - `yia` - Yank/Copy argument
 - `yaa` - Yank/Copy argument and its separator
-- `via` - Visually select argument
-- `v3a` - Visually select three arguments
+- `via` - Visually select argument 
+- `v3aa` - Visually select three arguments including separators
+- `v3ia` - Visually select three arguments without including separators
 - `]a` - Jump to next argument
 - `[a` - Jump to previous argument
 

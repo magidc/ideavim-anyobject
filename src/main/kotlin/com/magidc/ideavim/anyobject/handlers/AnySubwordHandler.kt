@@ -3,11 +3,12 @@ package com.magidc.ideavim.anyobject.handlers
 import andel.intervals.toReversedList
 import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.common.TextRange
+import com.magidc.ideavim.anyobject.handlers.base.BaseCountSelectionHandler
 import com.magidc.ideavim.anyobject.handlers.base.BaseJumpHandler
 import com.magidc.ideavim.anyobject.handlers.base.TextBasedHandler
 
 
-class AnySubwordHandler : TextBasedHandler(), BaseJumpHandler {
+class AnySubwordHandler : TextBasedHandler(), BaseJumpHandler, BaseCountSelectionHandler {
     private companion object {
         // It naturally ignores - and _ since those characters are not part of the token patterns, so dash-case and snake_case are split into tokens on those separators.
         val innerSelectionRegex = Regex("""[A-Z]?[a-z]+|[A-Z]+(?![a-z])|\d+""")

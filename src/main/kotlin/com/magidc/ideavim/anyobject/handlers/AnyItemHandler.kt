@@ -6,10 +6,10 @@ import com.intellij.psi.util.siblings
 import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.common.TextRange
 import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
-import com.magidc.ideavim.anyobject.handlers.base.BaseJumpHandler
+import com.magidc.ideavim.anyobject.handlers.base.BaseCountSelectionHandler
 
 
-open class AnyItemHandler : AbstractPSIBasedHandler(), BaseJumpHandler {
+open class AnyItemHandler : AbstractPSIBasedHandler(), BaseCountSelectionHandler {
     override fun getCommonSuffixes(): Set<String> = setOf("LIST", "ARRAY", "COLLECTION", "MAP", "SET", "SEQUENCE", "TUPLE", "INITIALIZER_EXPRESSION")
 
     override fun cleanPrefix(text: String, language: String): String {

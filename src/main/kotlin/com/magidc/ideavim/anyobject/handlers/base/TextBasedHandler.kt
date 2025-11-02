@@ -168,6 +168,4 @@ open class DelimiterHandler(val sameLine: Boolean, val delimiterPairs: Collectio
         val regex = searchStrings.joinToString("|") { Regex.escape(it) }.toRegex()
         return regex.findAll(text).toList()
     }
-
-
 }
