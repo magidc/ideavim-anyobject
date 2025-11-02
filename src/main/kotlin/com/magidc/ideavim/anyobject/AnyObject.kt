@@ -33,7 +33,6 @@ import com.magidc.ideavim.anyobject.handlers.AnyItemHandler
 import com.magidc.ideavim.anyobject.handlers.AnyLoopHandler
 import com.magidc.ideavim.anyobject.handlers.AnyQuoteHandler
 import com.magidc.ideavim.anyobject.handlers.AnySubwordHandler
-import com.magidc.ideavim.anyobject.handlers.base.BaseCountSelectionHandler
 import com.magidc.ideavim.anyobject.handlers.base.BaseJumpHandler
 import com.magidc.ideavim.anyobject.handlers.base.BaseSelectionHandler
 
@@ -120,7 +119,7 @@ class AnyObject : VimExtension {
             createSelection(handler, false),
             false
         )
-        if (handler is BaseCountSelectionHandler) {
+        if (handler.allowsCountSelection()) {
             for (n in 1..20) {
                 VimExtensionFacade.putExtensionHandlerMapping(
                     MappingMode.XO,

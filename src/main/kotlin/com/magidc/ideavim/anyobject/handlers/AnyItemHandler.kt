@@ -6,10 +6,11 @@ import com.intellij.psi.util.siblings
 import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.common.TextRange
 import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
-import com.magidc.ideavim.anyobject.handlers.base.BaseCountSelectionHandler
 
 
-open class AnyItemHandler : AbstractPSIBasedHandler(), BaseCountSelectionHandler {
+open class AnyItemHandler : AbstractPSIBasedHandler() {
+    override fun allowsCountSelection(): Boolean = true
+
     override fun getCommonSuffixes(): Set<String> = setOf("LIST", "ARRAY", "COLLECTION", "MAP", "SET", "SEQUENCE", "TUPLE", "INITIALIZER_EXPRESSION")
 
     override fun cleanPrefix(text: String, language: String): String {
@@ -39,15 +40,21 @@ open class AnyItemHandler : AbstractPSIBasedHandler(), BaseCountSelectionHandler
     }
 
     override fun getSelection(element: PsiElement, editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
-        if (element.text.isBlank()) return null
+        if (element.text.isBlank() || size == 0) return null
 
         var leftOffset: Int = element.textRange.startOffset
         var rightOffset = element.textRange.endOffset
 
-        if (isInner) return TextRange(leftOffset, element.textRange.endOffset)
+        // Returns a maximum of "size" elements after the current one. If "size" elements are returned, the last one will be out of the target range.
+        val elementsAfter = getNextElements(element, size)
+
+        if (isInner) {
+            if (elementsAfter.size >= 2)
+                return TextRange(leftOffset, elementsAfter[elementsAfter.size - 2].textRange.endOffset)
+            return TextRange(leftOffset, rightOffset)
+        }
 
         val elementBefore = getPreviousElement(element, false)
-        val elementsAfter = getNextElements(element, size)
 
         rightOffset = if (size > 1 && elementsAfter.isNotEmpty()) elementsAfter.getOrLast(size - 2).textRange.endOffset else rightOffset
 

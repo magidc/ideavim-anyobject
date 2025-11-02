@@ -26,6 +26,7 @@ class AnySubwordTest : BasePlatformTestCase() {
     }
 
     fun testInnerCamelCase() {
+        // Single item selection
         // Caret in the middle of the subword
         executeTest(String.format("this is %sf%soo%sBar", START, CARET, END))
         executeTest(String.format("this is foo%sB%sar%s", START, CARET, END))
@@ -35,6 +36,17 @@ class AnySubwordTest : BasePlatformTestCase() {
         // Caret at the end of the subword
         executeTest(String.format("this is %sfo%so%sBar", START, CARET, END))
         executeTest(String.format("this is foo%sBa%sr%s", START, CARET, END))
+
+        // Count selections
+        // Caret in the middle of the subword
+        executeTest(String.format("this is %sf%sooBar%sCo other", START, CARET, END), size = 2)
+        executeTest(String.format("this is foo%sB%sar%s other", START, CARET, END), size = 2)
+        // Caret at the start of the subword
+        executeTest(String.format("this is %s%sfooBar%sCo other", START, CARET, END), size = 2)
+        executeTest(String.format("this is foo%s%sBar%s other", START, CARET, END), size = 2)
+        // Caret at the end of the subword
+        executeTest(String.format("this is %sfo%soBar%sCo other", START, CARET, END), size = 2)
+        executeTest(String.format("this is foo%sBa%sr%s other", START, CARET, END), size = 2)
 
         // Subword = Word
         executeTest(String.format("this is %sfooba%sr%s", START, CARET, END))
@@ -59,15 +71,15 @@ class AnySubwordTest : BasePlatformTestCase() {
 
         // Count selections
         // Caret in the middle of the subword
-        executeTest(String.format("this is %sf%sooBar%s", START, CARET, END), inner = false, size = 2)
-        executeTest(String.format("this is foo%sB%sar%s", START, CARET, END), inner = false, size = 2)
+        executeTest(String.format("this is %sf%sooBar%sCo other", START, CARET, END), inner = false, size = 2)
+        executeTest(String.format("this is foo%sB%sar%s other", START, CARET, END), inner = false, size = 2)
 
         // Caret at the start of the subword
-        executeTest(String.format("this is %s%sfooBar%s", START, CARET, END), inner = false, size = 2)
-        executeTest(String.format("this is foo%s%sBar%s", START, CARET, END), inner = false, size = 2)
+        executeTest(String.format("this is %s%sfooBar%sCo other", START, CARET, END), inner = false, size = 2)
+        executeTest(String.format("this is foo%s%sBar%s other", START, CARET, END), inner = false, size = 2)
         // Caret at the end of the subword
-        executeTest(String.format("this is %sfo%soBar%s", START, CARET, END), inner = false, size = 2)
-        executeTest(String.format("this is foo%sBa%sr%s", START, CARET, END), inner = false, size = 2)
+        executeTest(String.format("this is %sfo%soBar%sCo other", START, CARET, END), inner = false, size = 2)
+        executeTest(String.format("this is foo%sBa%sr%s other", START, CARET, END), inner = false, size = 2)
 
         // Subword = Word
         executeTest(String.format("this is %sfooba%sr%s", START, CARET, END), inner = false)
@@ -77,6 +89,7 @@ class AnySubwordTest : BasePlatformTestCase() {
     }
 
     fun testInnerSnakeCase() {
+        // Single item selection
         // Caret in the middle of the subword
         executeTest(String.format("this is %sf%soo%s_bar", START, CARET, END))
         executeTest(String.format("this is foo_%sb%sar%s", START, CARET, END))
@@ -86,6 +99,17 @@ class AnySubwordTest : BasePlatformTestCase() {
         // Caret at the end of the subword
         executeTest(String.format("this is %sfoo%s%s_bar", START, END, CARET))
         executeTest(String.format("this is foo_%sba%sr%s", START, CARET, END))
+
+        // Count selections
+        // Caret in the middle of the subword
+        executeTest(String.format("this is %sf%soo_bar%s_co other", START, CARET, END), size = 2)
+        executeTest(String.format("this is foo_%sb%sar%s other", START, CARET, END), size = 2)
+        // Caret at the start of the subword
+        executeTest(String.format("this is %s%sfoo_bar%s_co other", START, CARET, END), size = 2)
+        executeTest(String.format("this is foo_%s%sbar%s other", START, CARET, END), size = 2)
+        // Caret at the end of the subword
+        executeTest(String.format("this is %sfoo%s_bar%s_co other", START, CARET, END), size = 2)
+        executeTest(String.format("this is foo_%sba%sr%s other", START, CARET, END), size = 2)
     }
 
     fun testOuterSnakeCase() {
@@ -99,21 +123,23 @@ class AnySubwordTest : BasePlatformTestCase() {
         // Caret at the end of the subword
         executeTest(String.format("this is %sfoo%s_%sbar", START, CARET, END), inner = false)
         executeTest(String.format("this is foo_%sba%sr%s", START, CARET, END), inner = false)
-        
+
         // Count selections
         // Caret in the middle of the subword
-        executeTest(String.format("this is %sf%soo_bar_%sco", START, CARET, END), inner = false, size = 2)
-        executeTest(String.format("this is foo_%sb%sar_co%s", START, CARET, END), inner = false, size = 2)
+        executeTest(String.format("this is %sf%soo_bar_%sco other", START, CARET, END), inner = false, size = 2)
+        executeTest(String.format("this is foo_%sb%sar%s other", START, CARET, END), inner = false, size = 2)
         // Caret at the start of the subword
-        executeTest(String.format("this is %s%sfoo_bar_%sco", START, CARET, END), inner = false, size = 2)
-        executeTest(String.format("this is foo_%s%sbar_co%s", START, CARET, END), inner = false, size = 2)
+        executeTest(String.format("this is %s%sfoo_bar_%sco other", START, CARET, END), inner = false, size = 2)
+        executeTest(String.format("this is foo_%s%sbar%s other", START, CARET, END), inner = false, size = 2)
         // Caret at the end of the subword
-        executeTest(String.format("this is %sfoo%s_bar_%sco", START, CARET, END), inner = false, size = 2)
-        executeTest(String.format("this is foo_%sba%sr_co%s", START, CARET, END), inner = false, size = 2)
-
+        executeTest(String.format("this is %sfoo%s_bar_%sco other", START, CARET, END), inner = false, size = 2)
+        executeTest(String.format("this is foo_%sba%sr%s other", START, CARET, END), inner = false, size = 2)
     }
 
     fun testInnerDashCase() {
+        executeTest(String.format("this is %sf%soo-bar%s-co other", START, CARET, END), size = 2)
+
+        // Single item selection
         // Caret in the middle of the subword
         executeTest(String.format("this is %sf%soo%s-bar", START, CARET, END))
         executeTest(String.format("this is foo-%sb%sar%s", START, CARET, END))
@@ -123,6 +149,17 @@ class AnySubwordTest : BasePlatformTestCase() {
         // Caret at the end of the subword
         executeTest(String.format("this is %sfoo%s%s-bar", START, END, CARET))
         executeTest(String.format("this is foo-%sba%sr%s", START, CARET, END))
+
+        // Count selections
+        // Caret in the middle of the subword
+        executeTest(String.format("this is %sf%soo-bar%s-co other", START, CARET, END), size = 2)
+        executeTest(String.format("this is foo-%sb%sar%s other", START, CARET, END), size = 2)
+        // Caret at the start of the subword
+        executeTest(String.format("this is %s%sfoo-bar%s-co other", START, CARET, END), size = 2)
+        executeTest(String.format("this is foo-%s%sbar%s other", START, CARET, END), size = 2)
+        // Caret at the end of the subword
+        executeTest(String.format("this is %sfoo%s-bar%s-co other", START, CARET, END), size = 2)
+        executeTest(String.format("this is foo-%sba%sr%s other", START, CARET, END), size = 2)
     }
 
     fun testOuterDashCase() {
@@ -139,13 +176,13 @@ class AnySubwordTest : BasePlatformTestCase() {
 
         // Count selections
         // Caret in the middle of the subword
-        executeTest(String.format("this is %sf%soo-bar-%sco", START, CARET, END), inner = false, size = 2)
-        executeTest(String.format("this is foo-%sb%sar-co%s", START, CARET, END), inner = false,size=2)
+        executeTest(String.format("this is %sf%soo-bar-%sco other", START, CARET, END), inner = false, size = 2)
+        executeTest(String.format("this is foo-%sb%sar%s other", START, CARET, END), inner = false, size = 2)
         // Caret at the start of the subword
-        executeTest(String.format("this is %s%sfoo-bar-%sco", START, CARET, END), inner = false,size=2)
-        executeTest(String.format("this is foo-%s%sbar-co%s", START, CARET, END), inner = false,size=2)
+        executeTest(String.format("this is %s%sfoo-bar-%sco other", START, CARET, END), inner = false, size = 2)
+        executeTest(String.format("this is foo-%s%sbar%s other", START, CARET, END), inner = false, size = 2)
         // Caret at the end of the subword
-        executeTest(String.format("this is %sfoo%s-bar-%sco", START, CARET, END), inner = false,size=2)
-        executeTest(String.format("this is foo-%sba%sr-co%s", START, CARET, END), inner = false,size=2)
+        executeTest(String.format("this is %sfoo%s-bar-%sco other", START, CARET, END), inner = false, size = 2)
+        executeTest(String.format("this is foo-%sba%sr%s other", START, CARET, END), inner = false, size = 2)
     }
 }

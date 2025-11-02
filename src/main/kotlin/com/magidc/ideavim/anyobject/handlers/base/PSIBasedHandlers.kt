@@ -14,7 +14,7 @@ import java.nio.file.Path
 /**
  * Base class for all handlers that operate on Intellij PSI DOM
  */
-abstract class AbstractPSIBasedHandler : BaseJumpHandler {
+abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
     companion object {
         private val cleanDelimitersRegex = "[_,-]".toRegex()
@@ -150,9 +150,9 @@ abstract class AbstractPSIBasedHandler : BaseJumpHandler {
         if (isInner) {
             val innerBlock = findInnerCodeBlock(element, editor) ?: element
             if (languageUsesDelimiters.getOrDefault(getLanguage(element), false)) {
-                val openBrace = innerBlock.parent.childLeafs().firstOrNull { it.text =="{" || getElementTypeName(it) == "LBRACE" }
+                val openBrace = innerBlock.parent.childLeafs().firstOrNull { it.text == "{" || getElementTypeName(it) == "LBRACE" }
                 if (null != openBrace) {
-                    val closeBrace = innerBlock.parent.childLeafs().lastOrNull { it.text =="}" || getElementTypeName(it) == "RBRACE" }
+                    val closeBrace = innerBlock.parent.childLeafs().lastOrNull { it.text == "}" || getElementTypeName(it) == "RBRACE" }
                     if (null != closeBrace)
                         return TextRange(openBrace.textRange.endOffset, closeBrace.textRange.startOffset)
                 }

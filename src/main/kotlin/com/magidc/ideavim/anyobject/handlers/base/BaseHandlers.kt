@@ -10,10 +10,7 @@ interface BaseSelectionHandler : BaseHandler {
      * Finds the selection to operate on.
      */
     fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): TextRange?
-}
-
-interface BaseCountSelectionHandler : BaseHandler {
-    fun findSelection(editor: VimEditor, isInner: Boolean, size: Int = 1): TextRange?
+    fun allowsCountSelection(): Boolean = false
 }
 
 interface BaseJumpHandler : BaseSelectionHandler {
