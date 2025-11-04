@@ -28,7 +28,7 @@ concepts programmers use to think about code: classes, functions, arguments, loo
 
 - **Inner/Outer**: All text objects support both `i` (inner) and `a` (around/outer) selection modes following standard Vim conventions
 - **Jump**: Text objects with jump support allow navigation using `]` (next) and `[` (previous) motions unless other mappings are specified (see [Customization](#customization))
-- **Count motions**: Text objects with count support allow selecting multiple consecutive instances. For example `d2a` will delete two arguments
+- **Count motions**: Text objects with count support allow selecting multiple consecutive instances. For example `d2aa` will delete two arguments including their separators
 
 ## Usage
 
