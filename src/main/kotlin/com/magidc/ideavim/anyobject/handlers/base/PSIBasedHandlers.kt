@@ -77,8 +77,9 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
         while (elementQueue.isNotEmpty()) {
             val currentElement = elementQueue.removeFirst()
-            if (!currentElement.textRange.contains(caretOffset))
+            if (currentElement.textRange.endOffset < caretOffset)
                 continue
+            elementQueue.addAll(currentElement.children)
             val elementTypeName = getElementTypeName(currentElement)
             if (codeBlockTypes.any { blockType ->
                     when {
@@ -88,7 +89,6 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
                     }
                 })
                 return currentElement
-            elementQueue.addAll(currentElement.children)
         }
         return null
     }
@@ -102,10 +102,10 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
     override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
         val currentElement = findCurrentElement(editor) ?: return null
         val objectElement = findObjectElement(currentElement) ?: return null
-        return getSelection(objectElement, editor, isInner, size)
+        return getSelection(objectElement, editor, isInner)
     }
 
-    private fun findCurrentElement(editor: VimEditor): PsiElement? {
+    protected fun findCurrentElement(editor: VimEditor): PsiElement? {
         val projectManager = ProjectManager.getInstance()
         if (null == projectManager || projectManager.openProjects.isEmpty()) return null
         val project = projectManager.openProjects[0]
@@ -146,7 +146,7 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
         return acceptedNormalizedTypes.contains(normalizeElementType(elementTypeName, language))
     }
 
-    protected open fun getSelection(element: PsiElement, editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
+     private fun getSelection(element: PsiElement, editor: VimEditor, isInner: Boolean): TextRange {
         if (isInner) {
             val innerBlock = findInnerCodeBlock(element, editor) ?: element
             if (languageUsesDelimiters.getOrDefault(getLanguage(element), false)) {

@@ -9,6 +9,11 @@ import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
 
 
 open class AnyItemHandler : AbstractPSIBasedHandler() {
+    companion object {
+        val delimiters = setOf(",", "(", ")", "{", "}")
+    }
+
+
     override fun allowsCountSelection(): Boolean = true
 
     override fun getCommonSuffixes(): Set<String> = setOf("LIST", "ARRAY", "COLLECTION", "MAP", "SET", "SEQUENCE", "TUPLE", "INITIALIZER_EXPRESSION")
@@ -21,6 +26,7 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
     }
 
     private fun isDelimiter(element: PsiElement): Boolean {
+        if (delimiters.contains(element.text)) return true
         val elementTypeName = getElementTypeName(element)
         if (elementTypeName.endsWith("COMMA")) return true
         if (elementTypeName.contains("LPAR")) return true
@@ -39,14 +45,17 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
         return getOrElse(index) { last() }
     }
 
-    override fun getSelection(element: PsiElement, editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
-        if (element.text.isBlank() || size == 0) return null
+    override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
+        val currentElement = findCurrentElement(editor) ?: return null
+        val objectElement = findObjectElement(currentElement) ?: super.getNextElement(currentElement) ?: return null
 
-        var leftOffset: Int = element.textRange.startOffset
-        var rightOffset = element.textRange.endOffset
+        if (objectElement.text.isBlank() || size == 0) return null
+
+        var leftOffset: Int = objectElement.textRange.startOffset
+        var rightOffset = objectElement.textRange.endOffset
 
         // Returns a maximum of "size" elements after the current one. If "size" elements are returned, the last one will be out of the target range.
-        val elementsAfter = getNextElements(element, size)
+        val elementsAfter = getNextElements(objectElement, size)
 
         if (isInner) {
             if (elementsAfter.size >= 2)
@@ -54,7 +63,7 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
             return TextRange(leftOffset, rightOffset)
         }
 
-        val elementBefore = getPreviousElement(element, false)
+        val elementBefore = getPreviousElement(objectElement, false)
 
         rightOffset = if (size > 1 && elementsAfter.isNotEmpty()) elementsAfter.getOrLast(size - 2).textRange.endOffset else rightOffset
 
@@ -110,40 +119,6 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
      * Given an element (sourceItem) that is an item targeted by this handler, check if the given element (otherElement) is also an item.
      */
     private fun isItem(sourceItem: PsiElement, otherElement: PsiElement): Boolean {
-        val language = getLanguage(sourceItem)
-        return when (language) {
-            "JSON" -> isJsonItem(sourceItem, otherElement)
-            "XML" -> isXmlItem(sourceItem, otherElement)
-            "YAML" -> isYamlItem(sourceItem, otherElement)
-            else -> return sourceItem.elementType == otherElement.elementType || (otherElement.text.isNotBlank() && !isDelimiter(otherElement))
-        }
-    }
-
-    private fun isJsonItem(sourceItem: PsiElement, otherElement: PsiElement): Boolean {
-        val sourceType = getElementTypeName(sourceItem)
-        val otherType = getElementTypeName(otherElement)
-
-        return sourceType == otherType ||
-                (sourceType.contains("VALUE") && otherType.contains("VALUE")) ||
-                (sourceType.contains("PROPERTY") && otherType.contains("PROPERTY"))
-    }
-
-    private fun isXmlItem(sourceItem: PsiElement, otherElement: PsiElement): Boolean {
-        val sourceType = getElementTypeName(sourceItem)
-        val otherType = getElementTypeName(otherElement)
-
-        return sourceType == otherType ||
-                (sourceType.contains("XML_TAG") && otherType.contains("XML_TAG")) ||
-                (sourceType.contains("XML_ATTRIBUTE") && otherType.contains("XML_ATTRIBUTE"))
-    }
-
-    private fun isYamlItem(sourceItem: PsiElement, otherElement: PsiElement): Boolean {
-        val sourceType = getElementTypeName(sourceItem)
-        val otherType = getElementTypeName(otherElement)
-
-        return sourceType == otherType ||
-                (sourceType.contains("SEQUENCE_ITEM") && otherType.contains("SEQUENCE_ITEM")) ||
-                (sourceType.contains("KEY_VALUE") && otherType.contains("KEY_VALUE")) ||
-                (sourceType.contains("MAPPING") && otherType.contains("MAPPING"))
+        return sourceItem.elementType == otherElement.elementType || (otherElement.text.isNotBlank() && !isDelimiter(otherElement))
     }
 }
