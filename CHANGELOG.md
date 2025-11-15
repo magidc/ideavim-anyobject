@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.3
+
+- **Improved implementation for Item and Argument text objects**
+
 ## 2.0.2
 
 - **New approach to identify PSI target elements**
@@ -15,13 +19,14 @@ Nested words in different case styles:
 | Snake case | `foo_bar` |
 | Dash case  | `foo-bar` | 
 
-
 ## 2.0.1
+
 Changed default mappings for AnyConditional to `y` to avoid confusion with Vim default text object for tags `t`
 
 ## 2.0.0
 
 ### Jump!!
+
 It is possible now to jump to the next or previous text object.
 
 Default mapping is `]<textObject>` to jump to next and `[<textObject>` to jump to previous text object.
@@ -29,13 +34,17 @@ Default mapping is `]<textObject>` to jump to next and `[<textObject>` to jump t
 ### New way of customization
 
 Don't want to use all the provided text objects? Specify which ones to enable using `anyobject_included` variable in your `.ideavimrc`:
+
 ```vimscript
 let g:anyobject_included = "anyDocument,anyFunction"
 ```
+
 If you prefer to specify which ones to exclude, use the `anyobject_excluded` variable instead:
+
 ```vimscript
 let g:anyobject_excluded = "anyDocument,anyFunction"
 ```
+
 You can also customize the mappings by adding the following to your `.ideavimrc`. For example:
 
 ```vimscript
@@ -45,9 +54,11 @@ let g:anyobject_map_anyfunction = "m"
 " Use 's' instead of default 'd' for any document text object
 let g:anyobject_map_anydocument = "s"
 ```
+
 In case of mapping conflicts, the custom mappings will take precedence and invalidate any other handler using the same mapping.
 
 Jump motion can be also customized:
+
 ```vimscript
 " Use '<' instead of default '[' for jumping to the previous text object
 let g:anyobject_map_jump_prev = "<" 
@@ -57,9 +68,10 @@ let g:anyobject_map_jump_next = ">"
 ```
 
 ### Other changes
-- **Multiple object outer selection for AnyArgument and AnyItem**: You can now select multiple objects of the same type in a single command. For example, `d2a` deletes the current and the next argument.
-- **Curson won't change positions on yank actions**
 
+- **Multiple object outer selection for AnyArgument and AnyItem**: You can now select multiple objects of the same type in a single command. For example, `d2a` deletes the current
+  and the next argument.
+- **Curson won't change positions on yank actions**
 
 ## 1.3.2
 

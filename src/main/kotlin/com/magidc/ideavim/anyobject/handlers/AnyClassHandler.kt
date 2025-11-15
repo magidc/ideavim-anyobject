@@ -1,7 +1,6 @@
 package com.magidc.ideavim.anyobject.handlers
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.elementType
 import com.maddyhome.idea.vim.api.VimEditor
 import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
 
@@ -64,14 +63,13 @@ class AnyClassHandler : AbstractPSIBasedHandler() {
     }
 
     override fun findInnerCodeBlock(element: PsiElement, editor: VimEditor): PsiElement? {
-        val innerCodeBlockElementTypeName = languageClassStatementBlockTypes[element.language.id.uppercase()] ?: return element
+        val innerCodeBlockElementTypeName = languageClassStatementBlockTypes[getLanguage(element)] ?: return element
 
         val elementQueue = ArrayDeque<PsiElement>()
         elementQueue.add(element)
         while (elementQueue.isNotEmpty()) {
             val currentElement = elementQueue.removeFirst()
-            val currentElementTypeName = currentElement.elementType.toString().uppercase()
-            if (currentElementTypeName == innerCodeBlockElementTypeName)
+            if (getElementTypeName(currentElement) == innerCodeBlockElementTypeName)
                 return currentElement
             elementQueue.addAll(currentElement.children)
         }

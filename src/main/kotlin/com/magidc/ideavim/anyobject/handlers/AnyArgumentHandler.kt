@@ -1,6 +1,18 @@
 package com.magidc.ideavim.anyobject.handlers
 
+import com.intellij.psi.PsiElement
+
 
 class AnyArgumentHandler : AnyItemHandler() {
-    override fun getCommonSuffixes(): Set<String> = setOf("LIST")
+
+    override fun acceptElement(element: PsiElement): Boolean {
+        if (element.text.isBlank()) return false
+        val parentElementTypeName = element.parent?.let { getElementTypeName(it) } ?: return false
+        if (!parentElementTypeName.endsWith("_LIST")) return false
+        val elementTypeName = getElementTypeName(element)
+        return (parentElementTypeName.endsWith("ARGUMENT_LIST") && (elementTypeName.contains("ARGUMENT") || elementTypeName.contains("EXPRESSION")))
+                || (parentElementTypeName.endsWith("PARAMETER_LIST") && elementTypeName.contains("PARAMETER"))
+                || (parentElementTypeName.endsWith("EXPRESSION_LIST") && elementTypeName.contains("EXPRESSION"))
+    }
+
 }

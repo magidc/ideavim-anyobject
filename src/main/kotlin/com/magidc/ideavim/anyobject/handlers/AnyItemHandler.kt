@@ -1,7 +1,6 @@
 package com.magidc.ideavim.anyobject.handlers
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.elementType
 import com.intellij.psi.util.siblings
 import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.common.TextRange
@@ -9,14 +8,7 @@ import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
 
 
 open class AnyItemHandler : AbstractPSIBasedHandler() {
-    companion object {
-        val delimiters = setOf(",", "(", ")", "{", "}")
-    }
-
-
     override fun allowsCountSelection(): Boolean = true
-
-    override fun getCommonSuffixes(): Set<String> = setOf("LIST", "ARRAY", "COLLECTION", "MAP", "SET", "SEQUENCE", "TUPLE", "INITIALIZER_EXPRESSION")
 
     override fun cleanPrefix(text: String, language: String): String {
         if (language == "XML") return text.replace("XML", "")
@@ -25,20 +17,11 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
         return super.cleanPrefix(text, language)
     }
 
-    private fun isDelimiter(element: PsiElement): Boolean {
-        if (delimiters.contains(element.text)) return true
+    override fun acceptElement(element: PsiElement): Boolean {
+        if (element.text.isBlank()) return false
+        val parentElementTypeName = element.parent?.let { getElementTypeName(it) } ?: return false
         val elementTypeName = getElementTypeName(element)
-        if (elementTypeName.endsWith("COMMA")) return true
-        if (elementTypeName.contains("LPAR")) return true
-        if (elementTypeName.contains("RPAR")) return true
-        if (elementTypeName.endsWith("BRACE")) return true
-        return false
-    }
-
-    override fun acceptElement(element: PsiElement, language: String, acceptedNormalizedTypes: Set<String>): Boolean {
-        if (element.text.isBlank() || isDelimiter(element)) return false
-        val containerElementTypeName = getElementTypeName(element.parent)
-        return getCommonSuffixes().any { containerElementTypeName.endsWith(it) }
+        return (parentElementTypeName.contains("ARRAY") && elementTypeName.contains("LITERAL"))
     }
 
     private fun <T> List<T>.getOrLast(index: Int): T {
@@ -80,7 +63,7 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
     private fun getPreviousElement(element: PsiElement, loop: Boolean): PsiElement? {
         // If the current element is not an item, fallback to the default handler behavior to find the previous one in the document from the current position
         val objectElement = findObjectElement(element) ?: return super.getPreviousElement(element)
-        val siblings = objectElement.parent.children.filter { isItem(objectElement, it) }.toList()
+        val siblings = objectElement.parent.children.filter { acceptElement(it) }.toList()
         val idx = siblings.indexOf(objectElement)
         if (idx < 0) return null
         if (siblings.isEmpty()) return null
@@ -102,23 +85,14 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
     override fun getNextElement(element: PsiElement): PsiElement? {
         // If the current element is not an item, fallback to the default handler behavior to find the first one in the document from the current position
         val objectElement = findObjectElement(element) ?: return super.getNextElement(element)
-        val siblings = objectElement.parent.children.filter { isItem(objectElement, it) }.toList()
+        val siblings = objectElement.parent.children.filter { acceptElement(it) }.toList()
         val idx = siblings.indexOf(objectElement)
         if (idx < 0) return null
-        if (siblings.isEmpty()) return null
-        if (siblings.last() == objectElement) return siblings.first()
-        return siblings[idx + 1]
+        return if (siblings.size - 1 == idx) return siblings.first() else siblings[idx + 1]
     }
 
     private fun getNextElements(element: PsiElement, size: Int): List<PsiElement> {
         if (size <= 0) return emptyList()
-        return element.siblings(withSelf = false).filter { isItem(element, it) }.take(size).toList()
-    }
-
-    /**
-     * Given an element (sourceItem) that is an item targeted by this handler, check if the given element (otherElement) is also an item.
-     */
-    private fun isItem(sourceItem: PsiElement, otherElement: PsiElement): Boolean {
-        return sourceItem.elementType == otherElement.elementType || (otherElement.text.isNotBlank() && !isDelimiter(otherElement))
+        return element.siblings(withSelf = false).filter { acceptElement(it) }.take(size).toList()
     }
 }

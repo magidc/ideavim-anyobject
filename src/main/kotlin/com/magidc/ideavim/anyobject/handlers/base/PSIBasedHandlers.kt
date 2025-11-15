@@ -66,6 +66,20 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
     private val cleanSuffixesRegex = "(${getCommonSuffixes().joinToString("|")})\$".toRegex()
 
     /**
+     * Utility method to print all element type names from the given element to its parents in the PSI DOM hierarchy
+     */
+    protected fun printElementHierarchyType(element: PsiElement, textLimit: Int = 50, startElement: Boolean = true) {
+        if (startElement)
+            println("--------------------")
+        println("Type: ${getElementTypeName(element)}")
+        println("Text: ${element.text.take(textLimit)}")
+        if (element.parent != null)
+            printElementHierarchyType(element.parent, textLimit, false)
+        if (startElement)
+            println("--------------------")
+    }
+
+    /**
      * Finds the inner code block for the given element (for inner selections)
      */
     protected open fun findInnerCodeBlock(element: PsiElement, editor: VimEditor): PsiElement? {
@@ -117,11 +131,9 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
     }
 
     protected fun findObjectElement(currentElement: PsiElement): PsiElement? {
-        val language = getLanguage(currentElement)
-        val types = getAcceptedNormalizedTypes(language)
         var objectElement = currentElement
         while (!getElementTypeName(objectElement).endsWith("FILE") && objectElement.parent != null) {
-            if (acceptElement(objectElement, language, types)) return objectElement
+            if (acceptElement(objectElement)) return objectElement
             objectElement = objectElement.parent
         }
         return null
@@ -141,12 +153,12 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
     /**
      * Evaluates whether the given element matches the type the handler is looking for.
      */
-    protected open fun acceptElement(element: PsiElement, language: String, acceptedNormalizedTypes: Set<String>): Boolean {
-        val elementTypeName = getElementTypeName(element)
-        return acceptedNormalizedTypes.contains(normalizeElementType(elementTypeName, language))
+    protected open fun acceptElement(element: PsiElement): Boolean {
+        val language = getLanguage(element)
+        return getAcceptedNormalizedTypes(language).contains(normalizeElementType(getElementTypeName(element), language))
     }
 
-     private fun getSelection(element: PsiElement, editor: VimEditor, isInner: Boolean): TextRange {
+    private fun getSelection(element: PsiElement, editor: VimEditor, isInner: Boolean): TextRange {
         if (isInner) {
             val innerBlock = findInnerCodeBlock(element, editor) ?: element
             if (languageUsesDelimiters.getOrDefault(getLanguage(element), false)) {
@@ -166,8 +178,6 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
     protected fun getElementTypeName(element: PsiElement): String = element.elementType.toString().uppercase()
 
     open fun getPreviousElement(element: PsiElement): PsiElement? {
-        val language = getLanguage(element)
-        val acceptedNormalizedTypes = getAcceptedNormalizedTypes(language)
         val file = element.containingFile
         var previous = findPreviousElement(element)
         while (null != previous) {
@@ -177,7 +187,7 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
             }
             if (previous == element) return null
             // It is necessary to validate that we are not repeatedly returning the same effective position unless the same element is found (when there is only one)
-            if (acceptElement(previous, language, acceptedNormalizedTypes) && previous.textRange.startOffset != element.startOffset) return previous
+            if (acceptElement(previous) && previous.textRange.startOffset != element.startOffset) return previous
             previous = findPreviousElement(previous)
         }
         return null
@@ -198,8 +208,6 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
     }
 
     open fun getNextElement(element: PsiElement): PsiElement? {
-        val language = getLanguage(element)
-        val acceptedNormalizedTypes = getAcceptedNormalizedTypes(language)
         val file = element.containingFile
         var next = findNextElement(element)
         while (null != next) {
@@ -209,13 +217,13 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
             }
             if (next == element) return null
             // It is necessary to validate that we are not repeatedly returning the same effective position unless the same element is found (when there is only one)
-            if (acceptElement(next, language, acceptedNormalizedTypes) && next.textRange.startOffset != element.startOffset) return next
+            if (acceptElement(next) && next.textRange.startOffset != element.startOffset) return next
             next = findNextElement(next)
         }
         return null
     }
 
-    protected fun getLanguage(currentElement: PsiElement): String = currentElement.language.id.uppercase()
+    protected fun getLanguage(element: PsiElement): String = element.language.id.uppercase()
 
     private fun findNextElement(element: PsiElement): PsiElement? {
         if (element.firstChild != null)
