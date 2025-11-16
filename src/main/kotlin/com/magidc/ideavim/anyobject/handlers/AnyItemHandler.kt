@@ -8,6 +8,12 @@ import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
 
 
 open class AnyItemHandler : AbstractPSIBasedHandler() {
+    companion object {
+        val delimiters = setOf(",", "(", ")", "{", "}", "[", "]", "<", ">")
+        private fun <T> List<T>.getOrLast(index: Int): T = getOrElse(index) { last() }
+    }
+
+    protected fun isDelimiter(element: PsiElement): Boolean = delimiters.contains(element.text)
     override fun allowsCountSelection(): Boolean = true
 
     override fun cleanPrefix(text: String, language: String): String {
@@ -17,20 +23,16 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
         return super.cleanPrefix(text, language)
     }
 
-    override fun acceptElement(element: PsiElement): Boolean {
-        if (element.text.isBlank()) return false
-        val parentElementTypeName = element.parent?.let { getElementTypeName(it) } ?: return false
-        val elementTypeName = getElementTypeName(element)
-        return (parentElementTypeName.contains("ARRAY") && elementTypeName.contains("LITERAL"))
+    override fun acceptElement(element: PsiElement, language: String, acceptedNormalizedTypes: Set<String>): Boolean {
+        if (element.text.isBlank() || isDelimiter(element)) return false
+        val parentElementTypeName = element.parent?.toElementTypeName() ?: return false
+        return (parentElementTypeName.contains("ARRAY") || parentElementTypeName.contains("LIST_") || parentElementTypeName.contains("TUPLE_"))
     }
 
-    private fun <T> List<T>.getOrLast(index: Int): T {
-        return getOrElse(index) { last() }
-    }
 
     override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
         val currentElement = findCurrentElement(editor) ?: return null
-        val objectElement = findObjectElement(currentElement) ?: super.getNextElement(currentElement) ?: return null
+        val objectElement = findObjectElement(currentElement) ?: return null
 
         if (objectElement.text.isBlank() || size == 0) return null
 
@@ -63,7 +65,7 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
     private fun getPreviousElement(element: PsiElement, loop: Boolean): PsiElement? {
         // If the current element is not an item, fallback to the default handler behavior to find the previous one in the document from the current position
         val objectElement = findObjectElement(element) ?: return super.getPreviousElement(element)
-        val siblings = objectElement.parent.children.filter { acceptElement(it) }.toList()
+        val siblings = objectElement.parent.children.filter { acceptElement(it, "", emptySet()) }.toList()
         val idx = siblings.indexOf(objectElement)
         if (idx < 0) return null
         if (siblings.isEmpty()) return null
@@ -85,7 +87,7 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
     override fun getNextElement(element: PsiElement): PsiElement? {
         // If the current element is not an item, fallback to the default handler behavior to find the first one in the document from the current position
         val objectElement = findObjectElement(element) ?: return super.getNextElement(element)
-        val siblings = objectElement.parent.children.filter { acceptElement(it) }.toList()
+        val siblings = objectElement.parent.children.filter { acceptElement(it, "", emptySet()) }.toList()
         val idx = siblings.indexOf(objectElement)
         if (idx < 0) return null
         return if (siblings.size - 1 == idx) return siblings.first() else siblings[idx + 1]
@@ -93,6 +95,6 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
 
     private fun getNextElements(element: PsiElement, size: Int): List<PsiElement> {
         if (size <= 0) return emptyList()
-        return element.siblings(withSelf = false).filter { acceptElement(it) }.take(size).toList()
+        return element.siblings(withSelf = false).filter { acceptElement(it, "", emptySet()) }.take(size).toList()
     }
 }

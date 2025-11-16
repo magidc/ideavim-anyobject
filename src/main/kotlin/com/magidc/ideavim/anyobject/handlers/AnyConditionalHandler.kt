@@ -23,7 +23,7 @@ class AnyConditionalHandler : AbstractPSIBasedHandler() {
     )
 
     override fun getCodeBlockTypes(element: PsiElement): Set<String> {
-        val language = element.language.id.uppercase()
+        val language = getLanguage(element)
         // Java and Kotlin may have inner code blocks in conditional statements without braces, therefore, is not always a CODE_BLOCK.
         if (language == "JAVA" || language == "KOTLIN") return super.getCodeBlockTypes(element) + "EXPRESSION_STATEMENT"
         return super.getCodeBlockTypes(element)
