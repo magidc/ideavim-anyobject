@@ -3,6 +3,8 @@
 ## 2.0.3
 
 - **Improved implementation for Item and Argument text objects**
+- **Bug fix: Class inner selection was not working correctly**
+- **[Experimental] Added caches to improve performance on PSIFile element lookup**
 
 ## 2.0.2
 
