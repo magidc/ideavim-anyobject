@@ -18,10 +18,10 @@ concepts programmers use to think about code: classes, functions, arguments, loo
 | **AnyClass**        | Class, interface, struct, and similar type definitions                                  | `c`             | ✓                   | ✓    | x             |
 | **AnyLoop**         | Loop statements (`for`, `while`, `do`, `repeat`, `until`, `loop`, etc.)                 | `l`             | ✓                   | ✓    | x             |
 | **AnyConditional**  | Conditional statements (`if-else`, `switch`, `try-catch`)                               | `y`             | ✓                   | ✓    | x             |
-| **AnyItem**         | Items within collections, lists, or arrays                                              | `i`             | ✓                   | ✓    | ✓             |
+| **AnyItem**         | Items within collections, tuples, lists, or arrays                                      | `i`             | ✓                   | ✓    | ✓             |
 | **AnyQuote**        | Content enclosed between any type of quotes (single, double, backticks)                 | `q`             | ✓                   | ✗    | ✗             |
 | **AnyBracket**      | Content enclosed between any type of brackets (parentheses, square, curly, angle, etc.) | `o`             | ✓                   | ✗    | ✗             |
-| **AnySubword**      | Words nested in longer words (`camel case`, `snake case`, `dash case`)                  | `u`             | ✓                   | ✓    | ✓             |
+| **AnySubword**      | Words nested in longer words (`camelCase`, `snake_case`, `dash-case`)                   | `u`             | ✓                   | ✓    | ✓             |
 | **AnyDocument**     | Entire document content                                                                 | `d`             | ✓                   | ✗    | ✗             |
 | **AnyBlockComment** | Block comments across different programming languages (`/* */`, `<!-- -->`, etc.)       | `k`             | ✓                   | ✗    | ✗             |
 | **AnyIndentBlock**  | Code blocks based on indentation levels                                                 | `n`             | ✓                   | ✗    | ✗             |
@@ -51,8 +51,8 @@ The plugin supports jumping to the next/previous text object using `]` (next) an
 - `yia` - Yank/Copy argument
 - `yaa` - Yank/Copy argument and its separator
 - `via` - Visually select argument 
-- `v3aa` - Visually select three arguments including separators
-- `v3ia` - Visually select three arguments without including separators
+- `v3aa` - Visually select three arguments including separator
+- `v3ia` - Visually select three arguments without including separator
 - `]a` - Jump to next argument
 - `[a` - Jump to previous argument
 
@@ -111,18 +111,17 @@ Block comments across different programming languages:
 
 ### AnyItem (`i`)
 
-Items within collections, lists, or arrays:
+Items within collections, tuples, lists, or arrays:
 
 | Structure Type    | Example                        |
 |-------------------|--------------------------------|
 | Arrays            | `[item1, item2, item3]`        |
-| Object properties | `{key1: value1, key2: value2}` |
 | List literals     | `(item1, item2, item3)`        |
 
 - **Inner selection (`ii`)**: Selects only the item itself
 - **Outer selection (`ai`)**: Selects the entire item including the separator and the item itself
 
-**Multiple outer selections are supported**. For example `d2i` will delete the current item and the next one
+**Multiple outer selections are supported**. For example `d2ai` will delete the current item and the next one including separator
 
 ### AnyArgument (`a`)
 
@@ -131,7 +130,7 @@ Function arguments, method parameters, and callable expressions.
 - **Inner selection (`ia`)**: Selects only the argument itself
 - **Outer selection (`ia`)**: Selects the entire argument including the separator and the argument itself
 
-**Multiple outer selections are supported**. For example `d2a` will delete the current argument and the next one
+**Multiple outer selections are supported**. For example `d2aa` will delete the current argument and the next one including separator
 
 ### AnyFunction (`f`)
 
