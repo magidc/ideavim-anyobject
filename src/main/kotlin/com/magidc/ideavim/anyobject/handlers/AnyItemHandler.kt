@@ -32,7 +32,7 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
 
     override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
         val currentElement = findCurrentElement(editor) ?: return null
-        val objectElement = findObjectElement(currentElement) ?: return null
+        val objectElement = findObjectElement(currentElement) ?: getNextElement(currentElement) ?: return null
 
         if (objectElement.text.isBlank() || size == 0) return null
 

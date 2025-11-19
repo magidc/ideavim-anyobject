@@ -30,36 +30,71 @@ open class DelimiterHandler(val sameLine: Boolean, val delimiterPairs: Collectio
     }
 
     override fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int, isInner: Boolean, size: Int): TextRange? {
+        if (text.isEmpty()) return null
         var bestMatch: TextRange? = null
         var bestMatchLength = Int.MAX_VALUE
+        val presentDelimiters = mutableSetOf<Pair<String, String>>()
 
+        // First, trying to match assuming the caret is within delimiters
         for (delimiterPair in delimiterPairs) {
             val openDelimiter = delimiterPair.first
             val closeDelimiter = delimiterPair.second
+            val equalDelimiters = openDelimiter == closeDelimiter
+
+            if (!text.contains(openDelimiter) || (!equalDelimiters && !text.contains(closeDelimiter))) continue
+            presentDelimiters.add(delimiterPair)
 
             val match =
-                if (openDelimiter == closeDelimiter)
+                if (equalDelimiters)
                     findByDelimiter(text, openDelimiter, caretOffset, bestMatchLength)
                 else
                     findByDelimiters(text, openDelimiter, closeDelimiter, caretOffset, bestMatchLength)
 
-            if (null == match)
-                continue
+            if (null == match) continue
 
             bestMatchLength = match.last - match.first
 
-            bestMatch = if (isInner)
-                TextRange(
-                    textOffset + match.first,
-                    textOffset + match.last,
-                )
-            else
-                TextRange(
-                    textOffset + match.first - openDelimiter.length,
-                    textOffset + match.last + closeDelimiter.length,
-                )
+            bestMatch =
+                if (isInner)
+                    TextRange(textOffset + match.first, textOffset + match.last)
+                else
+                    TextRange(textOffset + match.first - openDelimiter.length, textOffset + match.last + closeDelimiter.length)
         }
-        return bestMatch
+        if (null != bestMatch || presentDelimiters.isEmpty()) return bestMatch
+
+        // Second, trying to match assuming the caret is before the first delimiter
+        var nearestDelimitersToCaret: Pair<String, String>? = null
+        var nearestOpenDelimiterOffset = Int.MAX_VALUE
+        var nearestCloseDelimiterOffset = 0
+
+        // Checking which pair of delimiters is closer to the caret
+        for (delimiterPair in presentDelimiters) {
+            val openDelimiterOffset = text.indexOf(delimiterPair.first, caretOffset)
+            if (openDelimiterOffset == -1 || openDelimiterOffset > nearestOpenDelimiterOffset) continue
+
+            val closeDelimiterOffset = text.indexOf(delimiterPair.second, openDelimiterOffset + 1)
+            if (closeDelimiterOffset == -1) continue
+
+            if (openDelimiterOffset < nearestOpenDelimiterOffset) {
+                nearestDelimitersToCaret = delimiterPair
+                nearestOpenDelimiterOffset = openDelimiterOffset
+                nearestCloseDelimiterOffset = closeDelimiterOffset
+                if (nearestOpenDelimiterOffset == 1) break
+            }
+        }
+
+        if (nearestDelimitersToCaret == null) return null
+
+        return if (isInner)
+            TextRange(
+                textOffset + nearestOpenDelimiterOffset + nearestDelimitersToCaret.first.length,
+                textOffset + nearestCloseDelimiterOffset
+            )
+        else
+            TextRange(
+                textOffset + nearestOpenDelimiterOffset,
+                textOffset + nearestCloseDelimiterOffset + nearestDelimitersToCaret.second.length,
+            )
     }
 
 

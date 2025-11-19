@@ -3,6 +3,13 @@ package com.magidc.ideavim.anyobject
 import com.magidc.ideavim.anyobject.handlers.AnyBracketHandler
 
 class AnyBracketTest : TextHandlerBaseTest(AnyBracketHandler()) {
+    fun testAnyBracketCaretBefore() {
+        testInner(String.format("this is%s a {%s test %s}", CARET, START, END))
+        testOuter(String.format("this is%s a %s{ test }%s", CARET, START, END))
+
+        testInner(String.format("this is a %s{%s test %s}", CARET, START, END))
+        testOuter(String.format("this is a %s%s{ test }%s", CARET, START, END))
+    }
 
     fun testAnyBracketCaretInside() {
         testInner(String.format("this is a {%s te%sst %s}", START, CARET, END))
@@ -23,7 +30,7 @@ class AnyBracketTest : TextHandlerBaseTest(AnyBracketHandler()) {
         testInner(String.format("this is [a {%s te%sst %s} with nested ]Brackets", START, CARET, END))
         testOuter(String.format("this is [a %s{ te%sst }%s with nested ]Brackets", START, CARET, END))
 
-        testInner(String.format("this is [a {%s test %s%s} with nested ]Brackets", START,END, CARET))
+        testInner(String.format("this is [a {%s test %s%s} with nested ]Brackets", START, END, CARET))
         testOuter(String.format("this is [a %s{ test %s}%s with nested ]Brackets", START, CARET, END))
 
         testInner(String.format("this [%sis %sa { test } with nested %s]Brackets", START, CARET, END))

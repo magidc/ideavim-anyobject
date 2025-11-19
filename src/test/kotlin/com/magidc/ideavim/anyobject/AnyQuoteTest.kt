@@ -4,6 +4,14 @@ import com.magidc.ideavim.anyobject.handlers.AnyQuoteHandler
 
 class AnyQuoteTest : TextHandlerBaseTest(AnyQuoteHandler()) {
 
+    fun testAnyQuoteCaretBefore() {
+        testInner(String.format("this is%s a '%s test %s'", CARET, START, END))
+        testOuter(String.format("this is%s a %s' test '%s", CARET, START, END))
+
+        testInner(String.format("this is a %s'%s test %s'", CARET, START, END))
+        testOuter(String.format("this is a %s%s' test '%s", CARET, START, END))
+    }
+
     fun testAnyQuoteCaretInside() {
         testInner(String.format("this is a '%s te%sst %s'", START, CARET, END))
         testOuter(String.format("this is a %s' te%sst '%s", START, CARET, END))

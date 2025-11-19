@@ -82,7 +82,7 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
     override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
         val currentElement = findCurrentElement(editor) ?: return null
-        val objectElement = findObjectElement(currentElement) ?: return null
+        val objectElement = findObjectElement(currentElement) ?: getNextElement(currentElement)?: return null
         return getSelection(objectElement, editor, isInner)
     }
 

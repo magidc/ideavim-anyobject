@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.4
+If the current cursor position is within a text object, it will be selected. Otherwise, the nearest text object in the specified direction will be selected.
+This is a standard behavior of Vim's text objects that was not properly implemented in this plugin. Kudos to **@kbilsted** for reporting this issue.
+
 ## 2.0.3
 
 - **Improved implementation for Item and Argument text objects**
@@ -77,7 +81,7 @@ let g:anyobject_map_jump_next = ">"
 
 ## 1.3.2
 
-- **Bug fix**: Fix bug in outer argument selection. In some cases right separator was not selected.
+- **Bug fix**: Fix bug in outer argument selection. In some cases the right separator was not selected.
 
 ## 1.3.1
 
