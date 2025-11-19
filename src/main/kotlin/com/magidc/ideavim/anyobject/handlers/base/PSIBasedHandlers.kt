@@ -49,6 +49,20 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
 
     /**
+     * Utility method to print all element type names from the given element to its parents in the PSI DOM hierarchy
+     */
+    protected fun printElementHierarchyType(element: PsiElement, textLimit: Int = 50, startElement: Boolean = true) {
+        if (startElement)
+            println("--------------------")
+        println("Type: ${element.toElementTypeName()}")
+        println("Text: ${element.text.take(textLimit)}")
+        if (element.parent != null)
+            printElementHierarchyType(element.parent, textLimit, false)
+        if (startElement)
+            println("--------------------")
+    }
+
+    /**
      * Finds the inner code block for the given element (for inner selections)
      */
     protected open fun findInnerCodeBlock(element: PsiElement, editor: VimEditor): PsiElement? {
@@ -82,7 +96,7 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
     override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
         val currentElement = findCurrentElement(editor) ?: return null
-        val objectElement = findObjectElement(currentElement) ?: getNextElement(currentElement)?: return null
+        val objectElement = findObjectElement(currentElement) ?: getNextElement(currentElement) ?: return null
         return getSelection(objectElement, editor, isInner)
     }
 
@@ -185,13 +199,14 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
         return text
     }
 
-    open fun getNextElement(element: PsiElement): PsiElement? {
+    open fun getNextElement(element: PsiElement, restart: Boolean = true): PsiElement? {
         val language = getLanguage(element)
         val acceptedNormalizedTypes = getAcceptedNormalizedTypes(language)
         val file = element.containingFile
         var next = findNextElement(element)
         while (null != next) {
             if (next.containingFile != file) {
+                if (!restart) return null
                 next = file
                 continue
             }

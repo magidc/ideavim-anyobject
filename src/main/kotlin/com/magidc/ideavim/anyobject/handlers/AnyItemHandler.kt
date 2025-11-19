@@ -32,7 +32,7 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
 
     override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
         val currentElement = findCurrentElement(editor) ?: return null
-        val objectElement = findObjectElement(currentElement) ?: getNextElement(currentElement) ?: return null
+        val objectElement = findObjectElement(currentElement) ?: super.getNextElement(currentElement, false) ?: return null
 
         if (objectElement.text.isBlank() || size == 0) return null
 
@@ -84,9 +84,9 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
     /**
      * For jumps, items iterated in loop
      */
-    override fun getNextElement(element: PsiElement): PsiElement? {
+    override fun getNextElement(element: PsiElement, restart: Boolean): PsiElement? {
         // If the current element is not an item, fallback to the default handler behavior to find the first one in the document from the current position
-        val objectElement = findObjectElement(element) ?: return super.getNextElement(element)
+        val objectElement = findObjectElement(element) ?: return super.getNextElement(element, restart)
         val siblings = objectElement.parent.children.filter { acceptElement(it, "", emptySet()) }.toList()
         val idx = siblings.indexOf(objectElement)
         if (idx < 0) return null

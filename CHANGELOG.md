@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.5
+- **Improved C# support**: Argument and parameter selection now works correctly for C# methods and constructors
+
 ## 2.0.4
 If the current cursor position is within a text object, it will be selected. Otherwise, the nearest text object in the specified direction will be selected.
 This is a standard behavior of Vim's text objects that was not properly implemented in this plugin. Kudos to **@kbilsted** for reporting this issue.
