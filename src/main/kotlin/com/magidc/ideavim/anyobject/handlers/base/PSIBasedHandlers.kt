@@ -23,11 +23,11 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
         private val fileCache = LRUCache<String, PsiFile?>(10)
         private val cleanDelimitersRegex = "[_,-]".toRegex()
         private val languagesWithoutDelimiters = setOf("PYTHON", "RUBY", "F#", "LUA")
-        private val languageCodeBlockTypes = mapOf(
+        val languageCodeBlockTypes = mapOf(
             "JAVA" to setOf("CODE_BLOCK"),
-            "C#" to setOf("CS:BLOCK-LIST"),
-            "DART" to setOf("FUNCTION_BODY"),
             "KOTLIN" to setOf("BLOCK"),
+            "C#" to setOf("CS:BLOCK-LIST", "CS:STATEMENTS-LIST"),
+            "DART" to setOf("FUNCTION_BODY"),
             "RUST" to setOf("BLOCK"),
             "PHP" to setOf("GROUP STATEMENT"),
             "SCALA" to setOf("BLOCK OF EXPRESSIONS"),
@@ -65,12 +65,12 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
     /**
      * Finds the inner code block for the given element (for inner selections)
      */
-    protected open fun findInnerCodeBlock(element: PsiElement, editor: VimEditor): PsiElement? {
-        val codeBlockTypes = getCodeBlockTypes(element)
+    protected open fun findInnerCodeBlock(currentElement: PsiElement, objectElement: PsiElement, editor: VimEditor): PsiElement? {
+        val codeBlockTypes = getCodeBlockTypes(objectElement)
         val caretOffset = editor.currentCaret().offset
 
         val elementQueue = ArrayDeque<PsiElement>()
-        elementQueue.add(element)
+        elementQueue.add(objectElement)
 
         while (elementQueue.isNotEmpty()) {
             val currentElement = elementQueue.removeFirst()
@@ -96,8 +96,8 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
     override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
         val currentElement = findCurrentElement(editor) ?: return null
-        val objectElement = findObjectElement(currentElement) ?: getNextElement(currentElement) ?: return null
-        return getSelection(objectElement, editor, isInner)
+        val objectElement = findObjectElement(currentElement) ?: getNextElement(currentElement, false) ?: return null
+        return getSelection(currentElement, objectElement, editor, isInner)
     }
 
     private fun getCurrentPSIFile(editor: VimEditor): PsiFile? {
@@ -128,15 +128,19 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
         return null
     }
 
-    protected fun normalizeElementType(element: PsiElement, language: String): String {
-        var normalizedText = element.toElementTypeName()
+    protected fun normalizeElementType(elementTypeName: String, language: String): String {
+        var normalizedText = elementTypeName
         if (normalizedText.contains(":"))
             normalizedText = normalizedText.substringAfter(":")
         normalizedText = cleanPrefix(normalizedText, language)
         return normalizedText.replace(cleanDelimitersRegex, "").replace(cleanSuffixesRegex, "").trim()
     }
 
-    private fun getAcceptedNormalizedTypes(language: String): Set<String> {
+    protected fun normalizeElementType(element: PsiElement, language: String): String {
+        return normalizeElementType(element.toElementTypeName(), language)
+    }
+
+    protected fun getAcceptedNormalizedTypes(language: String): Set<String> {
         return acceptedNormalizedTypesCache.computeIfAbsent(language) { commonTypes + (languageSpecificTypes[language] ?: emptySet()) }
     }
 
@@ -150,10 +154,10 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
     private fun PsiElement.toTextRange(): TextRange = TextRange(this.textRange.startOffset, this.textRange.endOffset)
 
-    private fun getSelection(element: PsiElement, editor: VimEditor, isInner: Boolean): TextRange {
+    private fun getSelection(currentElement: PsiElement, objectElement: PsiElement, editor: VimEditor, isInner: Boolean): TextRange {
         if (isInner) {
-            val innerBlock = findInnerCodeBlock(element, editor) ?: element
-            if (!languagesWithoutDelimiters.contains(getLanguage(element))) {
+            val innerBlock = findInnerCodeBlock(currentElement, objectElement, editor) ?: objectElement
+            if (!languagesWithoutDelimiters.contains(getLanguage(objectElement))) {
                 val openBrace = innerBlock.childLeafs().firstOrNull { it.text == "{" }
                 if (null != openBrace) {
                     val closeBrace = innerBlock.childLeafs(forward = false).firstOrNull { it.text == "}" }
@@ -163,7 +167,7 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
             }
             return innerBlock.toTextRange()
         }
-        return element.toTextRange()
+        return objectElement.toTextRange()
     }
 
 

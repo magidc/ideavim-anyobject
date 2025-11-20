@@ -62,10 +62,10 @@ class AnyClassHandler : AbstractPSIBasedHandler() {
         return super.cleanPrefix(text, language)
     }
 
-    override fun findInnerCodeBlock(element: PsiElement, editor: VimEditor): PsiElement? {
-        val innerCodeBlockElementTypeName = languageClassStatementBlockTypes[getLanguage(element)] ?: return element
+    override fun findInnerCodeBlock(currentElement: PsiElement, objectElement: PsiElement, editor: VimEditor): PsiElement? {
+        val innerCodeBlockElementTypeName = languageClassStatementBlockTypes[getLanguage(objectElement)] ?: return objectElement
         val elementQueue = ArrayDeque<PsiElement>()
-        elementQueue.add(element)
+        elementQueue.add(objectElement)
         while (elementQueue.isNotEmpty()) {
             val currentElement = elementQueue.removeFirst()
             if (currentElement.toElementTypeName() == innerCodeBlockElementTypeName)

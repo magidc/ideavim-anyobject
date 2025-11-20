@@ -65,7 +65,8 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
     private fun getPreviousElement(element: PsiElement, loop: Boolean): PsiElement? {
         // If the current element is not an item, fallback to the default handler behavior to find the previous one in the document from the current position
         val objectElement = findObjectElement(element) ?: return super.getPreviousElement(element)
-        val siblings = objectElement.parent.children.filter { acceptElement(it, "", emptySet()) }.toList()
+        val language = getLanguage(objectElement)
+        val siblings = objectElement.parent.children.filter { acceptElement(it, language, emptySet()) }.toList()
         val idx = siblings.indexOf(objectElement)
         if (idx < 0) return null
         if (siblings.isEmpty()) return null
@@ -87,7 +88,8 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
     override fun getNextElement(element: PsiElement, restart: Boolean): PsiElement? {
         // If the current element is not an item, fallback to the default handler behavior to find the first one in the document from the current position
         val objectElement = findObjectElement(element) ?: return super.getNextElement(element, restart)
-        val siblings = objectElement.parent.children.filter { acceptElement(it, "", emptySet()) }.toList()
+        val language = getLanguage(objectElement)
+        val siblings = objectElement.parent.children.filter { acceptElement(it, language, emptySet()) }.toList()
         val idx = siblings.indexOf(objectElement)
         if (idx < 0) return null
         return if (siblings.size - 1 == idx) return siblings.first() else siblings[idx + 1]
@@ -95,6 +97,7 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
 
     private fun getNextElements(element: PsiElement, size: Int): List<PsiElement> {
         if (size <= 0) return emptyList()
-        return element.siblings(withSelf = false).filter { acceptElement(it, "", emptySet()) }.take(size).toList()
+        val language = getLanguage(element)
+        return element.siblings(withSelf = false).filter { acceptElement(it, language, emptySet()) }.take(size).toList()
     }
 }

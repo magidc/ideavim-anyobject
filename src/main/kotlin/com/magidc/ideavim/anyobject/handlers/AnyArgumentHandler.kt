@@ -10,10 +10,16 @@ class AnyArgumentHandler : AnyItemHandler() {
         val parentElementTypeName = element.parent?.toElementTypeName() ?: return false
         if (!parentElementTypeName.endsWith("LIST")) return false
         val elementTypeName = element.toElementTypeName()
+        if (language == "C#")
+            return parentElementTypeName.endsWith("PARENT-LIST") && (
+                    elementTypeName.contains("PARAMETER-DECLARATION")
+                            || elementTypeName.contains("LITERAL")
+                            || elementTypeName.contains("CALL")
+                    )
+
         return (parentElementTypeName.endsWith("ARGUMENT_LIST") && (elementTypeName.contains("ARGUMENT") || elementTypeName.contains("EXPRESSION")))
                 || (parentElementTypeName.endsWith("PARAMETER_LIST") && elementTypeName.contains("PARAMETER"))
                 || (parentElementTypeName.endsWith("EXPRESSION_LIST") && elementTypeName.contains("EXPRESSION"))
-                || (parentElementTypeName.endsWith("PARENT-LIST"))
     }
 
 }

@@ -6,7 +6,6 @@ import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
 
 class AnyConditionalHandler : AbstractPSIBasedHandler() {
     override val commonTypes: Set<String> = setOf("IF", "SWITCH", "CONDITIONAL", "TERNARY", "TRY", "TRYEXCEPT", "CASE")
-
     override val languageSpecificTypes: Map<String, Set<String>> = mapOf(
         "KOTLIN" to setOf("WHEN", "ELVIS"),
         "GO" to setOf("SELECT"),
@@ -20,6 +19,7 @@ class AnyConditionalHandler : AbstractPSIBasedHandler() {
         "GROOVY" to setOf("ELVIS"),
         "CLOJURE" to setOf("COND", "WHEN", "IFNOT"),
         "LUA" to setOf("ELSEIF"),
+        "C#" to setOf("IFELSEKOPS", "SWITCHKOPS", "TRYCATCHFINALLYKOPS"),
     )
 
     override fun getCodeBlockTypes(element: PsiElement): Set<String> {

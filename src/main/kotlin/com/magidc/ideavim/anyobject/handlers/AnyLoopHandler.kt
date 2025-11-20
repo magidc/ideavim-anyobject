@@ -22,6 +22,7 @@ class AnyLoopHandler : AbstractPSIBasedHandler() {
         "OBJECTIVE-C" to setOf("FORIN"),
         "HASKELL" to setOf("LISTCOMPREHENSION", "MONADCOMPREHENSION"),
         "F#" to setOf("FORLOOP", "WHILELOOP"),
+        "C#" to setOf("WHILEKOPS", "FOREACHKOPS", "FORKOPS", "DOWHILEKOPS"),
         "GROOVY" to setOf("FORIN", "EACH"),
         "CLOJURE" to setOf("DOSEQ", "DOTIMES", "LOOP"),
         "LUA" to setOf("REPEAT", "FORNUMERIC", "FORGENERIC"),
