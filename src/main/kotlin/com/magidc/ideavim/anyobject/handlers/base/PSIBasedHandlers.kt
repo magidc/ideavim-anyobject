@@ -20,7 +20,6 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
     companion object {
         fun PsiElement.toElementTypeName(): String = this.elementType.toString().uppercase().trim()
-        private val fileCache = LRUCache<String, PsiFile?>(10)
         private val cleanDelimitersRegex = "[_,-]".toRegex()
         private val languagesWithoutDelimiters = setOf("PYTHON", "RUBY", "F#", "LUA")
         val languageCodeBlockTypes = mapOf(
@@ -102,15 +101,12 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
     private fun getCurrentPSIFile(editor: VimEditor): PsiFile? {
         val vimVirtualFile = editor.getVirtualFile() ?: return null
-        val psiFile = fileCache.computeIfAbsent(vimVirtualFile.path) {
-            val projectManager = ProjectManager.getInstance()
-            if (null == projectManager || projectManager.openProjects.isEmpty())
-                return@computeIfAbsent null
-            val project = projectManager.openProjects[0]
-            val virtualFile = VirtualFileManager.getInstance().findFileByNioPath(Path.of(vimVirtualFile.path)) ?: return@computeIfAbsent null
-            return@computeIfAbsent PsiManager.getInstance(project).findFile(virtualFile)
-        }
-        return psiFile
+        val projectManager = ProjectManager.getInstance()
+        if (null == projectManager || projectManager.openProjects.isEmpty())
+            return null
+        val project = projectManager.openProjects[0]
+        val virtualFile = VirtualFileManager.getInstance().findFileByNioPath(Path.of(vimVirtualFile.path)) ?: return null
+        return PsiManager.getInstance(project).findFile(virtualFile)
     }
 
     protected fun findCurrentElement(editor: VimEditor): PsiElement? {
