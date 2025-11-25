@@ -66,7 +66,7 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
      */
     protected open fun findInnerCodeBlock(currentElement: PsiElement, objectElement: PsiElement, editor: VimEditor): PsiElement? {
         val codeBlockTypes = getCodeBlockTypes(objectElement)
-        val caretOffset = editor.currentCaret().offset
+        val caretOffset = editor.getCareOffset()
 
         val elementQueue = ArrayDeque<PsiElement>()
         elementQueue.add(objectElement)
@@ -110,7 +110,7 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
     }
 
     protected fun findCurrentElement(editor: VimEditor): PsiElement? {
-        return getCurrentPSIFile(editor)?.findElementAt(editor.currentCaret().offset)
+        return getCurrentPSIFile(editor)?.findElementAt(editor.getCareOffset())
     }
 
     protected fun findObjectElement(currentElement: PsiElement): PsiElement? {
@@ -124,7 +124,7 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
         return null
     }
 
-    protected fun normalizeElementType(elementTypeName: String, language: String): String {
+    private fun normalizeElementType(elementTypeName: String, language: String): String {
         var normalizedText = elementTypeName
         if (normalizedText.contains(":"))
             normalizedText = normalizedText.substringAfter(":")
@@ -132,11 +132,11 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
         return normalizedText.replace(cleanDelimitersRegex, "").replace(cleanSuffixesRegex, "").trim()
     }
 
-    protected fun normalizeElementType(element: PsiElement, language: String): String {
+    private fun normalizeElementType(element: PsiElement, language: String): String {
         return normalizeElementType(element.toElementTypeName(), language)
     }
 
-    protected fun getAcceptedNormalizedTypes(language: String): Set<String> {
+    private fun getAcceptedNormalizedTypes(language: String): Set<String> {
         return acceptedNormalizedTypesCache.computeIfAbsent(language) { commonTypes + (languageSpecificTypes[language] ?: emptySet()) }
     }
 
@@ -167,7 +167,7 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
     }
 
 
-    open fun getPreviousElement(element: PsiElement): PsiElement? {
+    private fun getPreviousElement(element: PsiElement): PsiElement? {
         val language = getLanguage(element)
         val acceptedNormalizedTypes = getAcceptedNormalizedTypes(language)
         val file = element.containingFile
@@ -199,7 +199,7 @@ abstract class AbstractPSIBasedHandler : BaseSelectionHandler, BaseJumpHandler {
         return text
     }
 
-    open fun getNextElement(element: PsiElement, restart: Boolean = true): PsiElement? {
+    protected fun getNextElement(element: PsiElement, restart: Boolean = true): PsiElement? {
         val language = getLanguage(element)
         val acceptedNormalizedTypes = getAcceptedNormalizedTypes(language)
         val file = element.containingFile

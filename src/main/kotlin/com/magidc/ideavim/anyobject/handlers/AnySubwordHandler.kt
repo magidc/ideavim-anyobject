@@ -5,6 +5,7 @@ import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.common.TextRange
 import com.magidc.ideavim.anyobject.handlers.base.BaseJumpHandler
 import com.magidc.ideavim.anyobject.handlers.base.TextBasedHandler
+import com.magidc.ideavim.anyobject.handlers.base.getCareOffset
 
 
 class AnySubwordHandler : TextBasedHandler(), BaseJumpHandler {
@@ -42,7 +43,7 @@ class AnySubwordHandler : TextBasedHandler(), BaseJumpHandler {
     }
 
     override fun findJumpElementStartOffset(editor: VimEditor, next: Boolean): Int? {
-        val caretOffset = editor.currentCaret().offset
+        val caretOffset = editor.getCareOffset()
         var found = false
         val sequence = outerSelectionRegex.findAll(editor.text())
         val matches = if (next) sequence.toList() else sequence.toReversedList()

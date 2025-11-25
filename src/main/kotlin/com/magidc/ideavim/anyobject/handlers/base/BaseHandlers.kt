@@ -3,6 +3,8 @@ package com.magidc.ideavim.anyobject.handlers.base
 import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.common.TextRange
 
+fun VimEditor.getCareOffset(): Int = currentCaret().offset
+
 interface BaseHandler
 
 interface BaseSelectionHandler : BaseHandler {
