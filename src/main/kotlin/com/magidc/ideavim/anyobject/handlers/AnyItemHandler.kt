@@ -10,8 +10,8 @@ import com.magidc.ideavim.anyobject.handlers.base.getCareOffset
 
 open class AnyItemHandler : AbstractPSIBasedHandler() {
     companion object {
-        val openDelimiters = setOf("(", "{", "[", "<")
-        val closeDelimiters = setOf(")", "}", "]", ">")
+        val openDelimiters = setOf("(", "{", "[")
+        val closeDelimiters = setOf(")", "}", "]")
         private fun <T> List<T>.getLoopNext(index: Int): T = if (index < size - 1) get(index + 1) else first()
         private fun <T> List<T>.getLoopPrevious(index: Int): T = if (index > 0) get(index - 1) else last()
     }
@@ -44,15 +44,19 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
     /**
      * Indentifies the main component ranges within the given element
      */
-    private fun findItemRanges(element: PsiElement): List<ItemRange> {
+    private fun findItemRanges(element: PsiElement, fromCaretOffset: Int = -1, maxSize: Int = Int.MAX_VALUE): List<ItemRange> {
+        if (maxSize == 0) return emptyList()
+
         val childLeafs = element.childLeafs()
 
         if (!childLeafs.none() && childLeafs.first().text == "(" && childLeafs.last().text == ")") {
             val itemStack = java.util.ArrayDeque<String>()
             val ranges = mutableListOf<ItemRange>()
+            val itemTextBuilder = StringBuilder()
             var fromInner = childLeafs.first().textRange.endOffset
             var fromOuter = fromInner
-            val stringBuilder = StringBuilder()
+            var isValid = fromCaretOffset == -1
+            var i = 0
 
             for (leaf in childLeafs) {
                 val leafText = leaf.text
@@ -64,38 +68,43 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
                     itemStack.pop()
                 } else {
                     if (leafText == "," && itemStack.size == 1) {
-                        ranges.add(
-                            ItemRange(
-                                fromOuter,
-                                leaf.textRange.endOffset,
-                                fromInner,
-                                leaf.textRange.startOffset,
-                                ranges.size,
-                                stringBuilder.toString()
-                            )
+                        val itemRange = ItemRange(
+                            fromOuter,
+                            leaf.textRange.endOffset,
+                            fromInner,
+                            leaf.textRange.startOffset,
+                            i++,
+                            itemTextBuilder.toString()
                         )
-                        stringBuilder.clear()
+
+                        itemTextBuilder.clear()
                         fromInner = leaf.textRange.endOffset
                         fromOuter = leaf.textRange.startOffset
+                        isValid = isValid || itemRange.containsOffset(fromCaretOffset)
+                        if (isValid) {
+                            ranges.add(itemRange)
+                            if (ranges.size == maxSize) return ranges
+                        }
                     } else {
-                        if (leafText.isBlank())
-                        // Shrink inner range to exclude whitespaces
-                            fromInner = leaf.textRange.endOffset
+                        if (leafText.isBlank() && itemTextBuilder.isEmpty())
+                        // Shrink inner range to exclude trailing whitespaces
+                            fromInner += leaf.textLength
                         else
-                            stringBuilder.append(leafText)
+                            itemTextBuilder.append(leafText)
                     }
                 }
             }
-            ranges.add(
-                ItemRange(
-                    fromOuter,
-                    childLeafs.last().textRange.startOffset,
-                    fromInner,
-                    childLeafs.last().textRange.startOffset,
-                    ranges.size,
-                    stringBuilder.toString()
-                )
+            val itemRange = ItemRange(
+                fromOuter,
+                childLeafs.last().textRange.startOffset,
+                fromInner,
+                childLeafs.last().textRange.startOffset,
+                i,
+                itemTextBuilder.toString()
             )
+            isValid = isValid || itemRange.containsOffset(fromCaretOffset)
+            if (isValid)
+                ranges.add(itemRange)
             return ranges
         }
         return emptyList()
@@ -107,9 +116,8 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
         val objectElement = findObjectElement(currentElement) ?: super.getNextElement(currentElement, false) ?: return null
 
         if (objectElement.text.isBlank() || size == 0) return null
-        val caretOffset = editor.getCareOffset()
-        val ranges = findItemRanges(objectElement.parent).asSequence().dropWhile { !it.containsOffset(caretOffset) }.take(size)
-        if (ranges.none()) return null
+        val ranges = findItemRanges(objectElement.parent, editor.getCareOffset(), size)
+        if (ranges.isEmpty()) return null
         if (isInner)
             return TextRange(ranges.first().startInnerOffset, ranges.last().endInnerOffset)
         // Outer selection of first items includes separator AFTER the items. For other items, it includes separator BEFORE the items.
@@ -126,9 +134,8 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
     override fun findJumpElementStartOffset(editor: VimEditor, next: Boolean): Int? {
         val currentElement = findCurrentElement(editor) ?: return null
         val objectElement = findObjectElement(currentElement) ?: return super.findJumpElementStartOffset(editor, next)
-        val caretOffset = editor.getCareOffset()
         val ranges = findItemRanges(objectElement.parent)
-        val idx = ranges.indexOfFirst { it.containsOffset(caretOffset) }
+        val idx = ranges.indexOfFirst { it.containsOffset(editor.getCareOffset()) }
         if (idx < 0) return null
         return (if (next) ranges.getLoopNext(idx) else ranges.getLoopPrevious(idx)).startInnerOffset
     }
