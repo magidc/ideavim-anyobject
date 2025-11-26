@@ -17,6 +17,11 @@ class AnyArgumentHandler : AnyItemHandler() {
                             || elementTypeName.contains("CALL")
                     )
 
+        // PHP uses "PARAMETER LIST" (with space) for both function definitions and calls
+        // Accept any non-delimiter child of PARAMETER LIST
+        if (language == "PHP" && parentElementTypeName.contains("PARAMETER") && parentElementTypeName.endsWith("LIST"))
+            return true
+
         return (parentElementTypeName.endsWith("ARGUMENT_LIST") && (elementTypeName.contains("ARGUMENT") || elementTypeName.contains("EXPRESSION")))
                 || (parentElementTypeName.endsWith("PARAMETER_LIST") && elementTypeName.contains("PARAMETER"))
                 || (parentElementTypeName.endsWith("EXPRESSION_LIST") && elementTypeName.contains("EXPRESSION"))
