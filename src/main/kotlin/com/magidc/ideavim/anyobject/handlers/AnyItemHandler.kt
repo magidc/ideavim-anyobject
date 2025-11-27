@@ -2,6 +2,8 @@ package com.magidc.ideavim.anyobject.handlers
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.childLeafs
+import com.intellij.psi.util.lastLeaf
+import com.intellij.psi.util.nextLeaf
 import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.common.TextRange
 import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
@@ -37,7 +39,9 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
         return (parentElementTypeName.contains("ARRAY") || parentElementTypeName.contains("LIST_") || parentElementTypeName.contains("TUPLE_"))
     }
 
-    private class ItemRange(val startOuterOffset: Int, val endOuterOffset: Int, val startInnerOffset: Int, val endInnerOffset: Int, val index: Int, val text: String) {
+    private class ItemRange(
+        val startOuterOffset: Int, val endOuterOffset: Int, val startInnerOffset: Int, val endInnerOffset: Int,
+        val index: Int, val text: String) {
         override fun toString(): String = text
         fun containsOffset(offset: Int): Boolean = offset in startOuterOffset until endOuterOffset + 1
     }
@@ -81,8 +85,7 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
                         fromInner,
                         leaf.textRange.startOffset,
                         i++,
-                        itemTextBuilder.toString()
-                    )
+                        itemTextBuilder.toString())
                     isValid = isValid || itemRange.containsOffset(fromCaretOffset)
                     if (isValid) {
                         ranges.add(itemRange)
@@ -107,21 +110,29 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
             fromInner,
             childLeafs.last().textRange.endOffset,
             i,
-            itemTextBuilder.toString()
-        )
+            itemTextBuilder.toString())
         isValid = isValid || itemRange.containsOffset(fromCaretOffset)
         if (isValid)
             ranges.add(itemRange)
         return ranges
     }
 
+    private fun findNextElement(editor: VimEditor, currentElement: PsiElement): PsiElement? {
+        val nextElementStartOffset = findJumpElementStartOffset(editor, true) ?: return null
+        var leaf: PsiElement? = currentElement.lastLeaf()
+        while (leaf != null && !leaf.textRange.contains(nextElementStartOffset)) {
+            leaf = leaf.nextLeaf(true)
+        }
+        if (leaf == null) return null
+        return findObjectElement(leaf)
+    }
 
     override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
+        if (size <= 0) return null
         val currentElement = findCurrentElement(editor) ?: return null
-        val objectElement = findObjectElement(currentElement) ?: super.getNextElement(currentElement, false) ?: return null
-
-        if (objectElement.text.isBlank() || size == 0) return null
-        val ranges = findItemRanges(objectElement.parent, editor.getCareOffset(), size)
+        val objectElement = findObjectElement(currentElement) ?: findNextElement(editor, currentElement) ?: return null
+        if (objectElement.text.isBlank()) return null
+        val ranges = findItemRanges(objectElement.parent, objectElement.textRange.startOffset, size)
         if (ranges.isEmpty()) return null
         if (isInner)
             return TextRange(ranges.first().startInnerOffset, ranges.last().endInnerOffset)

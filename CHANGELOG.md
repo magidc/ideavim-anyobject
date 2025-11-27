@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.7
+Improving argument selection in PHP.
+
 ## 2.0.6
 Fixed issues selecting collection items and arguments in various platforms.
 
