@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.6
+Fixed issues selecting collection items and arguments in various platforms.
+
 ## 2.0.5
 ### Improved C# support
 Fixed multiple issues detecting C# text objects.
