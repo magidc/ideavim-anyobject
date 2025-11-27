@@ -10,8 +10,9 @@ import com.magidc.ideavim.anyobject.handlers.base.getCareOffset
 
 open class AnyItemHandler : AbstractPSIBasedHandler() {
     companion object {
-        val openDelimiters = setOf("(", "{", "[")
-        val closeDelimiters = setOf(")", "}", "]")
+        val delimiterPairs = setOf(Pair("(", ")"), Pair("[", "]"), Pair("{", "}"), Pair("<", ">"))
+        val openDelimiters = delimiterPairs.map { it.first }
+        val closeDelimiters = delimiterPairs.map { it.second }
         private fun <T> List<T>.getLoopNext(index: Int): T = if (index < size - 1) get(index + 1) else first()
         private fun <T> List<T>.getLoopPrevious(index: Int): T = if (index > 0) get(index - 1) else last()
     }
@@ -36,26 +37,27 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
         return (parentElementTypeName.contains("ARRAY") || parentElementTypeName.contains("LIST_") || parentElementTypeName.contains("TUPLE_"))
     }
 
-    private class ItemRange(val startOuterOffset: Int, val endOuterOffset: Int, val startInnerOffset: Int, val endInnerOffset: Int, val index: Int, val text: String) {
-        override fun toString(): String = text
+    private class ItemRange(val startOuterOffset: Int, val endOuterOffset: Int, val startInnerOffset: Int, val endInnerOffset: Int, val index: Int) {
         fun containsOffset(offset: Int): Boolean = offset in startOuterOffset until endOuterOffset + 1
     }
 
     /**
-     * Indentifies the main component ranges within the given element
+     * Identifies the main component ranges within the given element
      */
     private fun findItemRanges(element: PsiElement, fromCaretOffset: Int = -1, maxSize: Int = Int.MAX_VALUE): List<ItemRange> {
         if (maxSize == 0) return emptyList()
 
         val childLeafs = element.childLeafs()
 
-        if (!childLeafs.none() && childLeafs.first().text == "(" && childLeafs.last().text == ")") {
+        if (!childLeafs.none() && delimiterPairs.any { childLeafs.first().text == it.first && childLeafs.last().text == it.second }) {
             val itemStack = java.util.ArrayDeque<String>()
             val ranges = mutableListOf<ItemRange>()
-            val itemTextBuilder = StringBuilder()
+            // If not "fromCaretOffset" specified, all items are processed
+            var isValid = fromCaretOffset == -1
+            // Was some non-blank text found for the current item?
+            var isBlank = true
             var fromInner = childLeafs.first().textRange.endOffset
             var fromOuter = fromInner
-            var isValid = fromCaretOffset == -1
             var i = 0
 
             for (leaf in childLeafs) {
@@ -68,29 +70,29 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
                     itemStack.pop()
                 } else {
                     if (leafText == "," && itemStack.size == 1) {
+                        // If a separator is found, it is the end of the current item
                         val itemRange = ItemRange(
                             fromOuter,
                             leaf.textRange.endOffset,
                             fromInner,
                             leaf.textRange.startOffset,
-                            i++,
-                            itemTextBuilder.toString()
+                            i++
                         )
-
-                        itemTextBuilder.clear()
-                        fromInner = leaf.textRange.endOffset
-                        fromOuter = leaf.textRange.startOffset
                         isValid = isValid || itemRange.containsOffset(fromCaretOffset)
                         if (isValid) {
                             ranges.add(itemRange)
                             if (ranges.size == maxSize) return ranges
                         }
+                        // Resetting current item parameters
+                        isBlank = true
+                        fromInner = leaf.textRange.endOffset
+                        fromOuter = leaf.textRange.startOffset
                     } else {
-                        if (leafText.isBlank() && itemTextBuilder.isEmpty())
+                        if (leafText.isBlank() && isBlank)
                         // Shrink inner range to exclude trailing whitespaces
                             fromInner += leaf.textLength
                         else
-                            itemTextBuilder.append(leafText)
+                            isBlank = false
                     }
                 }
             }
@@ -99,8 +101,7 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
                 childLeafs.last().textRange.startOffset,
                 fromInner,
                 childLeafs.last().textRange.startOffset,
-                i,
-                itemTextBuilder.toString()
+                i
             )
             isValid = isValid || itemRange.containsOffset(fromCaretOffset)
             if (isValid)
