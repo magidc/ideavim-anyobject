@@ -37,7 +37,8 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
         return (parentElementTypeName.contains("ARRAY") || parentElementTypeName.contains("LIST_") || parentElementTypeName.contains("TUPLE_"))
     }
 
-    private class ItemRange(val startOuterOffset: Int, val endOuterOffset: Int, val startInnerOffset: Int, val endInnerOffset: Int, val index: Int) {
+    private class ItemRange(val startOuterOffset: Int, val endOuterOffset: Int, val startInnerOffset: Int, val endInnerOffset: Int, val index: Int, val text: String) {
+        override fun toString(): String = text
         fun containsOffset(offset: Int): Boolean = offset in startOuterOffset until endOuterOffset + 1
     }
 
@@ -45,70 +46,73 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
      * Identifies the main component ranges within the given element
      */
     private fun findItemRanges(element: PsiElement, fromCaretOffset: Int = -1, maxSize: Int = Int.MAX_VALUE): List<ItemRange> {
-        if (maxSize == 0) return emptyList()
+        if (maxSize == 0 || element.childLeafs().none()) return emptyList()
 
-        val childLeafs = element.childLeafs()
+        val childLeafs =
+            if (delimiterPairs.any { element.childLeafs().first().text == it.first && element.childLeafs().last().text == it.second })
+                element.childLeafs().drop(1).toList().dropLast(1)
+            else
+                element.childLeafs().toList()
 
-        if (!childLeafs.none() && delimiterPairs.any { childLeafs.first().text == it.first && childLeafs.last().text == it.second }) {
-            val itemStack = java.util.ArrayDeque<String>()
-            val ranges = mutableListOf<ItemRange>()
-            // If not "fromCaretOffset" specified, all items are processed
-            var isValid = fromCaretOffset == -1
-            // Was some non-blank text found for the current item?
-            var isBlank = true
-            var fromInner = childLeafs.first().textRange.endOffset
-            var fromOuter = fromInner
-            var i = 0
+        val itemStack = java.util.ArrayDeque<String>()
+        val ranges = mutableListOf<ItemRange>()
+        // If not "fromCaretOffset" specified, all items are processed
+        var isValid = fromCaretOffset == -1
+        // Was some non-blank text found for the current item?
+        var fromInner = childLeafs.first().textRange.startOffset
+        var fromOuter = fromInner
+        var i = 0
+        val itemTextBuilder = StringBuilder()
 
-            for (leaf in childLeafs) {
-                val leafText = leaf.text
-                if (openDelimiters.contains(leafText))
-                    itemStack.push(leafText)
-                else if (closeDelimiters.contains(leafText)) {
-                    // Stack should not be empty in well-formed code. There must be at least the main item level
-                    if (itemStack.isEmpty()) return emptyList()
-                    itemStack.pop()
-                } else {
-                    if (leafText == "," && itemStack.size == 1) {
-                        // If a separator is found, it is the end of the current item
-                        val itemRange = ItemRange(
-                            fromOuter,
-                            leaf.textRange.endOffset,
-                            fromInner,
-                            leaf.textRange.startOffset,
-                            i++
-                        )
-                        isValid = isValid || itemRange.containsOffset(fromCaretOffset)
-                        if (isValid) {
-                            ranges.add(itemRange)
-                            if (ranges.size == maxSize) return ranges
-                        }
-                        // Resetting current item parameters
-                        isBlank = true
-                        fromInner = leaf.textRange.endOffset
-                        fromOuter = leaf.textRange.startOffset
-                    } else {
-                        if (leafText.isBlank() && isBlank)
-                        // Shrink inner range to exclude trailing whitespaces
-                            fromInner += leaf.textLength
-                        else
-                            isBlank = false
+        for (leaf in childLeafs) {
+            val leafText = leaf.text
+            if (openDelimiters.contains(leafText))
+                itemStack.push(leafText)
+            else if (closeDelimiters.contains(leafText)) {
+                // Stack should not be empty in well-formed code. There must be at least the main item level
+                if (itemStack.isEmpty()) return emptyList()
+                itemStack.pop()
+            } else {
+                if (leafText == "," && itemStack.isEmpty()) {
+                    // If a separator is found, it is the end of the current item
+                    val itemRange = ItemRange(
+                        fromOuter,
+                        leaf.textRange.endOffset,
+                        fromInner,
+                        leaf.textRange.startOffset,
+                        i++,
+                        itemTextBuilder.toString()
+                    )
+                    isValid = isValid || itemRange.containsOffset(fromCaretOffset)
+                    if (isValid) {
+                        ranges.add(itemRange)
+                        if (ranges.size == maxSize) return ranges
                     }
+                    // Resetting current item parameters
+                    itemTextBuilder.clear()
+                    fromInner = leaf.textRange.endOffset
+                    fromOuter = leaf.textRange.startOffset
+                    continue
                 }
             }
-            val itemRange = ItemRange(
-                fromOuter,
-                childLeafs.last().textRange.startOffset,
-                fromInner,
-                childLeafs.last().textRange.startOffset,
-                i
-            )
-            isValid = isValid || itemRange.containsOffset(fromCaretOffset)
-            if (isValid)
-                ranges.add(itemRange)
-            return ranges
+            // Shrink inner range to exclude trailing whitespaces
+            if (leafText.isBlank() && itemTextBuilder.isEmpty())
+                fromInner += leaf.textLength
+            else
+                itemTextBuilder.append(leafText)
         }
-        return emptyList()
+        val itemRange = ItemRange(
+            fromOuter,
+            childLeafs.last().textRange.endOffset,
+            fromInner,
+            childLeafs.last().textRange.endOffset,
+            i,
+            itemTextBuilder.toString()
+        )
+        isValid = isValid || itemRange.containsOffset(fromCaretOffset)
+        if (isValid)
+            ranges.add(itemRange)
+        return ranges
     }
 
 

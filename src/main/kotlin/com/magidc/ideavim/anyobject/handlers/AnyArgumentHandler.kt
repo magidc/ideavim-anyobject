@@ -12,10 +12,17 @@ class AnyArgumentHandler : AnyItemHandler() {
         val elementTypeName = element.toElementTypeName()
         if (language == "C#")
             return parentElementTypeName.endsWith("FUN-CALL-ROLE") || parentElementTypeName.endsWith("PARENT-LIST")
-
-        return (parentElementTypeName.endsWith("ARGUMENT_LIST") && (elementTypeName.contains("ARGUMENT") || elementTypeName.contains("EXPRESSION")))
-                || (parentElementTypeName.endsWith("PARAMETER_LIST") && elementTypeName.contains("PARAMETER"))
-                || (parentElementTypeName.endsWith("EXPRESSION_LIST") && elementTypeName.contains("EXPRESSION"))
+        val normalizedParentElementTypeName = normalizeElementType(parentElementTypeName)
+        return (normalizedParentElementTypeName.endsWith("ARGUMENT") && (elementTypeName.contains("ARGUMENT") || elementTypeName.contains("EXPRESSION")))
+                || (normalizedParentElementTypeName.endsWith("PARAMETER") && (elementTypeName.contains("PARAMETER")
+                || elementTypeName.contains("VARIABLE") || elementTypeName.contains("EXPRESSION")))
+                || (normalizedParentElementTypeName.endsWith("EXPRESSION") && elementTypeName.contains("EXPRESSION"))
     }
 
+    private fun normalizeElementType(elementTypeName: String): String {
+        return elementTypeName.removeSuffix("LIST")
+            .replace("_", "")
+            .replace("-", "")
+            .replace(" ", "")
+    }
 }
