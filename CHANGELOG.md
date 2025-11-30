@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.0
+Using Treesitter as the main parser for element detection. 
+This provides a more consistent model across different languages.
+
 ## 2.0.7
 Improving argument selection in PHP.
 
