@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.8
+Fixes problems with argument selection in Java annotations and function call arguments in PHP.
+
 ## 2.0.7
 Improving argument selection in PHP.
 

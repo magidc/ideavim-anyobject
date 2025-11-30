@@ -7,7 +7,6 @@ import com.intellij.psi.util.nextLeaf
 import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.common.TextRange
 import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
-import com.magidc.ideavim.anyobject.handlers.base.getCareOffset
 
 
 open class AnyItemHandler : AbstractPSIBasedHandler() {
@@ -15,8 +14,6 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
         val delimiterPairs = setOf(Pair("(", ")"), Pair("[", "]"), Pair("{", "}"), Pair("<", ">"))
         val openDelimiters = delimiterPairs.map { it.first }
         val closeDelimiters = delimiterPairs.map { it.second }
-        private fun <T> List<T>.getLoopNext(index: Int): T = if (index < size - 1) get(index + 1) else first()
-        private fun <T> List<T>.getLoopPrevious(index: Int): T = if (index > 0) get(index - 1) else last()
     }
 
     protected fun isDelimiter(element: PsiElement): Boolean {
@@ -41,7 +38,8 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
 
     private class ItemRange(
         val startOuterOffset: Int, val endOuterOffset: Int, val startInnerOffset: Int, val endInnerOffset: Int,
-        val index: Int, val text: String) {
+        val index: Int, val text: String
+    ) {
         override fun toString(): String = text
         fun containsOffset(offset: Int): Boolean = offset in startOuterOffset until endOuterOffset + 1
     }
@@ -85,7 +83,8 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
                         fromInner,
                         leaf.textRange.startOffset,
                         i++,
-                        itemTextBuilder.toString())
+                        itemTextBuilder.toString()
+                    )
                     isValid = isValid || itemRange.containsOffset(fromCaretOffset)
                     if (isValid) {
                         ranges.add(itemRange)
@@ -110,7 +109,8 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
             fromInner,
             childLeafs.last().textRange.endOffset,
             i,
-            itemTextBuilder.toString())
+            itemTextBuilder.toString()
+        )
         isValid = isValid || itemRange.containsOffset(fromCaretOffset)
         if (isValid)
             ranges.add(itemRange)
@@ -142,17 +142,5 @@ open class AnyItemHandler : AbstractPSIBasedHandler() {
         if (first.index == 0)
             return TextRange(first.startInnerOffset, ranges.last().endOuterOffset)
         return TextRange(first.startOuterOffset, ranges.last().endInnerOffset)
-    }
-
-    /**
-     * For jumps, items iterated in loop
-     */
-    override fun findJumpElementStartOffset(editor: VimEditor, next: Boolean): Int? {
-        val currentElement = findCurrentElement(editor) ?: return null
-        val objectElement = findObjectElement(currentElement) ?: return super.findJumpElementStartOffset(editor, next)
-        val ranges = findItemRanges(objectElement.parent)
-        val idx = ranges.indexOfFirst { it.containsOffset(editor.getCareOffset()) }
-        if (idx < 0) return null
-        return (if (next) ranges.getLoopNext(idx) else ranges.getLoopPrevious(idx)).startInnerOffset
     }
 }

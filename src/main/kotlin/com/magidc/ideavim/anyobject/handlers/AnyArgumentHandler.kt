@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement
 
 class AnyArgumentHandler : AnyItemHandler() {
     companion object {
-        val phpArgsTypeSuffixes = setOf("PARAMETER", "VARIABLE", "EXPRESSION", "IDENTIFIER", "REFERENCE", "STRING", "CLOSURE")
+        val phpArgsTypeSuffixes = setOf("PARAMETER", "VARIABLE", "EXPRESSION", "IDENTIFIER", "REFERENCE", "STRING", "CLOSURE", "CALL")
     }
 
     override fun acceptElement(element: PsiElement, language: String, acceptedNormalizedTypes: Set<String>): Boolean {
@@ -21,6 +21,7 @@ class AnyArgumentHandler : AnyItemHandler() {
         val normalizedParentElementTypeName = normalizeElementType(parentElementTypeName)
         return (normalizedParentElementTypeName.endsWith("ARGUMENT") && (elementTypeName.contains("ARGUMENT") || elementTypeName.contains("EXPRESSION")))
                 || (normalizedParentElementTypeName.endsWith("EXPRESSION") && elementTypeName.contains("EXPRESSION"))
+                || (normalizedParentElementTypeName.endsWith("PARAMETER") && (elementTypeName.contains("VALUE") || elementTypeName.contains("PARAMETER")))
     }
 
     private fun normalizeElementType(elementTypeName: String): String {
