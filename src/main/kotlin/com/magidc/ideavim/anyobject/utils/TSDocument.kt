@@ -6,6 +6,10 @@ import com.intellij.psi.PsiManager
 import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.common.ChangesListener
 import com.maddyhome.idea.vim.common.TextRange
+import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler.Companion.lastLeafOrSelf
+import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler.Companion.nextLeaf
+import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler.Companion.parentPrevSibling
+import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler.Companion.prevLeaf
 import com.magidc.ideavim.anyobject.handlers.base.getCareOffset
 import org.treesitter.TSNode
 import org.treesitter.TSParser
@@ -40,37 +44,6 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
     companion object {
         private val UTF8_ENCODER = StandardCharsets.UTF_8.newEncoder()
         private val UTF8_DECODER = StandardCharsets.UTF_8.newDecoder()
-
-        private fun TSNode.toText(text: String, textLimit: Int = 20): String {
-            val string = String(text.toByteArray().copyOfRange(startByte, endByte))
-            return "${grammarType}: ${string.take(textLimit)}"
-        }
-
-        private fun TSNode.lastLeafOrSelf(): TSNode {
-            if (namedChildCount == 0) return this
-            return getNamedChild(namedChildCount - 1).lastLeafOrSelf()
-        }
-
-        private fun TSNode.parentPrevSibling(): TSNode? {
-            if (parent.isNull) return null
-            return if (parent.prevNamedSibling.isNull) parent.parentPrevSibling() else parent.prevNamedSibling
-        }
-
-        private fun TSNode.prevLeaf(): TSNode? {
-            return if (prevNamedSibling.isNull) parent.takeIf { !it.isNull } else prevNamedSibling?.lastLeafOrSelf()
-        }
-
-        private fun TSNode.next(): TSNode? {
-            if (nextNamedSibling.isNull)
-                return if (parent.isNull) null else parent.next()
-            return nextNamedSibling
-        }
-
-        private fun TSNode.nextLeaf(): TSNode? {
-            if (namedChildCount > 0) return getNamedChild(0)
-            return if (nextNamedSibling.isNull) parent.next() else nextNamedSibling
-        }
-
         private val parserCache = LRUCache<String, TSParser>(3)
 
         private fun getLanguage(editor: VimEditor): String? {
@@ -140,6 +113,10 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         return UTF8_ENCODER.encode(CharBuffer.wrap(text, 0, charIndex)).limit()
     }
 
+    fun toTextRange(fromNode: TSNode, toNode: TSNode = fromNode): TextRange {
+        return TextRange(byteToCharOffset(fromNode.startByte), byteToCharOffset(toNode.endByte))
+    }
+
     private fun byteToCharOffset(byteIndex: Int): Int {
         require(byteIndex in 0..tsTree.rootNode.endByte)
         UTF8_DECODER.reset()
@@ -150,7 +127,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         if (!updated) loadTSTree()
         val byteOffset = charToByteOffset(offset)
         val containerNode = tsTree.rootNode.getFirstChildForByte(byteOffset)
-        if(containerNode.startByte > byteOffset) return containerNode
+        if (containerNode.startByte > byteOffset) return containerNode
         return containerNode.getDescendantForByteRange(byteOffset, byteOffset)
     }
 
@@ -163,12 +140,12 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         return null
     }
 
-    fun findSelection(acceptNode: (TSNode) -> Boolean, size: Int): TextRange? {
+    fun findSelectionNode(acceptNode: (TSNode) -> Boolean): TSNode? {
         val currentNode = findCurrentNode(editor.getCareOffset()) ?: return null
-        return (findObject(currentNode, acceptNode) ?: findNext(currentNode, acceptNode))?.let { TextRange(byteToCharOffset(it.startByte), byteToCharOffset(it.endByte)) }
+        return findObject(currentNode, acceptNode) ?: findNext(currentNode, acceptNode)
     }
 
-    private fun findNext(currentNode: TSNode, acceptNode: (TSNode) -> Boolean, forward: Boolean = true): TSNode? {
+    fun findNext(currentNode: TSNode, acceptNode: (TSNode) -> Boolean, forward: Boolean = true): TSNode? {
         var node: TSNode? = currentNode.let {
             if (forward)
                 it.nextLeaf()

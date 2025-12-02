@@ -9,9 +9,9 @@ import com.maddyhome.idea.vim.common.TextRange
 abstract class TextBasedHandler() : BaseSelectionHandler {
     abstract fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int, isInner: Boolean, size: Int = 1): TextRange?
 
-    override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
+    override fun findSelection(editor: VimEditor, inner: Boolean, size: Int): TextRange? {
         val caret = editor.currentCaret()
-        return findTextSelection(editor.text(), 0, caret.offset, isInner, size)
+        return findTextSelection(editor.text(), 0, caret.offset, inner, size)
     }
 }
 
@@ -20,13 +20,13 @@ abstract class TextBasedHandler() : BaseSelectionHandler {
  */
 open class DelimiterHandler(val sameLine: Boolean, val delimiterPairs: Collection<Pair<String, String>>) : TextBasedHandler() {
 
-    override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): TextRange? {
+    override fun findSelection(editor: VimEditor, inner: Boolean, size: Int): TextRange? {
         val caret = editor.currentCaret()
         val textOffset = if (sameLine) editor.getLineRange(caret.getLine()).first else 0
         val text = if (sameLine) editor.getLineText(caret.getLine()) else editor.text()
 
         val caretOffset = caret.offset - textOffset
-        return findTextSelection(text, textOffset, caretOffset, isInner)
+        return findTextSelection(text, textOffset, caretOffset, inner)
     }
 
     override fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int, isInner: Boolean, size: Int): TextRange? {
