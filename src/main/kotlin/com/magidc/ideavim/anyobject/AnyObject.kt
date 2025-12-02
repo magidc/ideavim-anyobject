@@ -139,7 +139,7 @@ class AnyObject : VimExtension {
         )
 
         if (handler.allowsCountSelection()) {
-            for (n in 1..20) {
+            for (n in 1..10) {
                 // Outer selection
                 VimExtensionFacade.putExtensionHandlerMapping(
                     MappingMode.XO,
@@ -161,7 +161,7 @@ class AnyObject : VimExtension {
                     MappingMode.XO,
                     injector.parser.parseKeys("<Plug>" + n + "Inner$command"),
                     owner,
-                    createSelection(handler, false, n),
+                    createSelection(handler, true, n),
                     false
                 )
 
@@ -213,6 +213,7 @@ class AnyObject : VimExtension {
     }
 
     private fun createSelection(handler: BaseSelectionHandler, isInner: Boolean, size: Int = 1): ExtensionHandler = object : ExtensionHandler {
+        override val isRepeatable: Boolean = true
         override fun execute(editor: VimEditor, context: ExecutionContext, operatorArguments: OperatorArguments) {
             val textObjectHandler = object : TextObjectActionHandler() {
                 override val visualType: TextObjectVisualType = TextObjectVisualType.CHARACTER_WISE
@@ -232,7 +233,7 @@ class AnyObject : VimExtension {
     }
 
     private fun createMotionAction(handler: BaseJumpHandler, next: Boolean): ExtensionHandler = object : ExtensionHandler {
-
+        override val isRepeatable: Boolean = true
         override fun execute(editor: VimEditor, context: ExecutionContext, operatorArguments: OperatorArguments) {
             val action = object : MotionActionHandler.SingleExecution() {
                 override val motionType: MotionType = MotionType.EXCLUSIVE
