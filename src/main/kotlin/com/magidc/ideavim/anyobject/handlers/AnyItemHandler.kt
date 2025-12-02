@@ -10,5 +10,8 @@ open class AnyItemHandler : AbstractTSBasedHandler() {
     override fun acceptNode(node: TSNode): Boolean {
         return !node.parent.isNull && parentTypes.contains(node.parent.grammarType)
     }
+
+    override fun allowsCountSelection(): Boolean = true
+
 }
 
