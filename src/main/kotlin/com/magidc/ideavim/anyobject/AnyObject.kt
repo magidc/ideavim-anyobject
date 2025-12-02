@@ -138,43 +138,6 @@ class AnyObject : VimExtension {
             true
         )
 
-        if (handler.allowsCountSelection()) {
-            for (n in 1..20) {
-                // Outer selection
-                VimExtensionFacade.putExtensionHandlerMapping(
-                    MappingMode.XO,
-                    injector.parser.parseKeys("<Plug>" + n + "Outer$command"),
-                    owner,
-                    createSelection(handler, false, n),
-                    false
-                )
-
-                VimExtensionFacade.putKeyMappingIfMissing(
-                    MappingMode.XO,
-                    injector.parser.parseKeys("${n}a$mapping"),
-                    owner,
-                    injector.parser.parseKeys("<Plug>" + n + "Outer$command"),
-                    true
-                )
-                // Inner selection
-                VimExtensionFacade.putExtensionHandlerMapping(
-                    MappingMode.XO,
-                    injector.parser.parseKeys("<Plug>" + n + "Inner$command"),
-                    owner,
-                    createSelection(handler, false, n),
-                    false
-                )
-
-                VimExtensionFacade.putKeyMappingIfMissing(
-                    MappingMode.XO,
-                    injector.parser.parseKeys("${n}i$mapping"),
-                    owner,
-                    injector.parser.parseKeys("<Plug>" + n + "Inner$command"),
-                    true
-                )
-            }
-        }
-
         if (handler is BaseJumpHandler) {
             // Next
             VimExtensionFacade.putExtensionHandlerMapping(
@@ -212,12 +175,14 @@ class AnyObject : VimExtension {
         }
     }
 
-    private fun createSelection(handler: BaseSelectionHandler, isInner: Boolean, size: Int = 1): ExtensionHandler = object : ExtensionHandler {
+    private fun createSelection(handler: BaseSelectionHandler, isInner: Boolean): ExtensionHandler = object : ExtensionHandler {
+        override val isRepeatable: Boolean = handler.allowsCountSelection()
+
         override fun execute(editor: VimEditor, context: ExecutionContext, operatorArguments: OperatorArguments) {
             val textObjectHandler = object : TextObjectActionHandler() {
                 override val visualType: TextObjectVisualType = TextObjectVisualType.CHARACTER_WISE
                 override fun getRange(editor: VimEditor, caret: ImmutableVimCaret, context: ExecutionContext, count: Int, rawCount: Int): TextRange? {
-                    val range = handler.findSelection(editor, isInner, size) ?: return null
+                    val range = handler.findSelection(editor, isInner, count) ?: return null
                     // Avoiding change caret position in yank actions
                     val isYankOperation = KeyHandler.getInstance().keyHandlerState.digraphSequence.toString().endsWith("char = y")
                     if (isYankOperation) {
@@ -231,13 +196,14 @@ class AnyObject : VimExtension {
         }
     }
 
-    private fun createMotionAction(handler: BaseJumpHandler, next: Boolean): ExtensionHandler = object : ExtensionHandler {
+    private fun createMotionAction(handler: BaseJumpHandler, forward: Boolean): ExtensionHandler = object : ExtensionHandler {
+        override val isRepeatable: Boolean = handler.allowsCountSelection()
 
         override fun execute(editor: VimEditor, context: ExecutionContext, operatorArguments: OperatorArguments) {
             val action = object : MotionActionHandler.SingleExecution() {
                 override val motionType: MotionType = MotionType.EXCLUSIVE
                 override fun getOffset(editor: VimEditor, context: ExecutionContext, argument: Argument?, operatorArguments: OperatorArguments): Motion {
-                    return handler.findJumpElementStartOffset(editor, next)?.toMotion() ?: Motion.Error
+                    return handler.findJumpElementStartOffset(editor, forward)?.toMotion() ?: Motion.Error
                 }
             }
             KeyHandler.getInstance().keyHandlerState.commandBuilder.addAction(action)

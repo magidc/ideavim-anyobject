@@ -11,24 +11,24 @@ concepts programmers use to think about code: classes, functions, arguments, loo
 
 ## Available Text Objects
 
-| Text Object         | Description                                                                             | Default mapping | Inner/Outer motions | Jump | Count motions |
-|---------------------|-----------------------------------------------------------------------------------------|-----------------|---------------------|------|---------------|
-| **AnyArgument**     | Function arguments, method parameters, and callable expressions                         | `a`             | ✓                   | ✓    | ✓             |
-| **AnyFunction**     | Functions, methods, and procedures                                                      | `f`             | ✓                   | ✓    | x             |
-| **AnyClass**        | Class, interface, struct, and similar type definitions                                  | `c`             | ✓                   | ✓    | x             |
-| **AnyLoop**         | Loop statements (`for`, `while`, `do`, `repeat`, `until`, `loop`, etc.)                 | `l`             | ✓                   | ✓    | x             |
-| **AnyConditional**  | Conditional statements (`if-else`, `switch`, `try-catch`)                               | `y`             | ✓                   | ✓    | x             |
-| **AnyItem**         | Items within collections, tuples, lists, or arrays                                      | `i`             | ✓                   | ✓    | ✓             |
-| **AnyQuote**        | Content enclosed between any type of quotes (single, double, backticks)                 | `q`             | ✓                   | ✗    | ✗             |
-| **AnyBracket**      | Content enclosed between any type of brackets (parentheses, square, curly, angle, etc.) | `o`             | ✓                   | ✗    | ✗             |
-| **AnySubword**      | Words nested in longer words (`camelCase`, `snake_case`, `dash-case`)                   | `u`             | ✓                   | ✓    | ✓             |
-| **AnyDocument**     | Entire document content                                                                 | `d`             | ✓                   | ✗    | ✗             |
-| **AnyBlockComment** | Block comments across different programming languages (`/* */`, `<!-- -->`, etc.)       | `k`             | ✓                   | ✗    | ✗             |
-| **AnyIndentBlock**  | Code blocks based on indentation levels                                                 | `n`             | ✓                   | ✗    | ✗             |
+| Text Object         | Description                                                                             | Default mapping | Inner/Outer motions | Count motions |
+|---------------------|-----------------------------------------------------------------------------------------|-----------------|---------------------|---------------|
+| **AnyArgument**     | Function arguments, method parameters, and callable expressions                         | `a`             | ✓                   | ✓             |
+| **AnyFunction**     | Functions, methods, and procedures                                                      | `f`             | ✓                   | x             |
+| **AnyClass**        | Class, interface, struct, and similar type definitions                                  | `c`             | ✓                   | x             |
+| **AnyLoop**         | Loop statements (`for`, `while`, `do`, `repeat`, `until`, `loop`, etc.)                 | `l`             | ✓                   | x             |
+| **AnyConditional**  | Conditional statements (`if-else`, `switch`, `try-catch`)                               | `y`             | ✓                   | x             |
+| **AnyItem**         | Items within collections, tuples, lists, or arrays                                      | `i`             | ✓                   | ✓             |
+| **AnyQuote**        | Content enclosed between any type of quotes (single, double, backticks)                 | `q`             | ✓                   | ✗             |
+| **AnyBracket**      | Content enclosed between any type of brackets (parentheses, square, curly, angle, etc.) | `o`             | ✓                   | ✗             |
+| **AnySubword**      | Words nested in longer words (`camelCase`, `snake_case`, `dash-case`)                   | `u`             | ✓                   | ✓             |
+| **AnyDocument**     | Entire document content                                                                 | `d`             | ✓                   | ✗             |
+| **AnyBlockComment** | Block comments across different programming languages (`/* */`, `<!-- -->`, etc.)       | `k`             | ✓                   | ✗             |
+| **AnyIndentBlock**  | Code blocks based on indentation levels                                                 | `n`             | ✓                   | ✗             |
 
 - **Inner/Outer**: All text objects support both `i` (inner) and `a` (around/outer) selection modes following standard Vim conventions
 - **Jump**: Text objects with jump support allow navigation using `]` (next) and `[` (previous) motions unless other mappings are specified (see [Customization](#customization))
-- **Count motions**: Text objects with count support allow selecting multiple consecutive instances. For example `d2aa` will delete two arguments including their separators
+- **Count motions**: Text objects with count support allow selecting multiple consecutive instances. For example `2daa` will delete two arguments including their separators
 
 ## Usage
 
@@ -44,15 +44,15 @@ The plugin supports jumping to the next/previous text object using `]` (next) an
 
 - `dia` - Delete argument
 - `daa` - Delete argument and its separator
-- `d2ia` - Deletes argument and the next without including separators
+- `2dia` - Deletes argument and the next without including separators
 - `cia` - Change argument
 - `caa` - Change argument and its separator
-- `c2aa` - Change argument and next one including separator
+- `2caa` - Change argument and next one including separator
 - `yia` - Yank/Copy argument
 - `yaa` - Yank/Copy argument and its separator
 - `via` - Visually select argument 
-- `v3aa` - Visually select three arguments including separator
-- `v3ia` - Visually select three arguments without including separator
+- `3vaa` - Visually select three arguments including separator
+- `3via` - Visually select three arguments without including separator
 - `]a` - Jump to next argument
 - `[a` - Jump to previous argument
 
@@ -121,7 +121,7 @@ Items within collections, tuples, lists, or arrays:
 - **Inner selection (`ii`)**: Selects only the item itself
 - **Outer selection (`ai`)**: Selects the entire item including the separator and the item itself
 
-**Multiple outer selections are supported**. For example `d2ai` will delete the current item and the next one including separator
+**Multiple outer selections are supported**. For example `2dai` will delete the current item and the next one including separator
 
 ### AnyArgument (`a`)
 
@@ -130,7 +130,7 @@ Function arguments, method parameters, and callable expressions.
 - **Inner selection (`ia`)**: Selects only the argument itself
 - **Outer selection (`ia`)**: Selects the entire argument including the separator and the argument itself
 
-**Multiple outer selections are supported**. For example `d2aa` will delete the current argument and the next one including separator
+**Multiple outer selections are supported**. For example `2daa` will delete the current argument and the next one including separator
 
 ### AnyFunction (`f`)
 
@@ -235,14 +235,14 @@ let g:anyobject_map_jump_next = ">"
 
 - `dia` - Delete argument
 - `daa` - Delete argument and its separator
-- `d2a` - Deletes argument and the next one including separators
+- `2dia` - Deletes argument and the next one
 - `cia` - Change argument
 - `caa` - Change argument and its separator
-- `c2a` - Change argument and next one including separators
+- `2caa` - Change argument and next one including separator
 - `yia` - Yank/Copy argument
 - `yaa` - Yank/Copy argument and its separator
 - `via` - Visually select argument
-- `v3a` - Visually select three arguments
+- `3via` - Visually select three arguments
 - `]a` - Jump to next argument
 - `[a` - Jump to previous argument
 

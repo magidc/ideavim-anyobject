@@ -7,14 +7,16 @@ import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.common.ChangesListener
 import com.maddyhome.idea.vim.common.TextRange
 import com.magidc.ideavim.anyobject.handlers.base.getCareOffset
-import org.treesitter.TSInputEncoding
 import org.treesitter.TSNode
 import org.treesitter.TSParser
 import org.treesitter.TSTree
 import org.treesitter.TreeSitterC
 import org.treesitter.TreeSitterCSharp
+import org.treesitter.TreeSitterClojure
 import org.treesitter.TreeSitterCpp
+import org.treesitter.TreeSitterCss
 import org.treesitter.TreeSitterGo
+import org.treesitter.TreeSitterHtml
 import org.treesitter.TreeSitterJava
 import org.treesitter.TreeSitterJavascript
 import org.treesitter.TreeSitterJson
@@ -22,8 +24,10 @@ import org.treesitter.TreeSitterKotlin
 import org.treesitter.TreeSitterObjc
 import org.treesitter.TreeSitterPhp
 import org.treesitter.TreeSitterPython
+import org.treesitter.TreeSitterR
 import org.treesitter.TreeSitterRust
 import org.treesitter.TreeSitterScala
+import org.treesitter.TreeSitterSql
 import org.treesitter.TreeSitterSwift
 import org.treesitter.TreeSitterTypescript
 import org.treesitter.TreeSitterYaml
@@ -36,8 +40,6 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
     companion object {
         private val UTF8_ENCODER = StandardCharsets.UTF_8.newEncoder()
         private val UTF8_DECODER = StandardCharsets.UTF_8.newDecoder()
-
-        private fun VimEditor.getText(): String = text().toString()
 
         private fun TSNode.toText(text: String, textLimit: Int = 20): String {
             val string = String(text.toByteArray().copyOfRange(startByte, endByte))
@@ -87,21 +89,25 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
                 when (language.uppercase()) {
                     "JAVA" -> parser.setLanguage(TreeSitterJava())
                     "KOTLIN" -> parser.setLanguage(TreeSitterKotlin())
+                    "CLOJURE" -> parser.setLanguage(TreeSitterClojure())
                     "SCALA" -> parser.setLanguage(TreeSitterScala())
                     "C#" -> parser.setLanguage(TreeSitterCSharp())
                     "RUST" -> parser.setLanguage(TreeSitterRust())
                     "GO" -> parser.setLanguage(TreeSitterGo())
                     "PYTHON" -> parser.setLanguage(TreeSitterPython())
                     "PHP" -> parser.setLanguage(TreeSitterPhp())
+                    "HTML" -> parser.setLanguage(TreeSitterHtml())
+                    "CSS" -> parser.setLanguage(TreeSitterCss())
                     "JAVASCRIPT" -> parser.setLanguage(TreeSitterJavascript())
                     "TYPESCRIPT" -> parser.setLanguage(TreeSitterTypescript())
                     "OBJECTIVE-C" -> parser.setLanguage(TreeSitterObjc())
                     "SWIFT" -> parser.setLanguage(TreeSitterSwift())
                     "C" -> parser.setLanguage(TreeSitterC())
                     "C++" -> parser.setLanguage(TreeSitterCpp())
+                    "R" -> parser.setLanguage(TreeSitterR())
+                    "SQL" -> parser.setLanguage(TreeSitterSql())
                     "JSON" -> parser.setLanguage(TreeSitterJson())
                     "YAML" -> parser.setLanguage(TreeSitterYaml())
-                    else -> throw IllegalArgumentException("Unsupported language: $language")
                 }
                 parser
             }
@@ -109,17 +115,23 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
     }
 
     private val parser: TSParser = getParser(getLanguage(editor))
-    private var tsTree: TSTree
-    private var text: String = editor.getText()
-    private var updated: Boolean = true
+    private lateinit var tsTree: TSTree
+    private lateinit var text: String
+    private var updated: Boolean = false
 
     init {
-        tsTree = parser.parseStringEncoding(null, text, TSInputEncoding.TSInputEncodingUTF8)
+        loadTSTree()
         editor.document.addChangeListener(this)
     }
 
     override fun documentChanged(change: ChangesListener.Change) {
         updated = false
+    }
+
+    private fun loadTSTree() {
+        text = editor.text().toString()
+        tsTree = parser.parseString(null, text)
+        updated = true
     }
 
     private fun charToByteOffset(charIndex: Int): Int {
@@ -129,41 +141,63 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
     }
 
     private fun byteToCharOffset(byteIndex: Int): Int {
-        require(byteIndex in 0..text.length)
+        require(byteIndex in 0..tsTree.rootNode.endByte)
         UTF8_DECODER.reset()
         return UTF8_DECODER.decode(ByteBuffer.wrap(text.toByteArray(), 0, byteIndex)).toString().length
     }
 
-    private fun findCurrentNode(): TSNode? {
-        if (!updated) {
-            text = editor.getText()
-            tsTree = parser.parseString(null, text)
-            updated = true
-        }
-        val byteOffset = charToByteOffset(editor.getCareOffset())
-        return tsTree.rootNode.getNamedDescendantForByteRange(byteOffset, byteOffset)
+    private fun findCurrentNode(offset: Int): TSNode? {
+        if (!updated) loadTSTree()
+        val byteOffset = charToByteOffset(offset)
+        val containerNode = tsTree.rootNode.getFirstChildForByte(byteOffset)
+        if(containerNode.startByte > byteOffset) return containerNode
+        return containerNode.getDescendantForByteRange(byteOffset, byteOffset)
     }
 
-    fun findSelection(acceptNode: (TSNode) -> Boolean): TextRange? {
-        var node = findCurrentNode() ?: return null
+    private fun findObject(currentNode: TSNode, acceptNode: (TSNode) -> Boolean): TSNode? {
+        var node = currentNode
         while (!node.isNull) {
-            if (acceptNode(node))
-                return TextRange(byteToCharOffset(node.startByte), byteToCharOffset(node.endByte))
+            if (acceptNode(node)) return node
             node = node.parent
         }
         return null
     }
 
-    fun findJumpElementStartOffset(next: Boolean, acceptNode: (TSNode) -> Boolean): Int? {
-        var node: TSNode? = findCurrentNode()?.let { if (next) it.nextLeaf() else it.parentPrevSibling()?.lastLeafOrSelf() } ?: return null
-        val nextNodeFunction = if (next) { n: TSNode -> n.nextLeaf() } else { n: TSNode -> n.prevLeaf() }
+    fun findSelection(acceptNode: (TSNode) -> Boolean, size: Int): TextRange? {
+        val currentNode = findCurrentNode(editor.getCareOffset()) ?: return null
+        return (findObject(currentNode, acceptNode) ?: findNext(currentNode, acceptNode))?.let { TextRange(byteToCharOffset(it.startByte), byteToCharOffset(it.endByte)) }
+    }
+
+    private fun findNext(currentNode: TSNode, acceptNode: (TSNode) -> Boolean, forward: Boolean = true): TSNode? {
+        var node: TSNode? = currentNode.let {
+            if (forward)
+                it.nextLeaf()
+            else {
+                if (it.prevNamedSibling.isNull)
+                    it.parentPrevSibling()?.lastLeafOrSelf()
+                else it.prevNamedSibling
+            }
+        } ?: return null
+        val nextNodeFunction = if (forward) { n: TSNode -> n.nextLeaf() } else { n: TSNode -> n.prevLeaf() }
 
         while (true) {
             while (null != node) {
-                if (acceptNode(node)) return byteToCharOffset(node.startByte)
+                if (acceptNode(node)) return node
                 node = nextNodeFunction(node)
             }
-            node = tsTree.rootNode.let { if (next) it else it.lastLeafOrSelf() }
+            node = tsTree.rootNode.let { if (forward) it else it.lastLeafOrSelf() }
         }
+    }
+
+    fun findJumpElementStartOffset(acceptNode: (TSNode) -> Boolean, forward: Boolean): Int? {
+        val caretOffset = editor.getCareOffset()
+        val currentNode = findCurrentNode(caretOffset) ?: return null
+        if (acceptNode(currentNode)) {
+            val currentNodeStartOffset = byteToCharOffset(currentNode.startByte)
+            if (forward) {
+                if (currentNodeStartOffset > caretOffset) return currentNodeStartOffset
+            } else if (currentNodeStartOffset < caretOffset) return currentNodeStartOffset
+        }
+        return findNext(currentNode, acceptNode, forward)?.let { byteToCharOffset(it.startByte) }
     }
 }

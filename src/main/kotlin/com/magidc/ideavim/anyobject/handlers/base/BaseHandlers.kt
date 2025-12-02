@@ -19,6 +19,6 @@ interface BaseJumpHandler : BaseSelectionHandler {
     /**
      * Locates the starting offset of the next or previous element to jump to.
      */
-    fun findJumpElementStartOffset(editor: VimEditor, next: Boolean): Int?
+    fun findJumpElementStartOffset(editor: VimEditor, forward: Boolean): Int?
 }
 
