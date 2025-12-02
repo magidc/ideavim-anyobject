@@ -175,14 +175,14 @@ class AnyObject : VimExtension {
         }
     }
 
-    private fun createSelection(handler: BaseSelectionHandler, isInner: Boolean): ExtensionHandler = object : ExtensionHandler {
+    private fun createSelection(handler: BaseSelectionHandler, inner: Boolean): ExtensionHandler = object : ExtensionHandler {
         override val isRepeatable: Boolean = handler.allowsCountSelection()
 
         override fun execute(editor: VimEditor, context: ExecutionContext, operatorArguments: OperatorArguments) {
             val textObjectHandler = object : TextObjectActionHandler() {
                 override val visualType: TextObjectVisualType = TextObjectVisualType.CHARACTER_WISE
                 override fun getRange(editor: VimEditor, caret: ImmutableVimCaret, context: ExecutionContext, count: Int, rawCount: Int): TextRange? {
-                    val range = handler.findSelection(editor, isInner, count) ?: return null
+                    val range = handler.findSelection(editor, inner, count) ?: return null
                     // Avoiding change caret position in yank actions
                     val isYankOperation = KeyHandler.getInstance().keyHandlerState.digraphSequence.toString().endsWith("char = y")
                     if (isYankOperation) {

@@ -28,7 +28,7 @@ concepts programmers use to think about code: classes, functions, arguments, loo
 
 - **Inner/Outer**: All text objects support both `i` (inner) and `a` (around/outer) selection modes following standard Vim conventions
 - **Jump**: Text objects with jump support allow navigation using `]` (next) and `[` (previous) motions unless other mappings are specified (see [Customization](#customization))
-- **Count motions**: Text objects with count support allow selecting multiple consecutive instances. For example `2daa` will delete two arguments including their separators
+- **Count motions**: Text objects with count support allow selecting multiple consecutive instances. For example `d2aa` will delete two arguments including their separators
 
 ## Usage
 
@@ -44,15 +44,15 @@ The plugin supports jumping to the next/previous text object using `]` (next) an
 
 - `dia` - Delete argument
 - `daa` - Delete argument and its separator
-- `2dia` - Deletes argument and the next without including separators
+- `d2ia` - Deletes argument and the next without including separators
 - `cia` - Change argument
 - `caa` - Change argument and its separator
-- `2caa` - Change argument and next one including separator
+- `c2aa` - Change argument and next one including separator
 - `yia` - Yank/Copy argument
 - `yaa` - Yank/Copy argument and its separator
 - `via` - Visually select argument 
-- `3vaa` - Visually select three arguments including separator
-- `3via` - Visually select three arguments without including separator
+- `v3aa` - Visually select three arguments including separator
+- `v3ia` - Visually select three arguments without including separator
 - `]a` - Jump to next argument
 - `[a` - Jump to previous argument
 
@@ -121,7 +121,7 @@ Items within collections, tuples, lists, or arrays:
 - **Inner selection (`ii`)**: Selects only the item itself
 - **Outer selection (`ai`)**: Selects the entire item including the separator and the item itself
 
-**Multiple outer selections are supported**. For example `2dai` will delete the current item and the next one including separator
+**Multiple outer selections are supported**. For example `d2ai` will delete the current item and the next one including separator
 
 ### AnyArgument (`a`)
 
@@ -130,7 +130,7 @@ Function arguments, method parameters, and callable expressions.
 - **Inner selection (`ia`)**: Selects only the argument itself
 - **Outer selection (`ia`)**: Selects the entire argument including the separator and the argument itself
 
-**Multiple outer selections are supported**. For example `2daa` will delete the current argument and the next one including separator
+**Multiple outer selections are supported**. For example `d2aa` will delete the current argument and the next one including separator
 
 ### AnyFunction (`f`)
 
@@ -235,14 +235,14 @@ let g:anyobject_map_jump_next = ">"
 
 - `dia` - Delete argument
 - `daa` - Delete argument and its separator
-- `2dia` - Deletes argument and the next one
+- `d2ia` - Deletes argument and the next one
 - `cia` - Change argument
 - `caa` - Change argument and its separator
-- `2caa` - Change argument and next one including separator
+- `c2aa` - Change argument and next one including separator
 - `yia` - Yank/Copy argument
 - `yaa` - Yank/Copy argument and its separator
 - `via` - Visually select argument
-- `3via` - Visually select three arguments
+- `v3ia` - Visually select three arguments
 - `]a` - Jump to next argument
 - `[a` - Jump to previous argument
 
