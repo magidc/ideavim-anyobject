@@ -1,5 +1,6 @@
 package com.magidc.ideavim.anyobject
 
+import ai.grazie.utils.capitalize
 import com.intellij.openapi.diagnostic.Logger
 import com.maddyhome.idea.vim.KeyHandler
 import com.maddyhome.idea.vim.VimPlugin
@@ -97,43 +98,79 @@ class AnyObject : VimExtension {
             }
             registerTextObjects(mapping, handlerSupplier(), jumpNextMapping, jumpPrevMapping)
         }
-//        registerTextObjects("AnyField", 'p', AnyFieldHandler())
     }
 
     /**
      * Registers the mapping for the text objects defined by the given delimiter pairs.
      */
+
     private fun registerTextObjects(mapping: String, handler: BaseSelectionHandler, jumpNextMapping: String, jumpPrevMapping: String) {
+        val command = handler.javaClass.simpleName.capitalize().replace("Handler", "")
+
         VimExtensionFacade.putExtensionHandlerMapping(
-            MappingMode.XO,
-            injector.parser.parseKeys("i$mapping"),
+            MappingMode.XO, injector.parser.parseKeys("<Plug>Inner$command"),
             owner,
             createSelection(handler, true),
             false
         )
 
+        VimExtensionFacade.putKeyMappingIfMissing(
+            MappingMode.XO,
+            injector.parser.parseKeys("i$mapping"),
+            owner,
+            injector.parser.parseKeys("<Plug>Inner$command"),
+            true
+        )
+        // Outer selection
         VimExtensionFacade.putExtensionHandlerMapping(
             MappingMode.XO,
-            injector.parser.parseKeys("a$mapping"),
+            injector.parser.parseKeys("<Plug>Outer$command"),
             owner,
             createSelection(handler, false),
             false
         )
+
+        VimExtensionFacade.putKeyMappingIfMissing(
+            MappingMode.XO,
+            injector.parser.parseKeys("a$mapping"),
+            owner,
+            injector.parser.parseKeys("<Plug>Outer$command"),
+            true
+        )
+
         if (handler.allowsCountSelection()) {
             for (n in 1..20) {
+                // Outer selection
                 VimExtensionFacade.putExtensionHandlerMapping(
                     MappingMode.XO,
-                    injector.parser.parseKeys("${n}i$mapping"),
-                    owner,
-                    createSelection(handler, true, n),
-                    false
-                )
-                VimExtensionFacade.putExtensionHandlerMapping(
-                    MappingMode.XO,
-                    injector.parser.parseKeys("${n}a$mapping"),
+                    injector.parser.parseKeys("<Plug>" + n + "Outer$command"),
                     owner,
                     createSelection(handler, false, n),
                     false
+                )
+
+                VimExtensionFacade.putKeyMappingIfMissing(
+                    MappingMode.XO,
+                    injector.parser.parseKeys("${n}a$mapping"),
+                    owner,
+                    injector.parser.parseKeys("<Plug>" + n + "Outer$command"),
+                    true
+                )
+                // Inner selection
+                VimExtensionFacade.putExtensionHandlerMapping(
+                    MappingMode.XO,
+                    injector.parser.parseKeys("<Plug>" + n + "Inner$command"),
+                    owner,
+                    createSelection(handler, false, n),
+                    false
+                )
+
+                VimExtensionFacade.putKeyMappingIfMissing(
+                    MappingMode.XO,
+                    injector.parser.parseKeys("${n}i$mapping"),
+                    owner,
+                    injector.parser.parseKeys("<Plug>" + n + "Inner$command"),
+                    true
                 )
             }
         }
@@ -142,19 +179,35 @@ class AnyObject : VimExtension {
             // Next
             VimExtensionFacade.putExtensionHandlerMapping(
                 MappingMode.N,
-                injector.parser.parseKeys("$jumpNextMapping$mapping"),
+                injector.parser.parseKeys("<Plug>Next$command"),
                 owner,
                 createMotionAction(handler, true),
                 false
             )
 
+            VimExtensionFacade.putKeyMappingIfMissing(
+                MappingMode.N,
+                injector.parser.parseKeys("$jumpNextMapping$mapping"),
+                owner,
+                injector.parser.parseKeys("<Plug>Next$command"),
+                true
+            )
+
             // Previous
             VimExtensionFacade.putExtensionHandlerMapping(
                 MappingMode.N,
-                injector.parser.parseKeys("$jumpPrevMapping$mapping"),
+                injector.parser.parseKeys("<Plug>Prev$command"),
                 owner,
                 createMotionAction(handler, false),
                 false
+            )
+
+            VimExtensionFacade.putKeyMappingIfMissing(
+                MappingMode.N,
+                injector.parser.parseKeys("$jumpPrevMapping$mapping"),
+                owner,
+                injector.parser.parseKeys("<Plug>Prev$command"),
+                true
             )
         }
     }
@@ -179,6 +232,7 @@ class AnyObject : VimExtension {
     }
 
     private fun createMotionAction(handler: BaseJumpHandler, next: Boolean): ExtensionHandler = object : ExtensionHandler {
+
         override fun execute(editor: VimEditor, context: ExecutionContext, operatorArguments: OperatorArguments) {
             val action = object : MotionActionHandler.SingleExecution() {
                 override val motionType: MotionType = MotionType.EXCLUSIVE

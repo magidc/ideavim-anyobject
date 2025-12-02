@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.9
+Adding commands to every text object motion so it will be shown in WhichKey plugin.
+
 ## 2.0.8
 Fixes problems with argument selection in Java annotations and function call arguments in PHP.
 
@@ -90,7 +93,7 @@ let g:anyobject_map_jump_next = ">"
 
 - **Multiple object outer selection for AnyArgument and AnyItem**: You can now select multiple objects of the same type in a single command. For example, `d2a` deletes the current
   and the next argument.
-- **Curson won't change positions on yank actions**
+- **Cursor won't change positions on yank actions**
 
 ## 1.3.2
 
