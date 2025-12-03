@@ -6,7 +6,7 @@ import org.treesitter.TSNode
 
 class AnyConditionalHandler : AbstractTSBasedHandler() {
     companion object {
-        private val innerBodyTypes = setOf("block", "switch_block_statement_group")
+        private val innerBodyTypes = setOf("block", "switch_block_statement_group", "expression_statement")
     }
 
     override val targetTypes = setOf("if_statement", "try_statement", "switch_expression")
