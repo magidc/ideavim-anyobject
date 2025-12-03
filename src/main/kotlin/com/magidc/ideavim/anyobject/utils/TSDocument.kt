@@ -35,16 +35,21 @@ import org.treesitter.TreeSitterSql
 import org.treesitter.TreeSitterSwift
 import org.treesitter.TreeSitterTypescript
 import org.treesitter.TreeSitterYaml
-import java.nio.ByteBuffer
-import java.nio.CharBuffer
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
+import java.util.TreeSet
+import java.util.concurrent.atomic.AtomicInteger
 
 class TSDocument(val editor: VimEditor) : ChangesListener {
     companion object {
-        private val UTF8_ENCODER = StandardCharsets.UTF_8.newEncoder()
-        private val UTF8_DECODER = StandardCharsets.UTF_8.newDecoder()
+        private class OffsetDelta(val sourceOffset: Int, val delta: Int = 0) : Comparable<OffsetDelta> {
+            override fun compareTo(other: OffsetDelta): Int = sourceOffset.compareTo(other.sourceOffset)
+        }
+
+        private val FIRST_OFFSET_DELTA = OffsetDelta(0)
         private val parserCache = LRUCache<String, TSParser>(3)
+        private val charToByteOffsetTree = TreeSet<OffsetDelta>()
+        private val byteToCharOffsetTree = TreeSet<OffsetDelta>()
 
         private fun getLanguage(editor: VimEditor): String? {
             val vimVirtualFile = editor.getVirtualFile() ?: return null
@@ -89,8 +94,8 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
 
     private val parser: TSParser = getParser(getLanguage(editor))
     private lateinit var tsTree: TSTree
-    private lateinit var text: String
     private var updated: Boolean = false
+
 
     init {
         loadTSTree()
@@ -102,25 +107,37 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
     }
 
     private fun loadTSTree() {
-        text = editor.text().toString()
+        val text = editor.text().toString()
         tsTree = parser.parseString(null, text)
         updated = true
+
+        // As byte offsets do not always match char offsets (i.e., emojis), we need to calculate the difference between them
+        // Trees are used to track those offsets where there are differences so we can efficiently convert between byte and char offsets
+        charToByteOffsetTree.clear()
+        byteToCharOffsetTree.clear()
+        val charArray = text.toCharArray()
+        val byteCount = AtomicInteger()
+        for (i in 0 until charArray.size) {
+            val byteDelta = charArray[i].toString().toByteArray(StandardCharsets.UTF_8).size - 1
+            if (byteDelta > 0) {
+                charToByteOffsetTree.add(OffsetDelta(i, byteDelta))
+                byteToCharOffsetTree.add(OffsetDelta(byteCount.get() + 1, -byteDelta))
+            }
+            byteCount.addAndGet(byteDelta + 1)
+        }
+
     }
 
     private fun charToByteOffset(charIndex: Int): Int {
-        require(charIndex in 0..text.length)
-        UTF8_ENCODER.reset()
-        return UTF8_ENCODER.encode(CharBuffer.wrap(text, 0, charIndex)).limit()
+        return charToByteOffsetTree.subSet(FIRST_OFFSET_DELTA, OffsetDelta(charIndex)).asSequence().map { it.delta }.sum() + charIndex
+    }
+
+    private fun byteToCharOffset(byteIndex: Int): Int {
+        return byteToCharOffsetTree.subSet(FIRST_OFFSET_DELTA, OffsetDelta(byteIndex)).asSequence().map { it.delta }.sum() + byteIndex
     }
 
     fun toTextRange(fromNode: TSNode, toNode: TSNode = fromNode): TextRange {
         return TextRange(byteToCharOffset(fromNode.startByte), byteToCharOffset(toNode.endByte))
-    }
-
-    private fun byteToCharOffset(byteIndex: Int): Int {
-        require(byteIndex in 0..tsTree.rootNode.endByte)
-        UTF8_DECODER.reset()
-        return UTF8_DECODER.decode(ByteBuffer.wrap(text.toByteArray(), 0, byteIndex)).toString().length
     }
 
     private fun findCurrentNode(offset: Int): TSNode? {
@@ -131,7 +148,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         return containerNode.getDescendantForByteRange(byteOffset, byteOffset)
     }
 
-    private fun findObject(currentNode: TSNode, acceptNode: (TSNode) -> Boolean): TSNode? {
+    private fun findObjectNode(currentNode: TSNode, acceptNode: (TSNode) -> Boolean): TSNode? {
         var node = currentNode
         while (!node.isNull) {
             if (acceptNode(node)) return node
@@ -142,10 +159,10 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
 
     fun findSelectionNode(acceptNode: (TSNode) -> Boolean): TSNode? {
         val currentNode = findCurrentNode(editor.getCareOffset()) ?: return null
-        return findObject(currentNode, acceptNode) ?: findNext(currentNode, acceptNode)
+        return findObjectNode(currentNode, acceptNode) ?: findNextNode(currentNode, acceptNode)
     }
 
-    fun findNext(currentNode: TSNode, acceptNode: (TSNode) -> Boolean, forward: Boolean = true): TSNode? {
+    fun findNextNode(currentNode: TSNode, acceptNode: (TSNode) -> Boolean, forward: Boolean = true): TSNode? {
         var node: TSNode? = currentNode.let {
             if (forward)
                 it.nextLeaf()
@@ -175,6 +192,6 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
                 if (currentNodeStartOffset > caretOffset) return currentNodeStartOffset
             } else if (currentNodeStartOffset < caretOffset) return currentNodeStartOffset
         }
-        return findNext(currentNode, acceptNode, forward)?.let { byteToCharOffset(it.startByte) }
+        return findNextNode(currentNode, acceptNode, forward)?.let { byteToCharOffset(it.startByte) }
     }
 }
