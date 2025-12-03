@@ -173,14 +173,14 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
             }
         } ?: return null
         val nextNodeFunction = if (forward) { n: TSNode -> n.nextLeaf() } else { n: TSNode -> n.prevLeaf() }
-
-        while (true) {
+        for (i in 1..2) {
             while (null != node) {
                 if (acceptNode(node)) return node
                 node = nextNodeFunction(node)
             }
             node = tsTree.rootNode.let { if (forward) it else it.lastLeafOrSelf() }
         }
+        return null
     }
 
     fun findJumpElementStartOffset(acceptNode: (TSNode) -> Boolean, forward: Boolean): Int? {
