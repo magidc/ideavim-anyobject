@@ -6,10 +6,11 @@ import org.treesitter.TSNode
 
 class AnyClassHandler : AbstractTSBasedHandler() {
     companion object {
-        private val targetTypes = setOf("class_declaration", "class_definition")
+        private val innerBodyTypes = setOf("class_body", "interface_body")
     }
 
-    override fun acceptNode(node: TSNode): Boolean {
-        return !node.isNull && targetTypes.contains(node.grammarType)
-    }
+    override val targetTypes: Set<String> = setOf("class_declaration", "class_definition", "interface_declaration", "record_declaration")
+
+    override fun findInnerBlock(node: TSNode?, offset: Int): TSNode? = node?.getFirstChildWithGrammar(innerBodyTypes, offset)
+
 }

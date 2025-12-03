@@ -6,10 +6,10 @@ import org.treesitter.TSNode
 
 class AnyConditionalHandler : AbstractTSBasedHandler() {
     companion object {
-        private val targetTypes = setOf("if_statement", "try_statement", "switch_expression")
+        private val innerBodyTypes = setOf("block", "switch_block_statement_group")
     }
 
-    override fun acceptNode(node: TSNode): Boolean {
-        return !node.isNull && targetTypes.contains(node.grammarType)
-    }
+    override val targetTypes = setOf("if_statement", "try_statement", "switch_expression")
+
+    override fun findInnerBlock(node: TSNode?, offset: Int): TSNode? = node?.getFirstChildWithGrammar(innerBodyTypes, offset)
 }

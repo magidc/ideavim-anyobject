@@ -7,9 +7,9 @@ import org.treesitter.TSNode
 
 
 open class AnyItemHandler : AbstractTSBasedHandler() {
-    protected open val parentTypes = setOf("argument", "simple_parameter")
+    override val targetTypes = setOf("array", "array_initializer", "dictionary", "list", "tuple")
 
-    override fun acceptNode(node: TSNode): Boolean = !node.parent.isNull && parentTypes.contains(node.parent.grammarType)
+    override fun acceptNode(node: TSNode): Boolean = !node.parent.isNull && node.isNamed && targetTypes.contains(node.parent.grammarType)
 
     override fun allowsCountSelection(): Boolean = true
 
