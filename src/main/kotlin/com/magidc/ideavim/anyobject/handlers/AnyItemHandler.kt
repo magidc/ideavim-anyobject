@@ -22,13 +22,19 @@ open class AnyItemHandler : AbstractTSBasedHandler() {
         val nodes = mutableListOf<TSNode>()
         nodes.add(firstNode)
         for (i in 1 until size) {
-            tsDocument.findNext(nodes.last(), { acceptNode(it) })
+            tsDocument.findNextNode(nodes.last(), { acceptNode(it) })
                 ?.takeIf { it.parent.isEqual(firstNode.parent) }
                 ?.let { nodes.add(it) }
                 ?: break
         }
         if (nodes.isEmpty()) return null
-        return tsDocument.toTextRange(nodes.first(),nodes.last())
+        if (!inner) {
+            if (firstNode.isEqual(firstNode.parent.getNamedChild(0)))
+                nodes.last().nextSibling?.let { nodes.add(it) }
+            else
+                firstNode.prevSibling?.let { nodes.add(0, it) }
+        }
+        return tsDocument.toTextRange(nodes.first(), nodes.last())
     }
 }
 

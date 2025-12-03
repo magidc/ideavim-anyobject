@@ -11,20 +11,20 @@ concepts programmers use to think about code: classes, functions, arguments, loo
 
 ## Available Text Objects
 
-| Text Object         | Description                                                                             | Default mapping | Inner/Outer motions | Count motions |
-|---------------------|-----------------------------------------------------------------------------------------|-----------------|---------------------|---------------|
-| **AnyArgument**     | Function arguments, method parameters, and callable expressions                         | `a`             | ✓                   | ✓             |
-| **AnyFunction**     | Functions, methods, and procedures                                                      | `f`             | ✓                   | x             |
-| **AnyClass**        | Class, interface, struct, and similar type definitions                                  | `c`             | ✓                   | x             |
-| **AnyLoop**         | Loop statements (`for`, `while`, `do`, `repeat`, `until`, `loop`, etc.)                 | `l`             | ✓                   | x             |
-| **AnyConditional**  | Conditional statements (`if-else`, `switch`, `try-catch`)                               | `y`             | ✓                   | x             |
-| **AnyItem**         | Items within collections, tuples, lists, or arrays                                      | `i`             | ✓                   | ✓             |
-| **AnyQuote**        | Content enclosed between any type of quotes (single, double, backticks)                 | `q`             | ✓                   | ✗             |
-| **AnyBracket**      | Content enclosed between any type of brackets (parentheses, square, curly, angle, etc.) | `o`             | ✓                   | ✗             |
-| **AnySubword**      | Words nested in longer words (`camelCase`, `snake_case`, `dash-case`)                   | `u`             | ✓                   | ✓             |
-| **AnyDocument**     | Entire document content                                                                 | `d`             | ✓                   | ✗             |
-| **AnyBlockComment** | Block comments across different programming languages (`/* */`, `<!-- -->`, etc.)       | `k`             | ✓                   | ✗             |
-| **AnyIndentBlock**  | Code blocks based on indentation levels                                                 | `n`             | ✓                   | ✗             |
+| Text Object        | Description                                                                             | Default mapping | Inner/Outer motions | Count motions |
+|--------------------|-----------------------------------------------------------------------------------------|-----------------|---------------------|---------------|
+| **AnyArgument**    | Function arguments, method parameters, and callable expressions                         | `a`             | ✓                   | ✓             |
+| **AnyFunction**    | Functions, methods, and procedures                                                      | `f`             | ✓                   | x             |
+| **AnyClass**       | Class, interface, struct, and similar type definitions                                  | `c`             | ✓                   | x             |
+| **AnyLoop**        | Loop statements (`for`, `while`, `do`, `repeat`, `until`, `loop`, etc.)                 | `l`             | ✓                   | x             |
+| **AnyConditional** | Conditional statements (`if-else`, `switch`, `try-catch`)                               | `y`             | ✓                   | x             |
+| **AnyItem**        | Items within collections, tuples, lists, or arrays                                      | `i`             | ✓                   | ✓             |
+| **AnyQuote**       | Content enclosed between any type of quotes (single, double, backticks)                 | `q`             | ✓                   | ✗             |
+| **AnyBracket**     | Content enclosed between any type of brackets (parentheses, square, curly, angle, etc.) | `o`             | ✓                   | ✗             |
+| **AnySubword**     | Words nested in longer words (`camelCase`, `snake_case`, `dash-case`)                   | `u`             | ✓                   | ✓             |
+| **AnyDocument**    | Entire document content                                                                 | `d`             | ✓                   | ✗             |
+| **AnyComment**     | Comments across different programming languages (`/* */`, `<!-- -->`, etc.)             | `k`             | ✓                   | ✗             |
+| **AnyIndentBlock** | Code blocks based on indentation levels                                                 | `n`             | ✓                   | ✗             |
 
 - **Inner/Outer**: All text objects support both `i` (inner) and `a` (around/outer) selection modes following standard Vim conventions
 - **Jump**: Text objects with jump support allow navigation using `]` (next) and `[` (previous) motions unless other mappings are specified (see [Customization](#customization))
@@ -94,20 +94,20 @@ Content enclosed between any type of brackets:
 
 Entire document content.
 
-### AnyBlockComment (`k`)
+### AnyComment (`k`)
 
-Block comments across different programming languages:
+Comments across different programming languages:
 
-| Comment Type | Languages                                                                               | Example                |
-|--------------|-----------------------------------------------------------------------------------------|------------------------|
-| `/* */`      | C, C++, Java, C#, JavaScript, TypeScript, Kotlin, Scala, Swift, Go, Rust, PHP, CSS, SQL | `/* comment */`        |
-| `/** */`     | Java (Javadoc), Rust (doc comments)                                                     | `/** documentation */` |
-| `<!-- -->`   | HTML, XML, XHTML, Markdown                                                              | `<!-- comment -->`     |
-| `""" """`    | Python (docstrings)                                                                     | `"""comment"""`        |
-| `''' '''`    | Python (docstrings)                                                                     | `'''comment'''`        |
-| `--[[ ]]`    | Lua                                                                                     | `--[[ comment ]]`      |
-| `--[=[ ]=]`  | Lua (custom delimiters)                                                                 | `--[=[ comment ]=]`    |
-| `#'` to `'`  | R (roxygen comments)                                                                    | `#' comment '`         |
+| Comment Type   | Languages                                                                               | Example                |
+|----------------|-----------------------------------------------------------------------------------------|------------------------|
+| `/* */`, `//`  | C, C++, Java, C#, JavaScript, TypeScript, Kotlin, Scala, Swift, Go, Rust, PHP, CSS, SQL | `/* comment */`        |
+| `/** */`       | Java (Javadoc), Rust (doc comments)                                                     | `/** documentation */` |
+| `<!-- -->`     | HTML, XML, XHTML, Markdown                                                              | `<!-- comment -->`     |
+| `""" """`, `#` | Python (docstrings)                                                                     | `"""comment"""`        |
+| `''' '''`      | Python (docstrings)                                                                     | `'''comment'''`        |
+| `--[[ ]]`      | Lua                                                                                     | `--[[ comment ]]`      |
+| `--[=[ ]=]`    | Lua (custom delimiters)                                                                 | `--[=[ comment ]=]`    |
+| `#'` to `'`    | R (roxygen comments)                                                                    | `#' comment '`         |
 
 ### AnyItem (`i`)
 

@@ -23,7 +23,7 @@ import com.maddyhome.idea.vim.handler.TextObjectActionHandler
 import com.maddyhome.idea.vim.handler.toMotion
 import com.maddyhome.idea.vim.state.mode.SelectionType
 import com.magidc.ideavim.anyobject.handlers.AnyArgumentHandler
-import com.magidc.ideavim.anyobject.handlers.AnyBlockCommentHandler
+import com.magidc.ideavim.anyobject.handlers.AnyCommentHandler
 import com.magidc.ideavim.anyobject.handlers.AnyBracketHandler
 import com.magidc.ideavim.anyobject.handlers.AnyClassHandler
 import com.magidc.ideavim.anyobject.handlers.AnyConditionalHandler
@@ -42,7 +42,7 @@ val handlerSupplierMap = mapOf(
     "anyquote" to Pair("q", ::AnyQuoteHandler),
     "anybracket" to Pair("o", ::AnyBracketHandler),
     "anyitem" to Pair("i", ::AnyItemHandler),
-    "anyblockcomment" to Pair("k", ::AnyBlockCommentHandler),
+    "anycomment" to Pair("k", ::AnyCommentHandler),
     "anyargument" to Pair("a", ::AnyArgumentHandler),
     "anyfunction" to Pair("f", ::AnyFunctionHandler),
     "anyclass" to Pair("c", ::AnyClassHandler),

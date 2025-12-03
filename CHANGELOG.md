@@ -1,8 +1,11 @@
 # Changelog
 
 ## 3.0.0
-Using Treesitter as the main parser for element detection. 
+### Tree-sitter
+From version 3.0.0 the plugin replaces the approach to detect coding text objects from PSI-based approach with Tree-sitter.
 This provides a more consistent model across different languages.
+
+Removed AnyBlockComment in favor of more generic AnyComment.
 
 ## 2.0.7
 Improving argument selection in PHP.
