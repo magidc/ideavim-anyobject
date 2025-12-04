@@ -88,7 +88,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
                     "OBJECTIVE-C" -> parser.setLanguage(TreeSitterObjc())
                     "SWIFT" -> parser.setLanguage(TreeSitterSwift())
                     "C" -> parser.setLanguage(TreeSitterC())
-                    "C++" -> parser.setLanguage(TreeSitterCpp())
+                    "C/C++" -> parser.setLanguage(TreeSitterCpp())
                     "R" -> parser.setLanguage(TreeSitterR())
                     "SQL" -> parser.setLanguage(TreeSitterSql())
                     "JSON" -> parser.setLanguage(TreeSitterJson())

@@ -170,16 +170,24 @@ tasks {
         token.set(System.getenv("PUBLISH_TOKEN"))
         dependsOn(patchChangelog)
     }
+    @Suppress("unused")
     val runIntellij by intellijPlatformTesting.runIde.registering {
         localPath.set(file("/opt/jetbrains/intellij"))
     }
+    @Suppress("unused")
     val runPycharm by intellijPlatformTesting.runIde.registering {
         localPath.set(file("/opt/jetbrains/pycharm"))
     }
-    val runPHPstorm by intellijPlatformTesting.runIde.registering {
+    @Suppress("unused")
+    val runPHPStorm by intellijPlatformTesting.runIde.registering {
         localPath.set(file("/opt/jetbrains/phpstorm"))
     }
+    @Suppress("unused")
     val runRider by intellijPlatformTesting.runIde.registering {
         localPath.set(file("/opt/jetbrains/rider"))
+    }
+    @Suppress("unused")
+    val runCLion by intellijPlatformTesting.runIde.registering {
+        localPath.set(file("/opt/jetbrains/clion"))
     }
 }

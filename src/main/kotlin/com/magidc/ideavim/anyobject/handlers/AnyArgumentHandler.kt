@@ -6,7 +6,7 @@ import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler
 import org.treesitter.TSNode
 
 open class AnyArgumentHandler : AbstractTSBasedHandler() {
-    override val targetTypes = setOf("arguments", "argument_list", "formal_parameters", "parameters")
+    override val targetTypes = setOf("arguments", "argument_list", "value_arguments", "formal_parameters", "parameters")
 
     override fun acceptNode(node: TSNode): Boolean = !node.parent.isNull && node.isNamed && targetTypes.contains(node.parent.grammarType)
 

@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.0.1
+First revision solving many reported issues in first release based in Treesitter
+
 ## 3.0.0
 ### Tree-sitter
 From version 3.0.0 the plugin replaces the approach to detect coding text objects from PSI-based approach with Tree-sitter.

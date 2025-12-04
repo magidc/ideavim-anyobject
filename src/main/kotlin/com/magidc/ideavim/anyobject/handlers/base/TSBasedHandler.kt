@@ -11,7 +11,6 @@ abstract class AbstractTSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
     companion object {
         private val documentCache = LRUCache<String, TSDocument>(5) { _, v -> v.editor.document.removeChangeListener(v) }
-        private val innerBlockTypes = setOf("block")
 
         @Suppress("unused")
         fun TSNode.toText(text: String, textLimit: Int = 20): String {
@@ -56,6 +55,7 @@ abstract class AbstractTSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
         }
     }
 
+    protected open val innerBlockTypes = setOf("block")
     protected abstract val targetTypes: Set<String>
 
     protected fun getTSDocument(editor: VimEditor): TSDocument = documentCache.getOrPut(editor.getVirtualFile()?.path ?: "") { TSDocument(editor) }
