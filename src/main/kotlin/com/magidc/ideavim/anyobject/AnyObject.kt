@@ -1,6 +1,5 @@
 package com.magidc.ideavim.anyobject
 
-import ai.grazie.utils.capitalize
 import com.intellij.openapi.diagnostic.Logger
 import com.maddyhome.idea.vim.KeyHandler
 import com.maddyhome.idea.vim.VimPlugin
@@ -23,9 +22,9 @@ import com.maddyhome.idea.vim.handler.TextObjectActionHandler
 import com.maddyhome.idea.vim.handler.toMotion
 import com.maddyhome.idea.vim.state.mode.SelectionType
 import com.magidc.ideavim.anyobject.handlers.AnyArgumentHandler
-import com.magidc.ideavim.anyobject.handlers.AnyCommentHandler
 import com.magidc.ideavim.anyobject.handlers.AnyBracketHandler
 import com.magidc.ideavim.anyobject.handlers.AnyClassHandler
+import com.magidc.ideavim.anyobject.handlers.AnyCommentHandler
 import com.magidc.ideavim.anyobject.handlers.AnyConditionalHandler
 import com.magidc.ideavim.anyobject.handlers.AnyDocumentHandler
 import com.magidc.ideavim.anyobject.handlers.AnyFunctionHandler
@@ -96,7 +95,7 @@ class AnyObject : VimExtension {
                 LOG.warn("Mapping $mapping for $handlerName is already used. Skipping")
                 continue
             }
-            registerTextObjects(mapping, handlerSupplier(), jumpNextMapping, jumpPrevMapping)
+            registerTextObjects(handlerName, mapping, handlerSupplier(), jumpNextMapping, jumpPrevMapping)
         }
     }
 
@@ -104,9 +103,7 @@ class AnyObject : VimExtension {
      * Registers the mapping for the text objects defined by the given delimiter pairs.
      */
 
-    private fun registerTextObjects(mapping: String, handler: BaseSelectionHandler, jumpNextMapping: String, jumpPrevMapping: String) {
-        val command = handler.javaClass.simpleName.capitalize().replace("Handler", "")
-
+    private fun registerTextObjects(command: String, mapping: String, handler: BaseSelectionHandler, jumpNextMapping: String, jumpPrevMapping: String) {
         VimExtensionFacade.putExtensionHandlerMapping(
             MappingMode.XO, injector.parser.parseKeys("<Plug>Inner$command"),
             owner,

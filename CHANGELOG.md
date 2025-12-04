@@ -1,7 +1,9 @@
 # Changelog
+## 3.0.2
+Fixed compatibility with Rider 2025.3.0.3
 
 ## 3.0.1
-First revision solving many reported issues in first release based in Treesitter
+Solved many reported issues in the first release based on Treesitter
 
 ## 3.0.0
 ### Tree-sitter

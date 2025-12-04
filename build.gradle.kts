@@ -175,7 +175,7 @@ tasks {
         localPath.set(file("/opt/jetbrains/intellij"))
     }
     @Suppress("unused")
-    val runPycharm by intellijPlatformTesting.runIde.registering {
+    val runPyCharm by intellijPlatformTesting.runIde.registering {
         localPath.set(file("/opt/jetbrains/pycharm"))
     }
     @Suppress("unused")
