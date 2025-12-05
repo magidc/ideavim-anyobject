@@ -42,11 +42,18 @@ import org.treesitter.TreeSitterYaml
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
 import java.util.TreeSet
-import java.util.concurrent.atomic.AtomicInteger
 
 class TSDocument(val editor: VimEditor) : ChangesListener {
     companion object {
         private fun String.byteLength(): Int = toByteArray(StandardCharsets.UTF_8).size
+
+        private fun getUTF8ByteLength(codePoint: Int): Int =
+            when {
+                codePoint <= 0x7F -> 1
+                codePoint <= 0x7FF -> 2
+                codePoint <= 0xFFFF -> 3
+                else -> 4
+            }
 
         private class OffsetDelta(val sourceOffset: Int, val delta: Int = 0) : Comparable<OffsetDelta> {
             override fun compareTo(other: OffsetDelta): Int = sourceOffset.compareTo(other.sourceOffset)
@@ -146,6 +153,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
     }
 
     override fun documentChanged(change: ChangesListener.Change) {
+        if(!updated) return
         val text = editor.text().toString()
         val updatedTSTree = editDocument(change, text)
         if (null != updatedTSTree) {
@@ -166,20 +174,30 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         updated = true
     }
 
+
     private fun reloadCacheTrees(text: String) {
         // As byte offsets do not always match char offsets (i.e., emojis), we need to calculate the difference between them
         // Trees are used to track those offsets where there are differences so we can efficiently convert between byte and char offsets
         charToByteOffsetTree.clear()
         byteToCharOffsetTree.clear()
-        val charArray = text.toCharArray()
-        val byteCount = AtomicInteger()
-        for (i in 0 until charArray.size) {
-            val byteDelta = charArray[i].toString().byteLength() - 1
-            if (byteDelta > 0) {
-                charToByteOffsetTree.add(OffsetDelta(i, byteDelta))
-                byteToCharOffsetTree.add(OffsetDelta(byteCount.get() + 1, -byteDelta))
+        var byteIndex = 0
+        var charIndex = 0
+        while (charIndex < text.length) {
+            val codePoint = text.codePointAt(charIndex)
+            // Total bytes in this character (code point)
+            val byteLength = getUTF8ByteLength(codePoint)
+            // Total UTF8 characters in this character (code point)
+            val charCount = Character.charCount(codePoint)
+            if (byteLength > 1) {
+                // Extra bytes of to represent this character
+                val deltaBytes = byteLength - 1
+                charToByteOffsetTree.add(OffsetDelta(charIndex, deltaBytes))
+                // Char Idx = Byte Idx - (Extra bytes of this character) + (Extra UTF8 characters in this character)
+                // For example: 😄 = 2 utf chars, 4 bytes
+                byteToCharOffsetTree.add(OffsetDelta(byteIndex, (charCount - 1 - deltaBytes)))
             }
-            byteCount.addAndGet(byteDelta + 1)
+            charIndex += charCount
+            byteIndex += byteLength
         }
         lineStartOffsetTree.clear()
         for (lineIdx in 0 until editor.lineCount())
