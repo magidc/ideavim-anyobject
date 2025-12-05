@@ -7,7 +7,9 @@ import org.treesitter.TSNode
 
 open class AnyArgumentHandler : AbstractTSBasedHandler() {
     override val targetTypes = setOf(
-        "arguments", "argument_list", "value_arguments", "formal_parameters", "parameters", "primary_constructor", "function_value_parameters"
+        "arguments", "argument_list", "value_arguments", "formal_parameters", "formal_parameters_list",
+        "parameters", "parameter_list", "function_parameters", "primary_constructor", "function_value_parameters",
+        "lambda_parameters", "lambda_parameter_list"
     )
 
     override fun acceptNode(node: TSNode): Boolean = !node.parent.isNull && node.isNamed && targetTypes.contains(node.parent.grammarType)
