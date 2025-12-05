@@ -44,7 +44,7 @@ import java.nio.file.Path
 import java.util.TreeSet
 import java.util.concurrent.atomic.AtomicInteger
 
-class TSDocument( val editor: VimEditor) : ChangesListener {
+class TSDocument(val editor: VimEditor) : ChangesListener {
     companion object {
         private class OffsetDelta(val sourceOffset: Int, val delta: Int = 0) : Comparable<OffsetDelta> {
             override fun compareTo(other: OffsetDelta): Int = sourceOffset.compareTo(other.sourceOffset)
@@ -125,10 +125,8 @@ class TSDocument( val editor: VimEditor) : ChangesListener {
     private val lineStartOffsetTree = TreeSet<LineOffset>()
 
     init {
-        if (parser.language == null)
-            disabled = true
-        else {
-            disabled = false
+        disabled = parser.language == null
+        if (!disabled) {
             loadTSTree()
             editor.document.addChangeListener(this)
         }
