@@ -118,14 +118,13 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
 
     private val parser: TSParser = getParser(getLanguage(editor))
     private lateinit var tsTree: TSTree
-    private val disabled: Boolean
+    private val disabled: Boolean = parser.language == null
     private var updated: Boolean = false
     private val charToByteOffsetTree = TreeSet<OffsetDelta>()
     private val byteToCharOffsetTree = TreeSet<OffsetDelta>()
     private val lineStartOffsetTree = TreeSet<LineOffset>()
 
     init {
-        disabled = parser.language == null
         if (!disabled) {
             loadTSTree()
             editor.document.addChangeListener(this)
