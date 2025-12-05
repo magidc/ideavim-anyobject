@@ -65,7 +65,6 @@ dependencies {
     implementation("io.github.bonede:tree-sitter-swift:0.5.0")
     implementation("io.github.bonede:tree-sitter-php:0.23.11")
     implementation("io.github.bonede:tree-sitter-comment:0.1.0")
-    implementation("io.github.bonede:tree-sitter-c:0.23.2")
     implementation("io.github.bonede:tree-sitter-cpp:0.23.4")
     implementation("io.github.bonede:tree-sitter-json:0.24.8")
     implementation("io.github.bonede:tree-sitter-yaml:0.5.0")
@@ -174,20 +173,29 @@ tasks {
     val runIntellij by intellijPlatformTesting.runIde.registering {
         localPath.set(file("/opt/jetbrains/intellij"))
     }
+
     @Suppress("unused")
     val runPyCharm by intellijPlatformTesting.runIde.registering {
         localPath.set(file("/opt/jetbrains/pycharm"))
     }
+
     @Suppress("unused")
     val runPHPStorm by intellijPlatformTesting.runIde.registering {
         localPath.set(file("/opt/jetbrains/phpstorm"))
     }
+
     @Suppress("unused")
     val runRider by intellijPlatformTesting.runIde.registering {
         localPath.set(file("/opt/jetbrains/rider"))
     }
+
     @Suppress("unused")
     val runCLion by intellijPlatformTesting.runIde.registering {
         localPath.set(file("/opt/jetbrains/clion"))
+    }
+
+    @Suppress("unused")
+    val runWebStorm by intellijPlatformTesting.runIde.registering {
+        localPath.set(file("/opt/jetbrains/webstorm"))
     }
 }

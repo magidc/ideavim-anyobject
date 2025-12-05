@@ -1,4 +1,8 @@
 # Changelog
+## 3.0.3
+Better Kotlin support
+Fixed document offset caches; it was wrongly set as a global variable shared across all documents
+
 ## 3.0.2
 Fixed compatibility with Rider 2025.3.0.3
 

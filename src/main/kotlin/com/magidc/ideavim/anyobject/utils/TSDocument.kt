@@ -1,5 +1,6 @@
 package com.magidc.ideavim.anyobject.utils
 
+import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
@@ -12,11 +13,11 @@ import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler.Compani
 import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler.Companion.prevLeaf
 import com.magidc.ideavim.anyobject.handlers.base.getCareOffset
 import org.treesitter.TSInputEdit
+import org.treesitter.TSLanguage
 import org.treesitter.TSNode
 import org.treesitter.TSParser
 import org.treesitter.TSPoint
 import org.treesitter.TSTree
-import org.treesitter.TreeSitterC
 import org.treesitter.TreeSitterCSharp
 import org.treesitter.TreeSitterClojure
 import org.treesitter.TreeSitterCpp
@@ -31,6 +32,7 @@ import org.treesitter.TreeSitterObjc
 import org.treesitter.TreeSitterPhp
 import org.treesitter.TreeSitterPython
 import org.treesitter.TreeSitterR
+import org.treesitter.TreeSitterRuby
 import org.treesitter.TreeSitterRust
 import org.treesitter.TreeSitterScala
 import org.treesitter.TreeSitterSql
@@ -42,7 +44,7 @@ import java.nio.file.Path
 import java.util.TreeSet
 import java.util.concurrent.atomic.AtomicInteger
 
-class TSDocument(val editor: VimEditor) : ChangesListener {
+class TSDocument( val editor: VimEditor) : ChangesListener {
     companion object {
         private class OffsetDelta(val sourceOffset: Int, val delta: Int = 0) : Comparable<OffsetDelta> {
             override fun compareTo(other: OffsetDelta): Int = sourceOffset.compareTo(other.sourceOffset)
@@ -54,9 +56,6 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
 
         private val FIRST_OFFSET_DELTA = OffsetDelta(0)
         private val parserCache = LRUCache<String, TSParser>(3)
-        private val charToByteOffsetTree = TreeSet<OffsetDelta>()
-        private val byteToCharOffsetTree = TreeSet<OffsetDelta>()
-        private val lineStartOffsetTree = TreeSet<LineOffset>()
 
         private fun getLanguage(editor: VimEditor): String? {
             val vimVirtualFile = editor.getVirtualFile() ?: return null
@@ -65,6 +64,24 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
             val project = projectManager.openProjects[0]
             val virtualFile = VirtualFileManager.getInstance().findFileByNioPath(Path.of(vimVirtualFile.path)) ?: return null
             return PsiManager.getInstance(project).findFile(virtualFile)?.language?.displayName
+        }
+
+        private fun getParserFromApp(): TSLanguage? {
+            val ideName = ApplicationInfo.getInstance().fullApplicationName.lowercase()
+            if (ideName.contains("intellij")) return TreeSitterJava()
+            if (ideName.contains("pycharm")) return TreeSitterPython()
+            if (ideName.contains("rustrover")) return TreeSitterRust()
+            if (ideName.contains("rider")) return TreeSitterCSharp()
+            if (ideName.contains("webstorm")) return TreeSitterJavascript()
+            if (ideName.contains("phpstorm")) return TreeSitterPhp()
+            if (ideName.contains("rubymine")) return TreeSitterRuby()
+            if (ideName.contains("goland")) return TreeSitterGo()
+            if (ideName.contains("clion")) return TreeSitterCpp()
+            if (ideName.contains("datagrip")) return TreeSitterSql()
+            if (ideName.contains("android")) return TreeSitterKotlin()
+            if (ideName.contains("appcode")) return TreeSitterSwift()
+
+            return null
         }
 
         private fun getParser(language: String?): TSParser {
@@ -83,16 +100,16 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
                     "PHP" -> parser.setLanguage(TreeSitterPhp())
                     "HTML" -> parser.setLanguage(TreeSitterHtml())
                     "CSS" -> parser.setLanguage(TreeSitterCss())
-                    "JAVASCRIPT" -> parser.setLanguage(TreeSitterJavascript())
+                    "ECMAScript 6" -> parser.setLanguage(TreeSitterJavascript())
                     "TYPESCRIPT" -> parser.setLanguage(TreeSitterTypescript())
                     "OBJECTIVE-C" -> parser.setLanguage(TreeSitterObjc())
                     "SWIFT" -> parser.setLanguage(TreeSitterSwift())
-                    "C" -> parser.setLanguage(TreeSitterC())
                     "C/C++" -> parser.setLanguage(TreeSitterCpp())
                     "R" -> parser.setLanguage(TreeSitterR())
                     "SQL" -> parser.setLanguage(TreeSitterSql())
                     "JSON" -> parser.setLanguage(TreeSitterJson())
                     "YAML" -> parser.setLanguage(TreeSitterYaml())
+                    else -> getParserFromApp()?.let { parser.setLanguage(it) }
                 }
                 parser
             }
@@ -101,12 +118,20 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
 
     private val parser: TSParser = getParser(getLanguage(editor))
     private lateinit var tsTree: TSTree
+    private val disabled: Boolean
     private var updated: Boolean = false
-
+    private val charToByteOffsetTree = TreeSet<OffsetDelta>()
+    private val byteToCharOffsetTree = TreeSet<OffsetDelta>()
+    private val lineStartOffsetTree = TreeSet<LineOffset>()
 
     init {
-        loadTSTree()
-        editor.document.addChangeListener(this)
+        if (parser.language == null)
+            disabled = true
+        else {
+            disabled = false
+            loadTSTree()
+            editor.document.addChangeListener(this)
+        }
     }
 
     private fun editDocument(change: ChangesListener.Change, text: String): TSTree? {
@@ -159,13 +184,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         }
         lineStartOffsetTree.clear()
         for (lineIdx in 0 until editor.lineCount())
-            lineStartOffsetTree.add(
-                LineOffset(
-                    toByteOffset(editor.getLineStartOffset(lineIdx)),
-                    lineIdx
-                )
-            )
-
+            lineStartOffsetTree.add(LineOffset(toByteOffset(editor.getLineStartOffset(lineIdx)), lineIdx))
     }
 
     private fun toByteOffset(charIndex: Int): Int {
@@ -200,6 +219,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
     }
 
     fun findSelectionNode(acceptNode: (TSNode) -> Boolean): TSNode? {
+        if (disabled) return null
         val currentNode = findCurrentNode(editor.getCareOffset()) ?: return null
         return findObjectNode(currentNode, acceptNode) ?: findNextNode(currentNode, acceptNode)
     }
@@ -213,7 +233,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
                     it.parentPrevSibling()?.lastLeafOrSelf()
                 else it.prevNamedSibling
             }
-        } ?: return null
+        }
         val nextNodeFunction = if (forward) { n: TSNode -> n.nextLeaf() } else { n: TSNode -> n.prevLeaf() }
         @Suppress("unused")
         for (i in 1..2) {
@@ -227,6 +247,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
     }
 
     fun findJumpElementStartOffset(acceptNode: (TSNode) -> Boolean, forward: Boolean): Int? {
+        if (disabled) return null
         val caretOffset = editor.getCareOffset()
         val currentNode = findCurrentNode(caretOffset) ?: return null
         if (acceptNode(currentNode)) {

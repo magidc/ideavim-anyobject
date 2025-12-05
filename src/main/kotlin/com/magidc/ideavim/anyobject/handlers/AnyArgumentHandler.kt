@@ -6,7 +6,9 @@ import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler
 import org.treesitter.TSNode
 
 open class AnyArgumentHandler : AbstractTSBasedHandler() {
-    override val targetTypes = setOf("arguments", "argument_list", "value_arguments", "formal_parameters", "parameters")
+    override val targetTypes = setOf(
+        "arguments", "argument_list", "value_arguments", "formal_parameters", "parameters", "primary_constructor", "function_value_parameters"
+    )
 
     override fun acceptNode(node: TSNode): Boolean = !node.parent.isNull && node.isNamed && targetTypes.contains(node.parent.grammarType)
 
@@ -15,8 +17,8 @@ open class AnyArgumentHandler : AbstractTSBasedHandler() {
     override fun findInnerBlock(node: TSNode?, offset: Int): TSNode? = node
 
     override fun findSelection(editor: VimEditor, inner: Boolean, size: Int): TextRange? {
-        val tsDocument = getTSDocument(editor)
         if (size == 0) return null
+        val tsDocument = getTSDocument(editor)
         val firstNode = tsDocument.findSelectionNode { acceptNode(it) } ?: return null
         val nodes = mutableListOf<TSNode>()
         nodes.add(firstNode)
