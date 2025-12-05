@@ -136,9 +136,9 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
     private fun editDocument(change: ChangesListener.Change, text: String): TSTree? {
         val startByte = toByteOffset(change.offset)
         val startPoint = findTSPoint(startByte) ?: return null
-        val oldEndByte = toByteOffset(change.offset + change.oldFragment.byteLength())
+        val oldEndByte = toByteOffset(startByte + change.oldFragment.byteLength())
         val oldEndPoint = findTSPoint(oldEndByte) ?: return null
-        val newEndByte = toByteOffset(change.offset + change.newFragment.byteLength())
+        val newEndByte = toByteOffset(startByte + change.newFragment.byteLength())
         val newEndPoint = findTSPoint(newEndByte) ?: return null
 
         tsTree.edit(TSInputEdit(startByte, oldEndByte, newEndByte, startPoint, oldEndPoint, newEndPoint))
