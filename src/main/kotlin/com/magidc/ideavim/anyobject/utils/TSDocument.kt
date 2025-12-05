@@ -46,6 +46,8 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class TSDocument(val editor: VimEditor) : ChangesListener {
     companion object {
+        private fun String.byteLength(): Int = toByteArray(StandardCharsets.UTF_8).size
+
         private class OffsetDelta(val sourceOffset: Int, val delta: Int = 0) : Comparable<OffsetDelta> {
             override fun compareTo(other: OffsetDelta): Int = sourceOffset.compareTo(other.sourceOffset)
         }
@@ -134,9 +136,9 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
     private fun editDocument(change: ChangesListener.Change, text: String): TSTree? {
         val startByte = toByteOffset(change.offset)
         val startPoint = findTSPoint(startByte) ?: return null
-        val oldEndByte = toByteOffset(change.offset + change.oldFragment.length)
+        val oldEndByte = toByteOffset(change.offset + change.oldFragment.byteLength())
         val oldEndPoint = findTSPoint(oldEndByte) ?: return null
-        val newEndByte = toByteOffset(change.offset + change.newFragment.length)
+        val newEndByte = toByteOffset(change.offset + change.newFragment.byteLength())
         val newEndPoint = findTSPoint(newEndByte) ?: return null
 
         tsTree.edit(TSInputEdit(startByte, oldEndByte, newEndByte, startPoint, oldEndPoint, newEndPoint))
@@ -172,7 +174,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         val charArray = text.toCharArray()
         val byteCount = AtomicInteger()
         for (i in 0 until charArray.size) {
-            val byteDelta = charArray[i].toString().toByteArray(StandardCharsets.UTF_8).size - 1
+            val byteDelta = charArray[i].toString().byteLength() - 1
             if (byteDelta > 0) {
                 charToByteOffsetTree.add(OffsetDelta(i, byteDelta))
                 byteToCharOffsetTree.add(OffsetDelta(byteCount.get() + 1, -byteDelta))
