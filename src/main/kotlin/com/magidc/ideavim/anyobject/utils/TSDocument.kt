@@ -66,7 +66,7 @@ class TSDocument( val editor: VimEditor) : ChangesListener {
             return PsiManager.getInstance(project).findFile(virtualFile)?.language?.displayName
         }
 
-        private fun getParserFromApp(): TSLanguage? {
+        private fun getDefaultAppLanguage(): TSLanguage? {
             val ideName = ApplicationInfo.getInstance().fullApplicationName.lowercase()
             if (ideName.contains("intellij")) return TreeSitterJava()
             if (ideName.contains("pycharm")) return TreeSitterPython()
@@ -109,7 +109,7 @@ class TSDocument( val editor: VimEditor) : ChangesListener {
                     "SQL" -> parser.setLanguage(TreeSitterSql())
                     "JSON" -> parser.setLanguage(TreeSitterJson())
                     "YAML" -> parser.setLanguage(TreeSitterYaml())
-                    else -> getParserFromApp()?.let { parser.setLanguage(it) }
+                    else -> getDefaultAppLanguage()?.let { parser.setLanguage(it) }
                 }
                 parser
             }
