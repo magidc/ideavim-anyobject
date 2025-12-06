@@ -138,7 +138,7 @@ class AnyObject : VimExtension {
         if (handler is BaseJumpHandler) {
             // Next
             VimExtensionFacade.putExtensionHandlerMapping(
-                MappingMode.N,
+                MappingMode.NV,
                 injector.parser.parseKeys("<Plug>Next$command"),
                 owner,
                 createMotionAction(handler, true),
@@ -146,7 +146,7 @@ class AnyObject : VimExtension {
             )
 
             VimExtensionFacade.putKeyMappingIfMissing(
-                MappingMode.N,
+                MappingMode.NV,
                 injector.parser.parseKeys("$jumpNextMapping$mapping"),
                 owner,
                 injector.parser.parseKeys("<Plug>Next$command"),
@@ -155,7 +155,7 @@ class AnyObject : VimExtension {
 
             // Previous
             VimExtensionFacade.putExtensionHandlerMapping(
-                MappingMode.N,
+                MappingMode.NV,
                 injector.parser.parseKeys("<Plug>Prev$command"),
                 owner,
                 createMotionAction(handler, false),
@@ -163,7 +163,7 @@ class AnyObject : VimExtension {
             )
 
             VimExtensionFacade.putKeyMappingIfMissing(
-                MappingMode.N,
+                MappingMode.NV,
                 injector.parser.parseKeys("$jumpPrevMapping$mapping"),
                 owner,
                 injector.parser.parseKeys("<Plug>Prev$command"),

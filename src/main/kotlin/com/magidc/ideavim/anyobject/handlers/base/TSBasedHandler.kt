@@ -77,6 +77,6 @@ abstract class AbstractTSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
     protected open fun findInnerBlock(node: TSNode?, offset: Int): TSNode? = node?.getFirstChildWithGrammar(innerBlockTypes, offset)
 
     final override fun findJumpElementStartOffset(editor: VimEditor, forward: Boolean): Int? {
-        return getTSDocument(editor).findJumpElementStartOffset({ acceptNode(it) }, forward)
+        return getTSDocument(editor).findJumpElementOffset({ acceptNode(it) }, forward)
     }
 }
