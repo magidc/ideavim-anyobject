@@ -46,6 +46,7 @@ import java.util.TreeSet
 class TSDocument(val editor: VimEditor) : ChangesListener {
     companion object {
         private fun String.byteLength(): Int = toByteArray(StandardCharsets.UTF_8).size
+        private fun VimEditor.isVisualMode(): Boolean = mode.toString().startsWith("VISUAL")
 
         private fun getUTF8ByteLength(codePoint: Int): Int =
             when {
@@ -140,6 +141,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         }
     }
 
+    @Suppress("unused")
     private fun editDocument(change: ChangesListener.Change, text: String): TSTree? {
         val startByte = toByteOffset(change.offset)
         val startPoint = findTSPoint(startByte) ?: return null
@@ -221,9 +223,13 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
     private fun findCurrentNode(offset: Int): TSNode? {
         if (!updated) loadTSTree()
         val byteOffset = toByteOffset(offset)
-        var containerNode = tsTree.rootNode
-        while (containerNode.startByte < byteOffset) containerNode = containerNode.nextLeaf() ?: break
-        return containerNode
+        var node = tsTree.rootNode
+        while (node.startByte < byteOffset) {
+            val nextNode = node.getFirstNamedChildForByte(byteOffset) ?: break
+            if (nextNode.isNull) break
+            node = nextNode
+        }
+        return node
     }
 
     private fun findObjectNode(currentNode: TSNode, acceptNode: (TSNode) -> Boolean): TSNode? {
@@ -245,16 +251,13 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         val objectNode = findObjectNode(currentNode, acceptNode)
         val startNode = if (objectNode != null) {
             if (forward && objectNode.startByte > currentNode.startByte) return objectNode
-            if (!forward && objectNode.startByte < currentNode.startByte) return objectNode
             objectNode
         } else currentNode
 
         var node: TSNode? = startNode.let {
-            if (forward)
-                it.nextLeaf()
+            if (forward) it.nextLeaf()
             else {
-                if (it.prevNamedSibling.isNull)
-                    it.parentPrevSibling()?.lastLeafOrSelf()
+                if (it.prevNamedSibling.isNull) it.parentPrevSibling()?.lastLeafOrSelf()
                 else it.prevNamedSibling
             }
         }
@@ -270,18 +273,20 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         return null
     }
 
+    private fun findJumpNode(currentNode: TSNode, acceptNode: (TSNode) -> Boolean, forward: Boolean, caretOffset: Int): TSNode? {
+        val caretByteOffset = toByteOffset(caretOffset)
+        if (acceptNode(currentNode)) {
+            if (forward) {
+                if (currentNode.startByte > caretByteOffset) return currentNode
+            } else if (currentNode.startByte < caretByteOffset) return currentNode
+        }
+        return findNextNode(currentNode, acceptNode, forward)
+    }
+
     fun findJumpElementOffset(acceptNode: (TSNode) -> Boolean, forward: Boolean): Int? {
         if (disabled) return null
         val caretOffset = editor.getCareOffset()
         val currentNode = findCurrentNode(caretOffset) ?: return null
-        val caretByteOffset = toByteOffset(caretOffset)
-        if (acceptNode(currentNode)) {
-            val currentNodeStartOffset = currentNode.startByte
-            if (forward) {
-                if (currentNodeStartOffset > caretByteOffset) return currentNodeStartOffset
-            } else if (currentNodeStartOffset < caretByteOffset) return currentNodeStartOffset
-        }
-        val isVisual = editor.mode.toString().startsWith("VISUAL")
-        return findNextNode(currentNode, acceptNode, forward)?.let { toCharOffset(if (isVisual) it.endByte else it.startByte) }
+        return findJumpNode(currentNode, acceptNode, forward, caretOffset)?.let { toCharOffset(if (editor.isVisualMode()) it.endByte - 1 else it.startByte) }
     }
 }
