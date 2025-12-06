@@ -147,20 +147,20 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         val oldEndPoint = findTSPoint(oldEndByte) ?: return null
         val newEndByte = toByteOffset(startByte + change.newFragment.byteLength())
         val newEndPoint = findTSPoint(newEndByte) ?: return null
-
         tsTree.edit(TSInputEdit(startByte, oldEndByte, newEndByte, startPoint, oldEndPoint, newEndPoint))
         return parser.parseString(tsTree, text)
     }
 
     override fun documentChanged(change: ChangesListener.Change) {
-        if(!updated) return
-        val text = editor.text().toString()
-        val updatedTSTree = editDocument(change, text)
-        if (null != updatedTSTree) {
-            tsTree = updatedTSTree
-            reloadCacheTrees(text)
-            updated = true
-        } else updated = false
+//        if (!updated) return
+//        val text = editor.text().toString()
+//        val updatedTSTree = editDocument(change, text)
+//        if (null != updatedTSTree) {
+//            tsTree = updatedTSTree
+//            reloadCacheTrees(text)
+//            updated = true
+//        } else updated = false
+        updated = false
     }
 
     private fun findTSPoint(byteOffSet: Int): TSPoint? {
@@ -221,9 +221,9 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
     private fun findCurrentNode(offset: Int): TSNode? {
         if (!updated) loadTSTree()
         val byteOffset = toByteOffset(offset)
-        val containerNode = tsTree.rootNode.getFirstChildForByte(byteOffset)
-        if (containerNode.startByte > byteOffset) return containerNode
-        return containerNode.getDescendantForByteRange(byteOffset, byteOffset)
+        var containerNode = tsTree.rootNode
+        while (containerNode.startByte < byteOffset) containerNode = containerNode.nextLeaf() ?: break
+        return containerNode
     }
 
     private fun findObjectNode(currentNode: TSNode, acceptNode: (TSNode) -> Boolean): TSNode? {
@@ -242,7 +242,14 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
     }
 
     fun findNextNode(currentNode: TSNode, acceptNode: (TSNode) -> Boolean, forward: Boolean = true): TSNode? {
-        var node: TSNode? = currentNode.let {
+        val objectNode = findObjectNode(currentNode, acceptNode)
+        val startNode = if (objectNode != null) {
+            if (forward && objectNode.startByte > currentNode.startByte) return objectNode
+            if (!forward && objectNode.startByte < currentNode.startByte) return objectNode
+            objectNode
+        } else currentNode
+
+        var node: TSNode? = startNode.let {
             if (forward)
                 it.nextLeaf()
             else {
@@ -263,16 +270,18 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         return null
     }
 
-    fun findJumpElementStartOffset(acceptNode: (TSNode) -> Boolean, forward: Boolean): Int? {
+    fun findJumpElementOffset(acceptNode: (TSNode) -> Boolean, forward: Boolean): Int? {
         if (disabled) return null
         val caretOffset = editor.getCareOffset()
         val currentNode = findCurrentNode(caretOffset) ?: return null
+        val caretByteOffset = toByteOffset(caretOffset)
         if (acceptNode(currentNode)) {
-            val currentNodeStartOffset = toCharOffset(currentNode.startByte)
+            val currentNodeStartOffset = currentNode.startByte
             if (forward) {
-                if (currentNodeStartOffset > caretOffset) return currentNodeStartOffset
-            } else if (currentNodeStartOffset < caretOffset) return currentNodeStartOffset
+                if (currentNodeStartOffset > caretByteOffset) return currentNodeStartOffset
+            } else if (currentNodeStartOffset < caretByteOffset) return currentNodeStartOffset
         }
-        return findNextNode(currentNode, acceptNode, forward)?.let { toCharOffset(it.startByte) }
+        val isVisual = editor.mode.toString().startsWith("VISUAL")
+        return findNextNode(currentNode, acceptNode, forward)?.let { toCharOffset(if (isVisual) it.endByte else it.startByte) }
     }
 }
