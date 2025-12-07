@@ -242,13 +242,16 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         return findObjectNode(currentNode, acceptNode) ?: findNextNode(currentNode, acceptNode)
     }
 
-    fun findNextNode(currentNode: TSNode, acceptNode: (TSNode) -> Boolean, forward: Boolean = true): TSNode? {
+    fun findNextNode(currentNode: TSNode, acceptNode: (TSNode) -> Boolean, forward: Boolean = true, includeSelf: Boolean = true): TSNode? {
         val objectNode = findObjectNode(currentNode, acceptNode)
-        val startNode = if (objectNode != null) {
-            if (forward && objectNode.startByte > currentNode.startByte) return objectNode
-            if (!forward && objectNode.startByte < currentNode.startByte) return objectNode
-            objectNode
-        } else currentNode
+        val startNode =
+            if (objectNode != null) {
+                if (includeSelf) {
+                    if (forward && objectNode.startByte > currentNode.startByte) return objectNode
+                    if (!forward && objectNode.startByte < currentNode.startByte) return objectNode
+                }
+                objectNode
+            } else currentNode
 
         var node: TSNode? = startNode.let {
             if (forward) it.nextLeaf()
@@ -269,23 +272,13 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         return null
     }
 
-    private fun findJumpNode(currentNode: TSNode, acceptNode: (TSNode) -> Boolean, forward: Boolean, caretOffset: Int): TSNode? {
-        val caretByteOffset = toByteOffset(caretOffset)
-        if (acceptNode(currentNode)) {
-            if (forward) {
-                if (currentNode.startByte > caretByteOffset) return currentNode
-            } else if (currentNode.startByte < caretByteOffset) return currentNode
-        }
-        return findNextNode(currentNode, acceptNode, forward)
-    }
-
     fun findJumpElementOffset(acceptNode: (TSNode) -> Boolean, forward: Boolean): Int? {
         if (disabled) return null
         val caretOffset = editor.getCareOffset()
         val currentNode = findCurrentNode(caretOffset) ?: return null
         val selectionModel = editor.getSelectionModel()
         val selection = selectionModel.hasSelection() && (selectionModel.selectionEnd - selectionModel.selectionStart) > 1
-        return findJumpNode(currentNode, acceptNode, forward, caretOffset)
+        return findNextNode(currentNode, acceptNode, forward, !selection || forward)
             ?.let { toCharOffset(if (selection) it.endByte - 1 else it.startByte) }
     }
 }
