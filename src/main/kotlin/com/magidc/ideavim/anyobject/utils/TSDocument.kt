@@ -5,6 +5,7 @@ import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import com.maddyhome.idea.vim.api.VimEditor
+import com.maddyhome.idea.vim.api.getLineEndForOffset
 import com.maddyhome.idea.vim.common.ChangesListener
 import com.maddyhome.idea.vim.common.TextRange
 import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler.Companion.lastLeafOrSelf
@@ -46,7 +47,6 @@ import java.util.TreeSet
 class TSDocument(val editor: VimEditor) : ChangesListener {
     companion object {
         private fun String.byteLength(): Int = toByteArray(StandardCharsets.UTF_8).size
-        private fun VimEditor.isVisualMode(): Boolean = mode.toString().startsWith("VISUAL")
 
         private fun getUTF8ByteLength(codePoint: Int): Int =
             when {
@@ -64,7 +64,6 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
             override fun compareTo(other: LineOffset): Int = startOffset.compareTo(other.startOffset)
         }
 
-        private val FIRST_OFFSET_DELTA = OffsetDelta(0)
         private val parserCache = LRUCache<String, TSParser>(3)
 
         private fun getLanguage(editor: VimEditor): String? {
@@ -142,26 +141,21 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
     }
 
     @Suppress("unused")
-    private fun editDocument(change: ChangesListener.Change, text: String): TSTree? {
+    private fun editDocument(change: ChangesListener.Change, text: String): Boolean {
         val startByte = toByteOffset(change.offset)
-        val startPoint = findTSPoint(startByte) ?: return null
+        val startPoint = findTSPoint(startByte) ?: return false
         val oldEndByte = toByteOffset(startByte + change.oldFragment.byteLength())
-        val oldEndPoint = findTSPoint(oldEndByte) ?: return null
+        val oldEndPoint = findTSPoint(oldEndByte) ?: return false
+        reloadCacheTrees(text, change.offset)
         val newEndByte = toByteOffset(startByte + change.newFragment.byteLength())
-        val newEndPoint = findTSPoint(newEndByte) ?: return null
+        val newEndPoint = findTSPoint(newEndByte) ?: return false
         tsTree.edit(TSInputEdit(startByte, oldEndByte, newEndByte, startPoint, oldEndPoint, newEndPoint))
-        return parser.parseString(tsTree, text)
+        return parser.parseString(tsTree, text)?.let { tsTree = it }?.let { true } ?: false
     }
 
     override fun documentChanged(change: ChangesListener.Change) {
-//        if (!updated) return
-//        val text = editor.text().toString()
-//        val updatedTSTree = editDocument(change, text)
-//        if (null != updatedTSTree) {
-//            tsTree = updatedTSTree
-//            reloadCacheTrees(text)
-//            updated = true
-//        } else updated = false
+        if (!updated) return
+//        updated = editDocument(change, editor.text().toString())
         updated = false
     }
 
@@ -177,13 +171,13 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
     }
 
 
-    private fun reloadCacheTrees(text: String) {
+    private fun reloadCacheTrees(text: String, fromOffSet: Int = 0) {
         // As byte offsets do not always match char offsets (i.e., emojis), we need to calculate the difference between them
         // Trees are used to track those offsets where there are differences so we can efficiently convert between byte and char offsets
-        charToByteOffsetTree.clear()
-        byteToCharOffsetTree.clear()
-        var byteIndex = 0
-        var charIndex = 0
+        var byteIndex = toByteOffset(fromOffSet)
+        var charIndex = fromOffSet
+        charToByteOffsetTree.removeIf { it.sourceOffset >= fromOffSet }
+        byteToCharOffsetTree.removeIf { it.sourceOffset >= byteIndex }
         while (charIndex < text.length) {
             val codePoint = text.codePointAt(charIndex)
             // Total bytes in this character (code point)
@@ -201,19 +195,20 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
             charIndex += charCount
             byteIndex += byteLength
         }
-        lineStartOffsetTree.clear()
-        for (lineIdx in 0 until editor.lineCount())
+        val fromLineIdx = editor.getLineEndForOffset(fromOffSet)
+        lineStartOffsetTree.removeIf { it.line >= fromLineIdx }
+        for (lineIdx in fromLineIdx until editor.lineCount())
             lineStartOffsetTree.add(LineOffset(toByteOffset(editor.getLineStartOffset(lineIdx)), lineIdx))
     }
 
     private fun toByteOffset(charIndex: Int): Int {
         if (charIndex == 0 || charToByteOffsetTree.isEmpty()) return charIndex
-        return charToByteOffsetTree.subSet(FIRST_OFFSET_DELTA, OffsetDelta(charIndex)).asSequence().map { it.delta }.sum() + charIndex
+        return charToByteOffsetTree.headSet(OffsetDelta(charIndex)).asSequence().map { it.delta }.sum() + charIndex
     }
 
     private fun toCharOffset(byteIndex: Int): Int {
         if (byteIndex == 0 || byteToCharOffsetTree.isEmpty()) return byteIndex
-        return byteToCharOffsetTree.subSet(FIRST_OFFSET_DELTA, OffsetDelta(byteIndex)).asSequence().map { it.delta }.sum() + byteIndex
+        return byteToCharOffsetTree.headSet(OffsetDelta(byteIndex)).asSequence().map { it.delta }.sum() + byteIndex
     }
 
     fun toTextRange(fromNode: TSNode, toNode: TSNode = fromNode): TextRange {
@@ -285,8 +280,12 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
 
     fun findJumpElementOffset(acceptNode: (TSNode) -> Boolean, forward: Boolean): Int? {
         if (disabled) return null
-        val caretOffset = editor.getCareOffset()
+        // TSNode.endbyte is exclusive. TSNode.getFirstNamedChildForByte(X) wont consider nodes that have endbyte = X
+        val selectionModel = editor.getSelectionModel()
+        val selection = selectionModel.hasSelection() && (selectionModel.selectionEnd - selectionModel.selectionStart) > 1
+        val caretOffset = editor.getCareOffset() - (if (selection) 1 else 0)
         val currentNode = findCurrentNode(caretOffset) ?: return null
-        return findJumpNode(currentNode, acceptNode, forward, caretOffset)?.let { toCharOffset(if (editor.isVisualMode()) it.endByte - 1 else it.startByte) }
+        return findJumpNode(currentNode, acceptNode, forward, caretOffset)
+            ?.let { toCharOffset(if (selection) it.endByte - 1 else it.startByte) }
     }
 }
