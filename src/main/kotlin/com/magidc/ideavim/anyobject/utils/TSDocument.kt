@@ -1,9 +1,5 @@
 package com.magidc.ideavim.anyobject.utils
 
-import com.intellij.openapi.application.ApplicationInfo
-import com.intellij.openapi.project.ProjectManager
-import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.PsiManager
 import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.api.getLineEndForOffset
 import com.maddyhome.idea.vim.common.ChangesListener
@@ -14,34 +10,11 @@ import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler.Compani
 import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler.Companion.prevLeaf
 import com.magidc.ideavim.anyobject.handlers.base.getCareOffset
 import org.treesitter.TSInputEdit
-import org.treesitter.TSLanguage
 import org.treesitter.TSNode
 import org.treesitter.TSParser
 import org.treesitter.TSPoint
 import org.treesitter.TSTree
-import org.treesitter.TreeSitterCSharp
-import org.treesitter.TreeSitterClojure
-import org.treesitter.TreeSitterCpp
-import org.treesitter.TreeSitterCss
-import org.treesitter.TreeSitterGo
-import org.treesitter.TreeSitterHtml
-import org.treesitter.TreeSitterJava
-import org.treesitter.TreeSitterJavascript
-import org.treesitter.TreeSitterJson
-import org.treesitter.TreeSitterKotlin
-import org.treesitter.TreeSitterObjc
-import org.treesitter.TreeSitterPhp
-import org.treesitter.TreeSitterPython
-import org.treesitter.TreeSitterR
-import org.treesitter.TreeSitterRuby
-import org.treesitter.TreeSitterRust
-import org.treesitter.TreeSitterScala
-import org.treesitter.TreeSitterSql
-import org.treesitter.TreeSitterSwift
-import org.treesitter.TreeSitterTypescript
-import org.treesitter.TreeSitterYaml
 import java.nio.charset.StandardCharsets
-import java.nio.file.Path
 import java.util.TreeSet
 
 class TSDocument(val editor: VimEditor) : ChangesListener {
@@ -66,66 +39,17 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
 
         private val parserCache = LRUCache<String, TSParser>(3)
 
-        private fun getLanguage(editor: VimEditor): String? {
-            val vimVirtualFile = editor.getVirtualFile() ?: return null
-            val projectManager = ProjectManager.getInstance()
-            if (null == projectManager || projectManager.openProjects.isEmpty()) return null
-            val project = projectManager.openProjects[0]
-            val virtualFile = VirtualFileManager.getInstance().findFileByNioPath(Path.of(vimVirtualFile.path)) ?: return null
-            return PsiManager.getInstance(project).findFile(virtualFile)?.language?.displayName
-        }
-
-        private fun getDefaultAppLanguage(): TSLanguage? {
-            val ideName = ApplicationInfo.getInstance().fullApplicationName.lowercase()
-            if (ideName.contains("intellij")) return TreeSitterJava()
-            if (ideName.contains("pycharm")) return TreeSitterPython()
-            if (ideName.contains("rustrover")) return TreeSitterRust()
-            if (ideName.contains("rider")) return TreeSitterCSharp()
-            if (ideName.contains("webstorm")) return TreeSitterJavascript()
-            if (ideName.contains("phpstorm")) return TreeSitterPhp()
-            if (ideName.contains("rubymine")) return TreeSitterRuby()
-            if (ideName.contains("goland")) return TreeSitterGo()
-            if (ideName.contains("clion")) return TreeSitterCpp()
-            if (ideName.contains("datagrip")) return TreeSitterSql()
-            if (ideName.contains("android")) return TreeSitterKotlin()
-            if (ideName.contains("appcode")) return TreeSitterSwift()
-
-            return null
-        }
-
-        private fun getParser(language: String?): TSParser {
-            if (null == language || language.isBlank()) throw IllegalArgumentException()
-            return parserCache.getOrPut(language) {
+        private fun getParser(editor: VimEditor): TSParser {
+            val tsLanguageInfo = TSLanguageUtils.getLanguage(editor)
+            return parserCache.getOrPut(tsLanguageInfo.name) {
                 val parser = TSParser()
-                when (language.uppercase()) {
-                    "JAVA" -> parser.setLanguage(TreeSitterJava())
-                    "KOTLIN" -> parser.setLanguage(TreeSitterKotlin())
-                    "CLOJURE" -> parser.setLanguage(TreeSitterClojure())
-                    "SCALA" -> parser.setLanguage(TreeSitterScala())
-                    "C#" -> parser.setLanguage(TreeSitterCSharp())
-                    "RUST" -> parser.setLanguage(TreeSitterRust())
-                    "GO" -> parser.setLanguage(TreeSitterGo())
-                    "PYTHON" -> parser.setLanguage(TreeSitterPython())
-                    "PHP" -> parser.setLanguage(TreeSitterPhp())
-                    "HTML" -> parser.setLanguage(TreeSitterHtml())
-                    "CSS" -> parser.setLanguage(TreeSitterCss())
-                    "ECMAScript 6" -> parser.setLanguage(TreeSitterJavascript())
-                    "TYPESCRIPT" -> parser.setLanguage(TreeSitterTypescript())
-                    "OBJECTIVE-C" -> parser.setLanguage(TreeSitterObjc())
-                    "SWIFT" -> parser.setLanguage(TreeSitterSwift())
-                    "C/C++" -> parser.setLanguage(TreeSitterCpp())
-                    "R" -> parser.setLanguage(TreeSitterR())
-                    "SQL" -> parser.setLanguage(TreeSitterSql())
-                    "JSON" -> parser.setLanguage(TreeSitterJson())
-                    "YAML" -> parser.setLanguage(TreeSitterYaml())
-                    else -> getDefaultAppLanguage()?.let { parser.setLanguage(it) }
-                }
+                tsLanguageInfo.tsLanguage?.let { parser.setLanguage(it.invoke()) }
                 parser
             }
         }
     }
 
-    private val parser: TSParser = getParser(getLanguage(editor))
+    private val parser: TSParser = getParser(editor)
     private lateinit var tsTree: TSTree
     private val disabled: Boolean = parser.language == null
     private var updated: Boolean = false
