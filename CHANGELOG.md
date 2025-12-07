@@ -1,4 +1,9 @@
 # Changelog
+## 3.0.4
+Byte offsets bug fixes
+Disabling continuous Tree-sitter parsing until it is stable enough
+Visual text objects jumps
+
 ## 3.0.3
 Better Kotlin support
 Fixed document offset caches; it was wrongly set as a global variable shared across all documents
