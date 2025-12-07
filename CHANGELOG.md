@@ -1,7 +1,7 @@
 # Changelog
 ## 3.0.4
 Byte offsets bug fixes
-Disabling continuous Tree-sitter parsing until it is stable enough
+Disabling continuous Treesitter parsing until it is stable enough
 Visual text objects jumps
 
 ## 3.0.3
