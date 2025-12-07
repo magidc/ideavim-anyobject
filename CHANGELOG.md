@@ -1,4 +1,8 @@
 # Changelog
+## 3.0.5
+Bug fixes for Kotlin support
+Visual text objects jumps seems to be ready
+
 ## 3.0.4
 Byte offsets bug fixes
 Disabling continuous Treesitter parsing until it is stable enough
