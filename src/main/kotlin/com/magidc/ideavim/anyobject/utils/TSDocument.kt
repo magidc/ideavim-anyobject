@@ -176,9 +176,15 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         // Trees are used to track those offsets where there are differences so we can efficiently convert between byte and char offsets
         var byteIndex = toByteOffset(fromOffSet)
         var charIndex = fromOffSet
-        val toByteOffset = toByteOffset(toOffset)
-        charToByteOffsetTree.removeIf { it.sourceOffset !in toOffset..<fromOffSet }
-        byteToCharOffsetTree.removeIf { it.sourceOffset !in toByteOffset..<byteIndex }
+
+        if (fromOffSet == 0 && toOffset == text.length) {
+            charToByteOffsetTree.clear()
+            byteToCharOffsetTree.clear()
+        } else {
+            charToByteOffsetTree.removeIf { it.sourceOffset !in toOffset..<fromOffSet }
+            byteToCharOffsetTree.removeIf { it.sourceOffset !in toByteOffset(toOffset)..<byteIndex }
+        }
+
         while (charIndex < toOffset) {
             val codePoint = text.codePointAt(charIndex)
             // Total bytes in this character (code point)
