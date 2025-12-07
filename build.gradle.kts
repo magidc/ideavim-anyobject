@@ -43,6 +43,31 @@ dependencies {
         zipSigner()
         testFramework(TestFrameworkType.Platform)
     }
+    // Treesitter
+    implementation("io.github.bonede:tree-sitter:0.25.3")
+    implementation("io.github.bonede:tree-sitter-java:0.23.4")
+    implementation("io.github.bonede:tree-sitter-clojure:0.0.12")
+    implementation("io.github.bonede:tree-sitter-r:main")
+    implementation("io.github.bonede:tree-sitter-kotlin:0.3.8.1")
+    implementation("io.github.bonede:tree-sitter-scala:0.23.3")
+    implementation("io.github.bonede:tree-sitter-ruby:0.23.1")
+    implementation("io.github.bonede:tree-sitter-c-sharp:0.23.1")
+    implementation("io.github.bonede:tree-sitter-html:0.23.2")
+    implementation("io.github.bonede:tree-sitter-css:0.23.1")
+    implementation("io.github.bonede:tree-sitter-javascript:0.23.1")
+    implementation("io.github.bonede:tree-sitter-typescript:0.23.2")
+    implementation("io.github.bonede:tree-sitter-rust:0.23.1")
+    implementation("io.github.bonede:tree-sitter-python:0.23.4")
+    implementation("io.github.bonede:tree-sitter-r:main")
+    implementation("io.github.bonede:tree-sitter-sql:gh-pages")
+    implementation("io.github.bonede:tree-sitter-go:0.23.3")
+    implementation("io.github.bonede:tree-sitter-objc:main")
+    implementation("io.github.bonede:tree-sitter-swift:0.5.0")
+    implementation("io.github.bonede:tree-sitter-php:0.23.11")
+    implementation("io.github.bonede:tree-sitter-comment:0.1.0")
+    implementation("io.github.bonede:tree-sitter-cpp:0.23.4")
+    implementation("io.github.bonede:tree-sitter-json:0.24.8")
+    implementation("io.github.bonede:tree-sitter-yaml:0.5.0")
 }
 
 intellijPlatform {
@@ -144,19 +169,33 @@ tasks {
         token.set(System.getenv("PUBLISH_TOKEN"))
         dependsOn(patchChangelog)
     }
+    @Suppress("unused")
     val runIntellij by intellijPlatformTesting.runIde.registering {
         localPath.set(file("/opt/jetbrains/intellij"))
     }
-    val runPycharm by intellijPlatformTesting.runIde.registering {
+
+    @Suppress("unused")
+    val runPyCharm by intellijPlatformTesting.runIde.registering {
         localPath.set(file("/opt/jetbrains/pycharm"))
     }
+
+    @Suppress("unused")
     val runPHPStorm by intellijPlatformTesting.runIde.registering {
         localPath.set(file("/opt/jetbrains/phpstorm"))
     }
+
+    @Suppress("unused")
     val runRider by intellijPlatformTesting.runIde.registering {
         localPath.set(file("/opt/jetbrains/rider"))
     }
+
+    @Suppress("unused")
     val runCLion by intellijPlatformTesting.runIde.registering {
         localPath.set(file("/opt/jetbrains/clion"))
+    }
+
+    @Suppress("unused")
+    val runWebStorm by intellijPlatformTesting.runIde.registering {
+        localPath.set(file("/opt/jetbrains/webstorm"))
     }
 }

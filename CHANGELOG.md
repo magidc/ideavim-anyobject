@@ -1,10 +1,29 @@
 # Changelog
+## 3.0.5
+Bug fixes for Kotlin support
+Visual text objects jumps seems to be ready
 
-## 2.0.9
-Adding commands to every text object motion so it will be shown in WhichKey plugin.
+## 3.0.4
+Byte offsets bug fixes
+Disabling continuous Treesitter parsing until it is stable enough
+Visual text objects jumps
 
-## 2.0.8
-Fixes problems with argument selection in Java annotations and function call arguments in PHP.
+## 3.0.3
+Better Kotlin support
+Fixed document offset caches; it was wrongly set as a global variable shared across all documents
+
+## 3.0.2
+Fixed compatibility with Rider 2025.3.0.3
+
+## 3.0.1
+Solved many reported issues in the first release based on Treesitter
+
+## 3.0.0
+### Tree-sitter
+From version 3.0.0 the plugin replaces the approach to detect coding text objects from PSI-based approach with Tree-sitter.
+This provides a more consistent model across different languages.
+
+Removed AnyBlockComment in favor of more generic AnyComment.
 
 ## 2.0.7
 Improving argument selection in PHP.
@@ -93,7 +112,7 @@ let g:anyobject_map_jump_next = ">"
 
 - **Multiple object outer selection for AnyArgument and AnyItem**: You can now select multiple objects of the same type in a single command. For example, `d2a` deletes the current
   and the next argument.
-- **Cursor won't change positions on yank actions**
+- **Curson won't change positions on yank actions**
 
 ## 1.3.2
 

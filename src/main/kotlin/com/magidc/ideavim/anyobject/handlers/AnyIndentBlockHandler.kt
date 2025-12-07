@@ -10,7 +10,7 @@ class AnyIndentBlockHandler : TextBasedHandler() {
         TODO("Not yet implemented")
     }
 
-    override fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): TextRange {
+    override fun findSelection(editor: VimEditor, inner: Boolean, size: Int): TextRange {
         val lineNumber = editor.currentCaret().getLine()
         val lineIndentation = editor.getLineText(lineNumber).takeWhile { it.isWhitespace() }
         var fromLine = lineNumber
@@ -30,7 +30,7 @@ class AnyIndentBlockHandler : TextBasedHandler() {
             }
         }
         return TextRange(
-            editor.getLineStartOffset(if (isInner) fromLine else max(0, fromLine - 1)),
+            editor.getLineStartOffset(if (inner) fromLine else max(0, fromLine - 1)),
             editor.getLineEndOffset(toLine)
         )
     }

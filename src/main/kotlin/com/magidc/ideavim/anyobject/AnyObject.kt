@@ -1,6 +1,5 @@
 package com.magidc.ideavim.anyobject
 
-import ai.grazie.utils.capitalize
 import com.intellij.openapi.diagnostic.Logger
 import com.maddyhome.idea.vim.KeyHandler
 import com.maddyhome.idea.vim.VimPlugin
@@ -23,9 +22,9 @@ import com.maddyhome.idea.vim.handler.TextObjectActionHandler
 import com.maddyhome.idea.vim.handler.toMotion
 import com.maddyhome.idea.vim.state.mode.SelectionType
 import com.magidc.ideavim.anyobject.handlers.AnyArgumentHandler
-import com.magidc.ideavim.anyobject.handlers.AnyBlockCommentHandler
 import com.magidc.ideavim.anyobject.handlers.AnyBracketHandler
 import com.magidc.ideavim.anyobject.handlers.AnyClassHandler
+import com.magidc.ideavim.anyobject.handlers.AnyCommentHandler
 import com.magidc.ideavim.anyobject.handlers.AnyConditionalHandler
 import com.magidc.ideavim.anyobject.handlers.AnyDocumentHandler
 import com.magidc.ideavim.anyobject.handlers.AnyFunctionHandler
@@ -42,7 +41,7 @@ val handlerSupplierMap = mapOf(
     "anyquote" to Pair("q", ::AnyQuoteHandler),
     "anybracket" to Pair("o", ::AnyBracketHandler),
     "anyitem" to Pair("i", ::AnyItemHandler),
-    "anyblockcomment" to Pair("k", ::AnyBlockCommentHandler),
+    "anycomment" to Pair("k", ::AnyCommentHandler),
     "anyargument" to Pair("a", ::AnyArgumentHandler),
     "anyfunction" to Pair("f", ::AnyFunctionHandler),
     "anyclass" to Pair("c", ::AnyClassHandler),
@@ -96,7 +95,7 @@ class AnyObject : VimExtension {
                 LOG.warn("Mapping $mapping for $handlerName is already used. Skipping")
                 continue
             }
-            registerTextObjects(mapping, handlerSupplier(), jumpNextMapping, jumpPrevMapping)
+            registerTextObjects(handlerName, mapping, handlerSupplier(), jumpNextMapping, jumpPrevMapping)
         }
     }
 
@@ -104,9 +103,7 @@ class AnyObject : VimExtension {
      * Registers the mapping for the text objects defined by the given delimiter pairs.
      */
 
-    private fun registerTextObjects(mapping: String, handler: BaseSelectionHandler, jumpNextMapping: String, jumpPrevMapping: String) {
-        val command = handler.javaClass.simpleName.capitalize().replace("Handler", "")
-
+    private fun registerTextObjects(command: String, mapping: String, handler: BaseSelectionHandler, jumpNextMapping: String, jumpPrevMapping: String) {
         VimExtensionFacade.putExtensionHandlerMapping(
             MappingMode.XO, injector.parser.parseKeys("<Plug>Inner$command"),
             owner,
@@ -138,47 +135,10 @@ class AnyObject : VimExtension {
             true
         )
 
-        if (handler.allowsCountSelection()) {
-            for (n in 1..10) {
-                // Outer selection
-                VimExtensionFacade.putExtensionHandlerMapping(
-                    MappingMode.XO,
-                    injector.parser.parseKeys("<Plug>" + n + "Outer$command"),
-                    owner,
-                    createSelection(handler, false, n),
-                    false
-                )
-
-                VimExtensionFacade.putKeyMappingIfMissing(
-                    MappingMode.XO,
-                    injector.parser.parseKeys("${n}a$mapping"),
-                    owner,
-                    injector.parser.parseKeys("<Plug>" + n + "Outer$command"),
-                    true
-                )
-                // Inner selection
-                VimExtensionFacade.putExtensionHandlerMapping(
-                    MappingMode.XO,
-                    injector.parser.parseKeys("<Plug>" + n + "Inner$command"),
-                    owner,
-                    createSelection(handler, true, n),
-                    false
-                )
-
-                VimExtensionFacade.putKeyMappingIfMissing(
-                    MappingMode.XO,
-                    injector.parser.parseKeys("${n}i$mapping"),
-                    owner,
-                    injector.parser.parseKeys("<Plug>" + n + "Inner$command"),
-                    true
-                )
-            }
-        }
-
         if (handler is BaseJumpHandler) {
             // Next
             VimExtensionFacade.putExtensionHandlerMapping(
-                MappingMode.N,
+                MappingMode.NV,
                 injector.parser.parseKeys("<Plug>Next$command"),
                 owner,
                 createMotionAction(handler, true),
@@ -186,7 +146,7 @@ class AnyObject : VimExtension {
             )
 
             VimExtensionFacade.putKeyMappingIfMissing(
-                MappingMode.N,
+                MappingMode.NV,
                 injector.parser.parseKeys("$jumpNextMapping$mapping"),
                 owner,
                 injector.parser.parseKeys("<Plug>Next$command"),
@@ -195,7 +155,7 @@ class AnyObject : VimExtension {
 
             // Previous
             VimExtensionFacade.putExtensionHandlerMapping(
-                MappingMode.N,
+                MappingMode.NV,
                 injector.parser.parseKeys("<Plug>Prev$command"),
                 owner,
                 createMotionAction(handler, false),
@@ -203,7 +163,7 @@ class AnyObject : VimExtension {
             )
 
             VimExtensionFacade.putKeyMappingIfMissing(
-                MappingMode.N,
+                MappingMode.NV,
                 injector.parser.parseKeys("$jumpPrevMapping$mapping"),
                 owner,
                 injector.parser.parseKeys("<Plug>Prev$command"),
@@ -212,13 +172,14 @@ class AnyObject : VimExtension {
         }
     }
 
-    private fun createSelection(handler: BaseSelectionHandler, isInner: Boolean, size: Int = 1): ExtensionHandler = object : ExtensionHandler {
-        override val isRepeatable: Boolean = true
+    private fun createSelection(handler: BaseSelectionHandler, inner: Boolean): ExtensionHandler = object : ExtensionHandler {
+        override val isRepeatable: Boolean = handler.allowsCountSelection()
+
         override fun execute(editor: VimEditor, context: ExecutionContext, operatorArguments: OperatorArguments) {
             val textObjectHandler = object : TextObjectActionHandler() {
                 override val visualType: TextObjectVisualType = TextObjectVisualType.CHARACTER_WISE
                 override fun getRange(editor: VimEditor, caret: ImmutableVimCaret, context: ExecutionContext, count: Int, rawCount: Int): TextRange? {
-                    val range = handler.findSelection(editor, isInner, size) ?: return null
+                    val range = handler.findSelection(editor, inner, count) ?: return null
                     // Avoiding change caret position in yank actions
                     val isYankOperation = KeyHandler.getInstance().keyHandlerState.digraphSequence.toString().endsWith("char = y")
                     if (isYankOperation) {
@@ -232,13 +193,14 @@ class AnyObject : VimExtension {
         }
     }
 
-    private fun createMotionAction(handler: BaseJumpHandler, next: Boolean): ExtensionHandler = object : ExtensionHandler {
-        override val isRepeatable: Boolean = true
+    private fun createMotionAction(handler: BaseJumpHandler, forward: Boolean): ExtensionHandler = object : ExtensionHandler {
+        override val isRepeatable: Boolean = handler.allowsCountSelection()
+
         override fun execute(editor: VimEditor, context: ExecutionContext, operatorArguments: OperatorArguments) {
             val action = object : MotionActionHandler.SingleExecution() {
                 override val motionType: MotionType = MotionType.EXCLUSIVE
                 override fun getOffset(editor: VimEditor, context: ExecutionContext, argument: Argument?, operatorArguments: OperatorArguments): Motion {
-                    return handler.findJumpElementStartOffset(editor, next)?.toMotion() ?: Motion.Error
+                    return handler.findJumpElementStartOffset(editor, forward)?.toMotion() ?: Motion.Error
                 }
             }
             KeyHandler.getInstance().keyHandlerState.commandBuilder.addAction(action)

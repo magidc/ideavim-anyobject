@@ -11,7 +11,7 @@ interface BaseSelectionHandler : BaseHandler {
     /**
      * Finds the selection to operate on.
      */
-    fun findSelection(editor: VimEditor, isInner: Boolean, size: Int): TextRange?
+    fun findSelection(editor: VimEditor, inner: Boolean, size: Int): TextRange?
     fun allowsCountSelection(): Boolean = false
 }
 
@@ -19,6 +19,6 @@ interface BaseJumpHandler : BaseSelectionHandler {
     /**
      * Locates the starting offset of the next or previous element to jump to.
      */
-    fun findJumpElementStartOffset(editor: VimEditor, next: Boolean): Int?
+    fun findJumpElementStartOffset(editor: VimEditor, forward: Boolean): Int?
 }
 
