@@ -146,7 +146,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         val startPoint = findTSPoint(startByte) ?: return false
         val oldEndByte = toByteOffset(startByte + change.oldFragment.byteLength())
         val oldEndPoint = findTSPoint(oldEndByte) ?: return false
-        reloadCacheTrees(text, change.offset)
+        reloadCacheTrees(text, change.offset, change.offset + change.oldFragment.length)
         val newEndByte = toByteOffset(startByte + change.newFragment.byteLength())
         val newEndPoint = findTSPoint(newEndByte) ?: return false
         tsTree.edit(TSInputEdit(startByte, oldEndByte, newEndByte, startPoint, oldEndPoint, newEndPoint))
@@ -171,14 +171,15 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
     }
 
 
-    private fun reloadCacheTrees(text: String, fromOffSet: Int = 0) {
+    private fun reloadCacheTrees(text: String, fromOffSet: Int = 0, toOffset: Int = text.length) {
         // As byte offsets do not always match char offsets (i.e., emojis), we need to calculate the difference between them
         // Trees are used to track those offsets where there are differences so we can efficiently convert between byte and char offsets
         var byteIndex = toByteOffset(fromOffSet)
         var charIndex = fromOffSet
-        charToByteOffsetTree.removeIf { it.sourceOffset >= fromOffSet }
-        byteToCharOffsetTree.removeIf { it.sourceOffset >= byteIndex }
-        while (charIndex < text.length) {
+        val toByteOffset = toByteOffset(toOffset)
+        charToByteOffsetTree.removeIf { it.sourceOffset !in toOffset..<fromOffSet }
+        byteToCharOffsetTree.removeIf { it.sourceOffset !in toByteOffset..<byteIndex }
+        while (charIndex < toOffset) {
             val codePoint = text.codePointAt(charIndex)
             // Total bytes in this character (code point)
             val byteLength = getUTF8ByteLength(codePoint)

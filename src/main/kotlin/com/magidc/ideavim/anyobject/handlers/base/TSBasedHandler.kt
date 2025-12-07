@@ -13,8 +13,8 @@ abstract class AbstractTSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
         private val documentCache = LRUCache<String, TSDocument>(5) { _, v -> v.editor.document.removeChangeListener(v) }
 
         @Suppress("unused")
-        fun TSNode.toText(text: String, textLimit: Int = 20): String {
-            val string = String(text.toByteArray().copyOfRange(startByte, endByte))
+        fun TSNode.toText(editor: VimEditor, textLimit: Int = 20): String {
+            val string = String(editor.text().toString().toByteArray().copyOfRange(startByte, endByte))
             return "${grammarType}: ${string.take(textLimit)}"
         }
 
