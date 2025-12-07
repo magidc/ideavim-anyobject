@@ -222,9 +222,9 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         return TextRange(toCharOffset(fromNode.startByte), toCharOffset(toNode.endByte))
     }
 
-    private fun findCurrentNode(offset: Int): TSNode? {
+    private fun findCurrentNode(): TSNode? {
         if (!updated) loadTSTree()
-        val byteOffset = toByteOffset(offset)
+        val byteOffset = toByteOffset(editor.getCareOffset())
         var node = tsTree.rootNode
         while (node.startByte < byteOffset) {
             val nextNode = node.getFirstChildForByte(byteOffset)
@@ -245,7 +245,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
 
     fun findSelectionNode(acceptNode: (TSNode) -> Boolean): TSNode? {
         if (disabled) return null
-        val currentNode = findCurrentNode(editor.getCareOffset()) ?: return null
+        val currentNode = findCurrentNode() ?: return null
         return findObjectNode(currentNode, acceptNode) ?: findNextNode(currentNode, acceptNode)
     }
 
@@ -281,10 +281,8 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
 
     fun findJumpElementOffset(acceptNode: (TSNode) -> Boolean, forward: Boolean): Int? {
         if (disabled) return null
-        val caretOffset = editor.getCareOffset()
-        val currentNode = findCurrentNode(caretOffset) ?: return null
-        val selectionModel = editor.getSelectionModel()
-        val selection = selectionModel.hasSelection() && (selectionModel.selectionEnd - selectionModel.selectionStart) > 1
+        val currentNode = findCurrentNode() ?: return null
+        val selection = editor.getSelectionModel().hasSelection()
         return findNextNode(currentNode, acceptNode, forward, !selection || forward)
             ?.let { toCharOffset(if (selection) it.endByte - 1 else it.startByte) }
     }
