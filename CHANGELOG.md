@@ -1,4 +1,15 @@
 # Changelog
+## 3.0.6
+Improved Ruby on Rails support
+Extended AnyItem scope to include hash collection items. Kudos to **@ZimCodes** for the suggestion.
+
+### AnyField (`v`)
+
+Field and variable declarations. It only works in languages that require explicit field declarations; it won't select anything in languages like Python, Ruby, or PHP that use implicit field declarations.
+
+- **Inner selection (`iv`)**: Selects only the initial value assigned to the field/variable if any
+- **Outer selection (`av`)**: Selects the entire field/variable declaration
+
 ## 3.0.5
 Bug fixes for Kotlin support
 Visual text objects jumps seems to be ready

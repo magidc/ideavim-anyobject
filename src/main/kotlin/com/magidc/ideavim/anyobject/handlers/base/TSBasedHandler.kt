@@ -45,7 +45,7 @@ abstract class AbstractTSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
             return if (nextNamedSibling.isNull) parent.next() else nextNamedSibling
         }
 
-        fun TSNode.getFirstChildWithGrammar(grammars: Set<String>, offset: Int): TSNode? {
+        fun TSNode.getFirstChildWithGrammar(grammars: Set<String>, offset: Int = this.startByte): TSNode? {
             var node = this
             while (node.startByte <= this.endByte) {
                 if (node.endByte >= offset && grammars.contains(node.grammarType)) return node

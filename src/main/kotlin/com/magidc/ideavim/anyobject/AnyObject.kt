@@ -27,6 +27,7 @@ import com.magidc.ideavim.anyobject.handlers.AnyClassHandler
 import com.magidc.ideavim.anyobject.handlers.AnyCommentHandler
 import com.magidc.ideavim.anyobject.handlers.AnyConditionalHandler
 import com.magidc.ideavim.anyobject.handlers.AnyDocumentHandler
+import com.magidc.ideavim.anyobject.handlers.AnyFieldHandler
 import com.magidc.ideavim.anyobject.handlers.AnyFunctionHandler
 import com.magidc.ideavim.anyobject.handlers.AnyIndentBlockHandler
 import com.magidc.ideavim.anyobject.handlers.AnyItemHandler
@@ -50,6 +51,7 @@ val handlerSupplierMap = mapOf(
     "anyindentblock" to Pair("n", ::AnyIndentBlockHandler),
     "anyconditional" to Pair("y", ::AnyConditionalHandler),
     "anysubword" to Pair("u", ::AnySubwordHandler),
+    "anyfield" to Pair("v", ::AnyFieldHandler),
 )
 
 val builtInVimTextObjectsMappings = setOf("w", "p", "t", "b", "s")
@@ -60,7 +62,7 @@ class AnyObject : VimExtension {
     }
 
     fun getGlobalVariableSet(variableName: String): Set<String>? {
-        return VimPlugin.getVariableService().getGlobalVariableValue(variableName)?.asString()
+        return VimPlugin.getVariableService().getGlobalVariableValue(variableName)?.toVimString()?.asString()
             ?.split(",")
             ?.map { it.trim() }
             ?.map { it.lowercase() }
@@ -75,7 +77,7 @@ class AnyObject : VimExtension {
 
         val customMappingMap = VimPlugin.getVariableService().getGlobalVariables().entries
             .filter { it.key.lowercase().startsWith("anyobject_map_") }
-            .associate { it.key.substringAfter("anyobject_map_").lowercase() to it.value.asString() }
+            .associate { it.key.substringAfter("anyobject_map_").lowercase() to it.value.toVimString().asString() }
 
         val jumpNextMapping = customMappingMap.getOrDefault("jump_next", "]")
         val jumpPrevMapping = customMappingMap.getOrDefault("jump_prev", "[")

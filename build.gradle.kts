@@ -195,6 +195,11 @@ tasks {
     }
 
     @Suppress("unused")
+    val runRubyMine by intellijPlatformTesting.runIde.registering {
+        localPath.set(file("/opt/jetbrains/rubymine"))
+    }
+
+    @Suppress("unused")
     val runWebStorm by intellijPlatformTesting.runIde.registering {
         localPath.set(file("/opt/jetbrains/webstorm"))
     }

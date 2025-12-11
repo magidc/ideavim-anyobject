@@ -21,6 +21,7 @@ import org.treesitter.TreeSitterObjc
 import org.treesitter.TreeSitterPhp
 import org.treesitter.TreeSitterPython
 import org.treesitter.TreeSitterR
+import org.treesitter.TreeSitterRuby
 import org.treesitter.TreeSitterRust
 import org.treesitter.TreeSitterScala
 import org.treesitter.TreeSitterSql
@@ -48,6 +49,7 @@ class TSLanguageUtils {
             "SCALA" to TSLanguageInfo("SCALA", "intellij", "scala", { TreeSitterScala() }),
             "C#" to TSLanguageInfo("C#", "rider", "cs", { TreeSitterCSharp() }),
             "RUST" to TSLanguageInfo("RUST", "rustrover", "rs", { TreeSitterRust() }),
+            "RUBY" to TSLanguageInfo("RUBY", "rubymine", "rb", { TreeSitterRuby() }),
             "GO" to TSLanguageInfo("GO", "goland", "go", { TreeSitterGo() }),
             "PYTHON" to TSLanguageInfo("PYTHON", "pycharm", "py", { TreeSitterPython() }),
             "PHP" to TSLanguageInfo("PHP", "phpstorm", "php", { TreeSitterPhp() }),
