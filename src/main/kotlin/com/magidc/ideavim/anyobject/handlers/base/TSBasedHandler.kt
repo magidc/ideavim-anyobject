@@ -20,36 +20,56 @@ abstract class AbstractTSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
         fun TSNode.isEqual(a: TSNode?) = (a?.isNull == false) && (a.startByte == startByte) && (a.endByte == endByte)
 
-        fun TSNode.lastLeafOrSelf(): TSNode {
+        fun TSNode.lastNamedLeafOrSelf(): TSNode {
             if (namedChildCount == 0) return this
-            return getNamedChild(namedChildCount - 1).lastLeafOrSelf()
+            return getNamedChild(namedChildCount - 1).lastNamedLeafOrSelf()
         }
 
-        fun TSNode.parentPrevSibling(): TSNode? {
+        fun TSNode.parentPrevNamedSibling(): TSNode? {
             if (parent.isNull) return null
-            return if (parent.prevNamedSibling.isNull) parent.parentPrevSibling() else parent.prevNamedSibling
+            return if (parent.prevNamedSibling.isNull) parent.parentPrevNamedSibling() else parent.prevNamedSibling
         }
 
-        fun TSNode.prevLeaf(): TSNode? {
-            return if (prevNamedSibling.isNull) parent.takeIf { !it.isNull } else prevNamedSibling?.lastLeafOrSelf()
+        fun TSNode.prevNamedLeaf(): TSNode? {
+            return if (prevNamedSibling.isNull) parent.takeIf { !it.isNull } else prevNamedSibling?.lastNamedLeafOrSelf()
         }
 
-        fun TSNode.next(): TSNode? {
+        fun TSNode.nextNamed(): TSNode? {
             if (nextNamedSibling.isNull)
-                return if (parent.isNull) null else parent.next()
+                return if (parent.isNull) null else parent.nextNamed()
             return nextNamedSibling
         }
 
-        fun TSNode.nextLeaf(): TSNode? {
+        fun TSNode.next(): TSNode? {
+            if (nextSibling.isNull)
+                return if (parent.isNull) null else parent.next()
+            return nextSibling
+        }
+
+        fun TSNode.nextNamedChild(): TSNode? {
             if (namedChildCount > 0) return getNamedChild(0)
-            return if (nextNamedSibling.isNull) parent.next() else nextNamedSibling
+            return if (nextNamedSibling.isNull) parent.nextNamed() else nextNamedSibling
+        }
+
+        fun TSNode.nextChild(): TSNode? {
+            if (childCount > 0) return getChild(0)
+            return if (nextSibling.isNull) parent.next() else nextSibling
+        }
+
+        fun TSNode.getFirstNamedChildWithGrammar(grammars: Set<String>, offset: Int = this.startByte): TSNode? {
+            var node = this
+            while (node.startByte <= this.endByte) {
+                if (node.endByte >= offset && grammars.contains(node.grammarType)) return node
+                node = node.nextNamedChild() ?: return null
+            }
+            return null
         }
 
         fun TSNode.getFirstChildWithGrammar(grammars: Set<String>, offset: Int = this.startByte): TSNode? {
             var node = this
             while (node.startByte <= this.endByte) {
                 if (node.endByte >= offset && grammars.contains(node.grammarType)) return node
-                node = node.nextLeaf() ?: return null
+                node = node.nextChild() ?: return null
             }
             return null
         }
@@ -67,14 +87,14 @@ abstract class AbstractTSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
         val objectNode = tsDocument.findSelectionNode { acceptNode(it) } ?: return null
         if (!inner) return tsDocument.toTextRange(objectNode)
         return findInnerBlock(objectNode, editor.getCareOffset())
-            ?.takeIf { it.namedChildCount > 0 }
+            ?.takeIf<TSNode> { it.namedChildCount > 0 }
             ?.let { tsDocument.toTextRange(it.getNamedChild(0), it.getNamedChild(it.namedChildCount - 1)) }
             ?: tsDocument.toTextRange(objectNode)
     }
 
     override fun allowsCountSelection(): Boolean = false
 
-    protected open fun findInnerBlock(node: TSNode?, offset: Int): TSNode? = node?.getFirstChildWithGrammar(innerBlockTypes, offset)
+    protected open fun findInnerBlock(node: TSNode?, offset: Int): TSNode? = node?.getFirstNamedChildWithGrammar(innerBlockTypes, offset)
 
     final override fun findJumpElementStartOffset(editor: VimEditor, forward: Boolean): Int? {
         return getTSDocument(editor).findJumpElementOffset({ acceptNode(it) }, forward)

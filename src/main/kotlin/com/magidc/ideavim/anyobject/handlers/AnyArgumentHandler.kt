@@ -26,7 +26,7 @@ open class AnyArgumentHandler : AbstractTSBasedHandler() {
         nodes.add(firstNode)
         @Suppress("unused")
         for (i in 1 until size) {
-            tsDocument.findNextNode(nodes.last(), { acceptNode(it) })
+            tsDocument.findNextNode(nodes.last(), { acceptNode(it) }, loop = false)
                 ?.takeIf { it.parent.isEqual(firstNode.parent) }
                 ?.let { nodes.add(it) }
                 ?: break
