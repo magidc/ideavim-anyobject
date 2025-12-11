@@ -3,6 +3,7 @@ package com.magidc.ideavim.anyobject.handlers
 import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.common.TextRange
 import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler
+import com.magidc.ideavim.anyobject.utils.TSDocument
 import org.treesitter.TSNode
 
 open class AnyArgumentHandler : AbstractTSBasedHandler() {
@@ -16,7 +17,7 @@ open class AnyArgumentHandler : AbstractTSBasedHandler() {
 
     override fun allowsCountSelection(): Boolean = true
 
-    override fun findInnerBlock(node: TSNode?, offset: Int): TSNode? = node
+    override fun findInnerBlockRange(node: TSNode, offset: Int, tsDocument: TSDocument): TextRange = tsDocument.toTextRange(node)
 
     override fun findSelection(editor: VimEditor, inner: Boolean, size: Int): TextRange? {
         if (size == 0) return null

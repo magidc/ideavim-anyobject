@@ -5,6 +5,7 @@ import com.maddyhome.idea.vim.common.TextRange
 import com.magidc.ideavim.anyobject.utils.LRUCache
 import com.magidc.ideavim.anyobject.utils.TSDocument
 import org.treesitter.TSNode
+import java.util.stream.IntStream
 
 
 abstract class AbstractTSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
@@ -40,7 +41,7 @@ abstract class AbstractTSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
             return nextNamedSibling
         }
 
-        fun TSNode.next(): TSNode? {
+        private fun TSNode.next(): TSNode? {
             if (nextSibling.isNull)
                 return if (parent.isNull) null else parent.next()
             return nextSibling
@@ -56,26 +57,30 @@ abstract class AbstractTSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
             return if (nextSibling.isNull) parent.next() else nextSibling
         }
 
-        fun TSNode.getFirstNamedChildWithGrammar(grammars: Set<String>, offset: Int = this.startByte): TSNode? {
-            var node = this
-            while (node.startByte <= this.endByte) {
+        fun TSNode.getFirstNamedChildWithGrammar(grammars: Collection<String>, offset: Int = this.startByte): TSNode? {
+            val nodeDeque = ArrayDeque<TSNode>()
+            nodeDeque.add(this)
+            while (nodeDeque.isNotEmpty()) {
+                val node = nodeDeque.removeFirst()
                 if (node.endByte >= offset && grammars.contains(node.grammarType)) return node
-                node = node.nextNamedChild() ?: return null
+                IntStream.range(0, node.namedChildCount).mapToObj { node.getNamedChild(it) }.forEach(nodeDeque::add)
             }
             return null
         }
 
         fun TSNode.getFirstChildWithGrammar(grammars: Set<String>, offset: Int = this.startByte): TSNode? {
-            var node = this
-            while (node.startByte <= this.endByte) {
+            val nodeDeque = ArrayDeque<TSNode>()
+            nodeDeque.add(this)
+            while (nodeDeque.isNotEmpty()) {
+                val node = nodeDeque.removeFirst()
                 if (node.endByte >= offset && grammars.contains(node.grammarType)) return node
-                node = node.nextChild() ?: return null
+                IntStream.range(0, node.childCount).mapToObj { node.getChild(it) }.forEach(nodeDeque::add)
             }
             return null
         }
     }
 
-    protected open val innerBlockTypes = setOf("block")
+    protected open val innerBlockTypes: Collection<String> = setOf("block")
     protected abstract val targetTypes: Set<String>
 
     protected fun getTSDocument(editor: VimEditor): TSDocument = documentCache.getOrPut(editor.getVirtualFile()?.path ?: "") { TSDocument(editor) }
@@ -86,15 +91,16 @@ abstract class AbstractTSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
         val tsDocument = getTSDocument(editor)
         val objectNode = tsDocument.findSelectionNode { acceptNode(it) } ?: return null
         if (!inner) return tsDocument.toTextRange(objectNode)
-        return findInnerBlock(objectNode, editor.getCareOffset())
-            ?.takeIf<TSNode> { it.namedChildCount > 0 }
-            ?.let { tsDocument.toTextRange(it.getNamedChild(0), it.getNamedChild(it.namedChildCount - 1)) }
-            ?: tsDocument.toTextRange(objectNode)
+        return findInnerBlockRange(objectNode, editor.getCareOffset(), tsDocument)
     }
 
     override fun allowsCountSelection(): Boolean = false
 
-    protected open fun findInnerBlock(node: TSNode?, offset: Int): TSNode? = node?.getFirstNamedChildWithGrammar(innerBlockTypes, offset)
+    protected open fun findInnerBlockRange(node: TSNode, offset: Int, tsDocument: TSDocument): TextRange? {
+        return node.getFirstNamedChildWithGrammar(innerBlockTypes, offset)
+            ?.takeIf { it.namedChildCount > 0 }
+            ?.let { tsDocument.toTextRange(it.getNamedChild(0), it.getNamedChild(it.namedChildCount - 1)) }
+    }
 
     final override fun findJumpElementStartOffset(editor: VimEditor, forward: Boolean): Int? {
         return getTSDocument(editor).findJumpElementOffset({ acceptNode(it) }, forward)
