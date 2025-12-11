@@ -7,7 +7,7 @@ Extended AnyItem scope to include hash collection items. Kudos to **@ZimCodes** 
 
 Field and variable declarations. It only works in languages that require explicit field declarations; it won't select anything in languages like Python, Ruby, or PHP that use implicit field declarations.
 
-- **Inner selection (`iv`)**: Selects only the initial value assigned to the field/variable if any
+- **Inner selection (`iv`)**: Selects only the value assigned to the field/variable if any
 - **Outer selection (`av`)**: Selects the entire field/variable declaration
 
 ## 3.0.5
