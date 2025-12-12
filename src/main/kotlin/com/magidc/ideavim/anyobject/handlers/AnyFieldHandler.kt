@@ -15,7 +15,10 @@ class AnyFieldHandler : AbstractTSBasedHandler() {
             ?.takeIf { !it.isNull }
             ?.let {
                 if (it.namedChildCount > 0) {
-                    TextRange(it.startByte, it.endByte)
+                    var lastLeaf: TSNode = node.lastLeafOrSelf()
+                    while (lastLeaf.grammarType == ";")
+                        lastLeaf = lastLeaf.prevLeaf() ?: break
+                    tsDocument.toTextRange(it, lastLeaf)
                 } else tsDocument.toTextRange(it)
             }
             ?: tsDocument.toTextRange(node)

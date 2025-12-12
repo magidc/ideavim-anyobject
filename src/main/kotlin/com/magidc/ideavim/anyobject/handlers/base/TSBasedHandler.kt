@@ -26,6 +26,11 @@ abstract class AbstractTSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
             return getNamedChild(namedChildCount - 1).lastNamedLeafOrSelf()
         }
 
+        fun TSNode.lastLeafOrSelf(): TSNode {
+            if (childCount == 0) return this
+            return getChild(childCount - 1).lastLeafOrSelf()
+        }
+
         fun TSNode.parentPrevNamedSibling(): TSNode? {
             if (parent.isNull) return null
             return if (parent.prevNamedSibling.isNull) parent.parentPrevNamedSibling() else parent.prevNamedSibling
@@ -33,6 +38,10 @@ abstract class AbstractTSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
         fun TSNode.prevNamedLeaf(): TSNode? {
             return if (prevNamedSibling.isNull) parent.takeIf { !it.isNull } else prevNamedSibling?.lastNamedLeafOrSelf()
+        }
+
+        fun TSNode.prevLeaf(): TSNode? {
+            return if (prevSibling.isNull) parent.takeIf { !it.isNull } else prevSibling?.lastLeafOrSelf()
         }
 
         fun TSNode.nextNamed(): TSNode? {
