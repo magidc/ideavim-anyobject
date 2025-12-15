@@ -8,10 +8,10 @@ import org.treesitter.TSNode
 
 class AnyStringHandler : AbstractTSBasedHandler() {
     companion object {
-        val quotes = setOf('"', '\'', '`')
+        private val quotes = setOf('"', '\'', '`')
     }
 
-    override val targetTypes = setOf("string_literal", "verbatim_string_literal", "interpolated_string_expression", "raw_string_literal")
+    override val targetTypes = setOf("string", "string_literal", "verbatim_string_literal", "interpolated_string_expression", "raw_string_literal")
 
     override fun findInnerBlockRange(node: TSNode, offset: Int, tsDocument: TSDocument): TextRange? {
         val string = node.toText(tsDocument.editor, maxSize = Int.MAX_VALUE)
