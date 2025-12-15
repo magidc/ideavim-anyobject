@@ -4,6 +4,8 @@ import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.api.getLineEndForOffset
 import com.maddyhome.idea.vim.common.ChangesListener
 import com.maddyhome.idea.vim.common.TextRange
+import com.maddyhome.idea.vim.state.mode.inBlockSelection
+import com.maddyhome.idea.vim.state.mode.inSelectMode
 import com.magidc.ideavim.anyobject.handlers.base.getCareOffset
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.lastNamedLeafOrSelf
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.nextNamedLeaf
@@ -199,7 +201,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
     fun findJumpElementOffset(acceptNode: (TSNode) -> Boolean, forward: Boolean): Int? {
         if (disabled) return null
         val currentNode = findCurrentNode() ?: return null
-        val selection = editor.getSelectionModel().hasSelection()
+        val selection = editor.inSelectMode || editor.inBlockSelection
         return findNextNode(currentNode, acceptNode, forward, !selection || forward)
             ?.let { toCharOffset(if (selection) it.endByte - 1 else it.startByte) }
     }

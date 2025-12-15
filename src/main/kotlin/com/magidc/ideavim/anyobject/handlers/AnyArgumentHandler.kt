@@ -8,11 +8,15 @@ import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.isEqual
 import org.treesitter.TSNode
 
 open class AnyArgumentHandler : AbstractTSBasedHandler() {
-    override val targetTypes = setOf(
-        "arguments", "argument_list", "value_arguments", "formal_parameters", "formal_parameters_list",
-        "parameters", "parameter_list", "function_parameters", "primary_constructor", "function_value_parameters",
-        "lambda_parameters", "lambda_parameter_list"
-    )
+    companion object {
+        val argumentTargetTypes = setOf(
+            "arguments", "argument_list", "value_arguments", "formal_parameters", "formal_parameters_list",
+            "parameters", "parameter_list", "function_parameters", "primary_constructor", "function_value_parameters",
+            "lambda_parameters", "lambda_parameter_list"
+        )
+    }
+
+    override val targetTypes = argumentTargetTypes
 
     override fun acceptNode(node: TSNode): Boolean = !node.parent.isNull && node.isNamed && targetTypes.contains(node.parent.grammarType)
 

@@ -20,6 +20,7 @@ concepts programmers use to think about code: classes, functions, arguments, loo
 | **AnyLoop**        | Loop statements (`for`, `while`, `do`, `repeat`, `until`, `loop`, etc.)                 | `l`             | x             |
 | **AnyConditional** | Conditional statements (`if-else`, `switch`, `try-catch`)                               | `y`             | x             |
 | **AnyItem**        | Items within collections, tuples, lists, or arrays                                      | `i`             | ✓             |
+| **AnyArgOrItem**   | Combines objects targeted by AnyArgument and AnyItem                                    | `x`             | ✓             |
 | **AnyQuote**       | Content enclosed between any type of quotes (single, double, backticks)                 | `q`             | ✗             |
 | **AnyString**      | String content                                                                          | `g`             | ✗             |
 | **AnyBracket**     | Content enclosed between any type of brackets (parentheses, square, curly, angle, etc.) | `o`             | ✗             |
@@ -141,6 +142,11 @@ Function arguments, method parameters, and callable expressions.
 - **Outer selection (`ia`)**: Selects the entire argument including the separator and the argument itself
 
 **Multiple outer selections are supported**. For example `d2aa` will delete the current argument and the next one including separator
+
+### AnyArgOrItem (`x`)
+
+Combines objects targeted by AnyArgument and AnyItem.
+Selects any function argument, method parameter, callable expression, or collection items.
 
 ### AnyVariable (`v`)
 
