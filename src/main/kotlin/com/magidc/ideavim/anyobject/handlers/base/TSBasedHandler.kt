@@ -8,7 +8,7 @@ import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.getFirstNa
 import org.treesitter.TSNode
 
 
-abstract class AbstractTSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
+abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
     companion object {
         private val documentCache = LRUCache<String, TSDocument>(5) { _, v -> v.editor.document.removeChangeListener(v) }

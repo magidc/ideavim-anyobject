@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.8
+
+Updated dependency and IntelliJ platform version
+
 ## 3.0.7
 
 ### AnyString (`g`)

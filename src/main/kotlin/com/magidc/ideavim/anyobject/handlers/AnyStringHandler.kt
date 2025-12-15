@@ -1,12 +1,12 @@
 package com.magidc.ideavim.anyobject.handlers
 
 import com.maddyhome.idea.vim.common.TextRange
-import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler
+import com.magidc.ideavim.anyobject.handlers.base.TSBasedHandler
 import com.magidc.ideavim.anyobject.utils.TSDocument
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.toText
 import org.treesitter.TSNode
 
-class AnyStringHandler : AbstractTSBasedHandler() {
+class AnyStringHandler : TSBasedHandler() {
     companion object {
         private val quotes = setOf('"', '\'', '`')
     }
