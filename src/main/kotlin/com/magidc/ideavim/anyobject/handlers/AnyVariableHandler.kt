@@ -1,7 +1,7 @@
 package com.magidc.ideavim.anyobject.handlers
 
 import com.maddyhome.idea.vim.common.TextRange
-import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler
+import com.magidc.ideavim.anyobject.handlers.base.TSBasedHandler
 import com.magidc.ideavim.anyobject.utils.TSDocument
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.getFirstChildWithGrammar
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.lastLeafOrSelf
@@ -9,7 +9,7 @@ import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.nextLeaf
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.prevLeaf
 import org.treesitter.TSNode
 
-class AnyVariableHandler : AbstractTSBasedHandler() {
+class AnyVariableHandler : TSBasedHandler() {
     override val targetTypes = setOf(
         "assignment", "assignment_expression", "property_declaration", "field_declaration", "field_definition", "local_declaration_statement",
         "local_variable_declaration", "declaration"

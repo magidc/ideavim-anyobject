@@ -1,8 +1,8 @@
 package com.magidc.ideavim.anyobject.handlers
 
-import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler
+import com.magidc.ideavim.anyobject.handlers.base.TSBasedHandler
 
-class AnyLoopHandler : AbstractTSBasedHandler() {
+class AnyLoopHandler : TSBasedHandler() {
     // Keep it as a list to set an order of evaluation
     override val innerBlockTypes = listOf("block", "compound_statement", "expression_statement", "statements", "control_structure_body")
     override val targetTypes = setOf(

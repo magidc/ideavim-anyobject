@@ -2,12 +2,12 @@ package com.magidc.ideavim.anyobject.handlers
 
 import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.common.TextRange
-import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler
+import com.magidc.ideavim.anyobject.handlers.base.TSBasedHandler
 import com.magidc.ideavim.anyobject.utils.TSDocument
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.isEqual
 import org.treesitter.TSNode
 
-open class AnyArgumentHandler : AbstractTSBasedHandler() {
+open class AnyArgumentHandler : TSBasedHandler() {
     companion object {
         val argumentTargetTypes = setOf(
             "arguments", "argument_list", "value_arguments", "formal_parameters", "formal_parameters_list",

@@ -1,8 +1,8 @@
 package com.magidc.ideavim.anyobject.handlers
 
-import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler
+import com.magidc.ideavim.anyobject.handlers.base.TSBasedHandler
 
-class AnyFunctionHandler : AbstractTSBasedHandler() {
+class AnyFunctionHandler : TSBasedHandler() {
     override val innerBlockTypes = setOf("block", "function_body", "compound_statement", "body_statement")
     override val targetTypes = setOf(
         "method", "method_declaration", "function_definition", "function_declaration", "method_definition", "constructor_declaration",
