@@ -1,5 +1,7 @@
 # Changelog
+
 ## 3.0.7
+
 ### AnyString (`g`)
 
 String data to assign to a variable or field.
@@ -14,55 +16,73 @@ Field/variable declarations and assignments.
 - **Inner selection (`iv`)**: Selects only the value assigned to the field/variable if any
 - **Outer selection (`av`)**: Selects the entire field/variable declaration
 
+### AnyArgOrItem (`x`)
+
+Combines objects targeted by AnyArgument and AnyItem.
+Selects any function argument, method parameter, callable expression, or collection items.
 
 ## 3.0.6
+
 Improved Ruby on Rails support
 Extended AnyItem scope to include hash collection items. Kudos to **@ZimCodes** for the suggestion.
 
 ### AnyField (`v`)
 
-Field and variable declarations. It only works in languages that require explicit field declarations; it won't select anything in languages like Python, Ruby, or PHP that use implicit field declarations.
+Field and variable declarations. It only works in languages that require explicit field declarations; it won't select anything in languages like Python, Ruby, or PHP that use
+implicit field declarations.
 
 - **Inner selection (`iv`)**: Selects only the value assigned to the field/variable if any
 - **Outer selection (`av`)**: Selects the entire field/variable declaration
 
 ## 3.0.5
+
 Bug fixes for Kotlin support
 Visual text objects jumps seems to be ready
 
 ## 3.0.4
+
 Byte offsets bug fixes
 Disabling continuous Treesitter parsing until it is stable enough
 Visual text objects jumps
 
 ## 3.0.3
+
 Better Kotlin support
 Fixed document offset caches; it was wrongly set as a global variable shared across all documents
 
 ## 3.0.2
+
 Fixed compatibility with Rider 2025.3.0.3
 
 ## 3.0.1
+
 Solved many reported issues in the first release based on Treesitter
 
 ## 3.0.0
+
 ### Tree-sitter
+
 From version 3.0.0 the plugin replaces the approach to detect coding text objects from PSI-based approach with Tree-sitter.
 This provides a more consistent model across different languages.
 
 Removed AnyBlockComment in favor of more generic AnyComment.
 
 ## 2.0.7
+
 Improving argument selection in PHP.
 
 ## 2.0.6
+
 Fixed issues selecting collection items and arguments in various platforms.
 
 ## 2.0.5
+
 ### Improved C# support
+
 Fixed multiple issues detecting C# text objects.
 
 ## 2.0.4
+
 If the current cursor position is within a text object, it will be selected. Otherwise, the nearest text object in the specified direction will be selected.
 This is a standard behavior of Vim's text objects that was not properly implemented in this plugin. Kudos to **@kbilsted** for reporting this issue.
 
