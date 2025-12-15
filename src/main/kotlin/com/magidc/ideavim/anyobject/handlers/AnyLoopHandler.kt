@@ -3,7 +3,8 @@ package com.magidc.ideavim.anyobject.handlers
 import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler
 
 class AnyLoopHandler : AbstractTSBasedHandler() {
-    override val innerBlockTypes = setOf("block", "compound_statement", "expression_statement")
+    // Keep it as a list to set an order of evaluation
+    override val innerBlockTypes = listOf("block", "compound_statement", "expression_statement", "statements", "control_structure_body")
     override val targetTypes = setOf(
         "for_statement", "enhanced_for_statement", "while_statement", "do_statement",
         "for_each_statement", "foreach_statement", "for_range_statement", "range_for_statement",

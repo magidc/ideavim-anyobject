@@ -4,11 +4,11 @@ import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.api.getLineEndForOffset
 import com.maddyhome.idea.vim.common.ChangesListener
 import com.maddyhome.idea.vim.common.TextRange
-import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler.Companion.lastLeafOrSelf
-import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler.Companion.nextLeaf
-import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler.Companion.parentPrevSibling
-import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler.Companion.prevLeaf
 import com.magidc.ideavim.anyobject.handlers.base.getCareOffset
+import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.lastNamedLeafOrSelf
+import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.nextNamedLeaf
+import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.parentPrevNamedSibling
+import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.prevNamedLeaf
 import org.treesitter.TSInputEdit
 import org.treesitter.TSNode
 import org.treesitter.TSParser
@@ -137,7 +137,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         return charToByteOffsetTree.headSet(OffsetDelta(charIndex)).asSequence().map { it.delta }.sum() + charIndex
     }
 
-    private fun toCharOffset(byteIndex: Int): Int {
+    fun toCharOffset(byteIndex: Int): Int {
         if (byteIndex == 0 || byteToCharOffsetTree.isEmpty()) return byteIndex
         return byteToCharOffsetTree.headSet(OffsetDelta(byteIndex)).asSequence().map { it.delta }.sum() + byteIndex
     }
@@ -150,30 +150,25 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         if (!updated) loadTSTree()
         val byteOffset = toByteOffset(editor.getCareOffset())
         var node = tsTree.rootNode
-        while (node.startByte < byteOffset) {
+        while (node.startByte <= byteOffset) {
             val nextNode = node.getFirstChildForByte(byteOffset)
-            if (nextNode.isNull) break
+            if (nextNode.isNull || node.startByte > byteOffset) break
             node = nextNode
         }
         return node
     }
 
     private fun findObjectNode(currentNode: TSNode, acceptNode: (TSNode) -> Boolean): TSNode? {
-        var node = currentNode
-        while (!node.isNull) {
-            if (acceptNode(node)) return node
-            node = node.parent
-        }
-        return null
+        return generateSequence(currentNode) { it.parent.takeIf { n -> !n.isNull } }.firstOrNull { acceptNode(it) }
     }
 
     fun findSelectionNode(acceptNode: (TSNode) -> Boolean): TSNode? {
         if (disabled) return null
         val currentNode = findCurrentNode() ?: return null
-        return findObjectNode(currentNode, acceptNode) ?: findNextNode(currentNode, acceptNode)
+        return findObjectNode(currentNode, acceptNode) ?: findNextNode(currentNode, acceptNode, loop = false)
     }
 
-    fun findNextNode(currentNode: TSNode, acceptNode: (TSNode) -> Boolean, forward: Boolean = true, includeSelf: Boolean = true): TSNode? {
+    fun findNextNode(currentNode: TSNode, acceptNode: (TSNode) -> Boolean, forward: Boolean = true, includeSelf: Boolean = true, loop: Boolean = true): TSNode? {
         val objectNode = findObjectNode(currentNode, acceptNode)
         val startNode =
             if (objectNode != null) {
@@ -185,20 +180,18 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
             } else currentNode
 
         var node: TSNode? = startNode.let {
-            if (forward) it.nextLeaf()
+            if (forward) it.nextNamedLeaf()
             else {
-                if (it.prevNamedSibling.isNull) it.parentPrevSibling()?.lastLeafOrSelf()
+                if (it.prevNamedSibling.isNull) it.parentPrevNamedSibling()?.lastNamedLeafOrSelf()
                 else it.prevNamedSibling
             }
         }
-        val nextNodeFunction = if (forward) { n: TSNode -> n.nextLeaf() } else { n: TSNode -> n.prevLeaf() }
+        val nextNodeFunction = if (forward) { n: TSNode -> n.nextNamedLeaf() } else { n: TSNode -> n.prevNamedLeaf() }
         @Suppress("unused")
         for (i in 1..2) {
-            while (null != node) {
-                if (acceptNode(node)) return node
-                node = nextNodeFunction(node)
-            }
-            node = tsTree.rootNode.let { if (forward) it else it.lastLeafOrSelf() }
+            generateSequence(node) { nextNodeFunction(it) }.filter { acceptNode(it) }.firstOrNull()?.let { return it }
+            if (!loop) break
+            node = tsTree.rootNode.let { if (forward) it else it.lastNamedLeafOrSelf() }
         }
         return null
     }

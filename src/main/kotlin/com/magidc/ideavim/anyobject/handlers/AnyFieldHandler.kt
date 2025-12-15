@@ -1,39 +1,33 @@
-//package com.magidc.ideavim.anyobject.handlers
-//
-//import com.intellij.psi.PsiElement
-//import com.intellij.psi.util.elementType
-//import com.magidc.ideavim.anyobject.handlers.base.AbstractPSIBasedHandler
-//
-//
-//class AnyFieldHandler : AbstractPSIBasedHandler() {
-//    companion object {
-//        private val languageVariableTypes = mapOf(
-//            "JAVA" to setOf("FIELD", "LOCAL_VARIABLE", "PARAMETER", "ENUM_CONSTANT", "RESOURCE_VARIABLE", "EXCEPTION_PARAMETER", "PATTERN_VARIABLE"),
-//            "KOTLIN" to setOf("PROPERTY", "LOCAL_VARIABLE", "VALUE_PARAMETER", "OBJECT_DECLARATION", "CLASS_PARAMETER", "LOOP_PARAMETER", "DESTRUCTURING_DECLARATION"),
-//            "C#" to setOf("CS:FIELD-DECLARATION", "CS:LOCAL-VARIABLE", "CS:PARAMETER", "CS:PROPERTY-DECLARATION", "CS:CONSTANT-DECLARATION", "CS:EVENT-FIELD-DECLARATION"),
-//            "PYTHON" to setOf("PY:TARGET_EXPRESSION", "PY:PARAMETER", "PY:NAMED_PARAMETER", "PY:TUPLE_PARAMETER", "PY:SINGLE_STAR_PARAMETER", "PY:DOUBLE_STAR_PARAMETER"),
-//            "JAVASCRIPT" to setOf("JS:VAR_STATEMENT", "JS:LET_STATEMENT", "JS:CONST_STATEMENT", "JS:PARAMETER", "JS:DESTRUCTURING_PARAMETER", "JS:REST_PARAMETER"),
-//            "TYPESCRIPT" to setOf("JS:TYPESCRIPT_VARIABLE", "JS:TYPESCRIPT_PARAMETER", "JS:TYPESCRIPT_PROPERTY", "JS:TYPESCRIPT_FIELD", "JS:TYPESCRIPT_ACCESSOR"),
-//            "DART" to setOf("VARIABLE_DECLARATION", "FIELD_DECLARATION", "FORMAL_PARAMETER", "DEFAULT_FORMAL_PARAMETER", "FIELD_FORMAL_PARAMETER"),
-//            "GO" to setOf("VAR_DECLARATION", "SHORT_VAR_DECLARATION", "FIELD_DECLARATION", "PARAMETER_DECLARATION", "RECEIVER"),
-//            "RUST" to setOf("LET_DECL", "STATIC_ITEM", "CONST_ITEM", "FIELD_DECL", "VALUE_PARAMETER", "SELF_PARAMETER"),
-//            "PHP" to setOf("VARIABLE", "FIELD", "PARAMETER", "PROPERTY", "CLASS_CONSTANT", "GLOBAL_VARIABLE"),
-//            "RUBY" to setOf("RUBY:LOCAL_VARIABLE", "RUBY:INSTANCE_VARIABLE", "RUBY:CLASS_VARIABLE", "RUBY:GLOBAL_VARIABLE", "RUBY:CONSTANT", "RUBY:PARAMETER"),
-//            "SCALA" to setOf("VALUE DEFINITION", "VARIABLE DEFINITION", "PARAMETER", "CLASS PARAMETER", "PATTERN DEFINITION"),
-//            "R" to setOf("R_ASSIGNMENT_STATEMENT", "R_PARAMETER", "R_VARIABLE"),
-//            "PERL" to setOf("PERL5:VARIABLE", "PERL5:SCALAR_VARIABLE", "PERL5:ARRAY_VARIABLE", "PERL5:HASH_VARIABLE", "PERL5:SUB_DECLARATION"),
-//            "HASKELL" to setOf("HS:VAR_DECLARATION", "HS:PATTERN_BINDING", "HS:FUNCTION_BINDING"),
-//            "F#" to setOf("FS:BINDING", "FS:PARAMETER", "FS:FIELD", "FS:PROPERTY"),
-//            "GROOVY" to setOf("FIELD", "LOCAL_VARIABLE", "PARAMETER", "PROPERTY"),
-//            "CLOJURE" to setOf("DEF", "DEFN", "LET_BINDING", "PARAMETER"),
-//            "LUA" to setOf("LOCAL_VARIABLE", "GLOBAL_VARIABLE", "PARAMETER", "FIELD"),
-//            "C" to setOf("VARIABLE_DECLARATION", "FIELD_DECLARATION", "PARAMETER_DECLARATION", "STATIC_VARIABLE", "EXTERN_VARIABLE"),
-//            "OBJECTIVE-C" to setOf("OBJC:INSTANCE_VARIABLE", "OBJC:PROPERTY_DECLARATION", "OBJC:PARAMETER", "OBJC:LOCAL_VARIABLE", "OBJC:STATIC_VARIABLE"),
-//            "SWIFT" to setOf("VARIABLE_DECLARATION", "CONSTANT_DECLARATION", "PARAMETER", "PROPERTY_DECLARATION", "SUBSCRIPT_DECLARATION"),
-//        )
-//    }
-//
-//    override fun acceptElement(element: PsiElement, language: String): Boolean {
-//        return languageVariableTypes[language]?.contains(element.elementType.toString().uppercase()) ?: false
-//    }
-//}
+package com.magidc.ideavim.anyobject.handlers
+
+import com.maddyhome.idea.vim.common.TextRange
+import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler
+import com.magidc.ideavim.anyobject.utils.TSDocument
+import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.getFirstChildWithGrammar
+import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.lastLeafOrSelf
+import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.nextLeaf
+import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.prevLeaf
+import org.treesitter.TSNode
+
+class AnyFieldHandler : AbstractTSBasedHandler() {
+    override val targetTypes = setOf(
+        "assignment", "assignment_expression", "property_declaration", "field_declaration", "field_definition", "local_declaration_statement",
+        "local_variable_declaration", "declaration"
+    )
+
+    override fun findInnerBlockRange(node: TSNode, offset: Int, tsDocument: TSDocument): TextRange? {
+        return node.getFirstChildWithGrammar(setOf("="))?.nextLeaf()
+            ?.takeIf { !it.isNull }
+            ?.let {
+                if (it.namedChildCount > 0) {
+                    var lastLeaf: TSNode = node.lastLeafOrSelf()
+                    if (lastLeaf.grammarType != ";") tsDocument.toTextRange(it, node)
+                    else {
+                        while (lastLeaf.grammarType == ";")
+                            lastLeaf = lastLeaf.prevLeaf() ?: break
+                        tsDocument.toTextRange(it, lastLeaf)
+                    }
+                } else tsDocument.toTextRange(it, node)
+            }
+    }
+}

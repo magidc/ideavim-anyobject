@@ -1,4 +1,4 @@
-package com.magidc.ideavim.anyobject
+package com.magidc.ideavim.anyobject.text
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.magidc.ideavim.anyobject.handlers.base.TextBasedHandler

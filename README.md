@@ -11,23 +11,25 @@ concepts programmers use to think about code: classes, functions, arguments, loo
 
 ## Available Text Objects
 
-| Text Object        | Description                                                                             | Default mapping | Inner/Outer motions | Count motions |
-|--------------------|-----------------------------------------------------------------------------------------|-----------------|---------------------|---------------|
-| **AnyArgument**    | Function arguments, method parameters, and callable expressions                         | `a`             | ✓                   | ✓             |
-| **AnyFunction**    | Functions, methods, and procedures                                                      | `f`             | ✓                   | x             |
-| **AnyClass**       | Class, interface, struct, and similar type definitions                                  | `c`             | ✓                   | x             |
-| **AnyLoop**        | Loop statements (`for`, `while`, `do`, `repeat`, `until`, `loop`, etc.)                 | `l`             | ✓                   | x             |
-| **AnyConditional** | Conditional statements (`if-else`, `switch`, `try-catch`)                               | `y`             | ✓                   | x             |
-| **AnyItem**        | Items within collections, tuples, lists, or arrays                                      | `i`             | ✓                   | ✓             |
-| **AnyQuote**       | Content enclosed between any type of quotes (single, double, backticks)                 | `q`             | ✓                   | ✗             |
-| **AnyBracket**     | Content enclosed between any type of brackets (parentheses, square, curly, angle, etc.) | `o`             | ✓                   | ✗             |
-| **AnySubword**     | Words nested in longer words (`camelCase`, `snake_case`, `dash-case`)                   | `u`             | ✓                   | ✓             |
-| **AnyDocument**    | Entire document content                                                                 | `d`             | ✓                   | ✗             |
-| **AnyComment**     | Comments across different programming languages (`/* */`, `<!-- -->`, etc.)             | `k`             | ✓                   | ✗             |
-| **AnyIndentBlock** | Code blocks based on indentation levels                                                 | `n`             | ✓                   | ✗             |
+| Text Object        | Description                                                                             | Default mapping | Count motions |
+|--------------------|-----------------------------------------------------------------------------------------|-----------------|---------------|
+| **AnyArgument**    | Function arguments, method parameters, and callable expressions                         | `a`             | ✓             |
+| **AnyFunction**    | Functions, methods, and procedures                                                      | `f`             | x             |
+| **AnyClass**       | Class, interface, struct, and similar type definitions                                  | `c`             | x             |
+| **AnyField**       | Field/variable declarations and assignments                                             | `v`             | x             |
+| **AnyLoop**        | Loop statements (`for`, `while`, `do`, `repeat`, `until`, `loop`, etc.)                 | `l`             | x             |
+| **AnyConditional** | Conditional statements (`if-else`, `switch`, `try-catch`)                               | `y`             | x             |
+| **AnyItem**        | Items within collections, tuples, lists, or arrays                                      | `i`             | ✓             |
+| **AnyQuote**       | Content enclosed between any type of quotes (single, double, backticks)                 | `q`             | ✗             |
+| **AnyString**      | String content                                                                          | `g`             | ✗             |
+| **AnyBracket**     | Content enclosed between any type of brackets (parentheses, square, curly, angle, etc.) | `o`             | ✗             |
+| **AnySubword**     | Words nested in longer words (`camelCase`, `snake_case`, `dash-case`)                   | `u`             | ✓             |
+| **AnyDocument**    | Entire document content                                                                 | `d`             | ✗             |
+| **AnyComment**     | Comments across different programming languages (`/* */`, `<!-- -->`, etc.)             | `k`             | ✗             |
+| **AnyIndentBlock** | Code blocks based on indentation levels                                                 | `n`             | ✗             |
 
 - **Inner/Outer**: All text objects support both `i` (inner) and `a` (around/outer) selection modes following standard Vim conventions
-- **Jump**: Text objects with jump support allow navigation using `]` (next) and `[` (previous) motions unless other mappings are specified (see [Customization](#customization))
+- **Jump**: All text objects allow navigation using `]` (next) and `[` (previous) motions unless other mappings are specified (see [Customization](#customization))
 - **Count motions**: Text objects with count support allow selecting multiple consecutive instances. For example `d2aa` will delete two arguments including their separators
 
 ## Usage
@@ -38,7 +40,8 @@ The plugin follows standard Vim text object conventions with `i` (inner) and `a`
 
 ### Jump
 
-The plugin supports jumping to the next/previous text object using `]` (next) and `[` (previous)
+The plugin supports jumping to the next/previous text object using `]` (next) and `[` (previous).
+A common use case is to visually select an argument `vaa`, and jump to next ones to extend the selection `]a`. This is analogous to count visual selection (i.e. `v3aa`)
 
 ### Example with argument text object (`a`)
 
@@ -50,7 +53,7 @@ The plugin supports jumping to the next/previous text object using `]` (next) an
 - `c2aa` - Change argument and next one including separator
 - `yia` - Yank/Copy argument
 - `yaa` - Yank/Copy argument and its separator
-- `via` - Visually select argument 
+- `via` - Visually select argument
 - `v3aa` - Visually select three arguments including separator
 - `v3ia` - Visually select three arguments without including separator
 - `]a` - Jump to next argument
@@ -109,14 +112,21 @@ Comments across different programming languages:
 | `--[=[ ]=]`    | Lua (custom delimiters)                                                                 | `--[=[ comment ]=]`    |
 | `#'` to `'`    | R (roxygen comments)                                                                    | `#' comment '`         |
 
+### AnyString (`g`)
+
+String data to assign to a variable or field.
+
+- **Inner selection (`ig`)**: Selects only the string content
+- **Outer selection (`ag`)**: Selects the entire string including quotes and leading formatting symbols
+
 ### AnyItem (`i`)
 
 Items within collections, tuples, lists, or arrays:
 
-| Structure Type    | Example                        |
-|-------------------|--------------------------------|
-| Arrays            | `[item1, item2, item3]`        |
-| List literals     | `(item1, item2, item3)`        |
+| Structure Type | Example                 |
+|----------------|-------------------------|
+| Arrays         | `[item1, item2, item3]` |
+| List literals  | `(item1, item2, item3)` |
 
 - **Inner selection (`ii`)**: Selects only the item itself
 - **Outer selection (`ai`)**: Selects the entire item including the separator and the item itself
@@ -131,6 +141,13 @@ Function arguments, method parameters, and callable expressions.
 - **Outer selection (`ia`)**: Selects the entire argument including the separator and the argument itself
 
 **Multiple outer selections are supported**. For example `d2aa` will delete the current argument and the next one including separator
+
+### AnyField (`v`)
+
+Field/variable declarations and assignments.
+
+- **Inner selection (`iv`)**: Selects only the value assigned to the field/variable if any
+- **Outer selection (`av`)**: Selects the entire field/variable declaration
 
 ### AnyFunction (`f`)
 
