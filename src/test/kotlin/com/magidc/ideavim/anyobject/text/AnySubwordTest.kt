@@ -1,9 +1,9 @@
-package com.magidc.ideavim.anyobject
+package com.magidc.ideavim.anyobject.text
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.magidc.ideavim.anyobject.TextHandlerBaseTest.Companion.CARET
-import com.magidc.ideavim.anyobject.TextHandlerBaseTest.Companion.END
-import com.magidc.ideavim.anyobject.TextHandlerBaseTest.Companion.START
+import com.magidc.ideavim.anyobject.text.TextHandlerBaseTest.Companion.CARET
+import com.magidc.ideavim.anyobject.text.TextHandlerBaseTest.Companion.END
+import com.magidc.ideavim.anyobject.text.TextHandlerBaseTest.Companion.START
 import com.magidc.ideavim.anyobject.handlers.AnySubwordHandler
 import org.apache.commons.lang3.StringUtils
 

@@ -4,6 +4,7 @@ import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.common.TextRange
 import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler
 import com.magidc.ideavim.anyobject.utils.TSDocument
+import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.isEqual
 import org.treesitter.TSNode
 
 open class AnyArgumentHandler : AbstractTSBasedHandler() {

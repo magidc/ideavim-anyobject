@@ -4,11 +4,11 @@ import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.api.getLineEndForOffset
 import com.maddyhome.idea.vim.common.ChangesListener
 import com.maddyhome.idea.vim.common.TextRange
-import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler.Companion.lastNamedLeafOrSelf
-import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler.Companion.nextNamedChild
-import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler.Companion.parentPrevNamedSibling
-import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler.Companion.prevNamedLeaf
 import com.magidc.ideavim.anyobject.handlers.base.getCareOffset
+import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.lastNamedLeafOrSelf
+import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.nextNamedLeaf
+import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.parentPrevNamedSibling
+import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.prevNamedLeaf
 import org.treesitter.TSInputEdit
 import org.treesitter.TSNode
 import org.treesitter.TSParser
@@ -159,12 +159,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
     }
 
     private fun findObjectNode(currentNode: TSNode, acceptNode: (TSNode) -> Boolean): TSNode? {
-        var node = currentNode
-        while (!node.isNull) {
-            if (acceptNode(node)) return node
-            node = node.parent
-        }
-        return null
+        return generateSequence(currentNode) { it.parent.takeIf { n -> !n.isNull } }.firstOrNull { acceptNode(it) }
     }
 
     fun findSelectionNode(acceptNode: (TSNode) -> Boolean): TSNode? {
@@ -185,19 +180,16 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
             } else currentNode
 
         var node: TSNode? = startNode.let {
-            if (forward) it.nextNamedChild()
+            if (forward) it.nextNamedLeaf()
             else {
                 if (it.prevNamedSibling.isNull) it.parentPrevNamedSibling()?.lastNamedLeafOrSelf()
                 else it.prevNamedSibling
             }
         }
-        val nextNodeFunction = if (forward) { n: TSNode -> n.nextNamedChild() } else { n: TSNode -> n.prevNamedLeaf() }
+        val nextNodeFunction = if (forward) { n: TSNode -> n.nextNamedLeaf() } else { n: TSNode -> n.prevNamedLeaf() }
         @Suppress("unused")
         for (i in 1..2) {
-            while (null != node) {
-                if (acceptNode(node)) return node
-                node = nextNodeFunction(node)
-            }
+            generateSequence(node) { nextNodeFunction(it) }.filter { acceptNode(it) }.firstOrNull()?.let { return it }
             if (!loop) break
             node = tsTree.rootNode.let { if (forward) it else it.lastNamedLeafOrSelf() }
         }

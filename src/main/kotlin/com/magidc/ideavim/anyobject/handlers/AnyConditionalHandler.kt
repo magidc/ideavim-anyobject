@@ -3,6 +3,7 @@ package com.magidc.ideavim.anyobject.handlers
 import com.maddyhome.idea.vim.common.TextRange
 import com.magidc.ideavim.anyobject.handlers.base.AbstractTSBasedHandler
 import com.magidc.ideavim.anyobject.utils.TSDocument
+import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.getFirstNamedChildWithGrammar
 import org.treesitter.TSNode
 
 class AnyConditionalHandler : AbstractTSBasedHandler() {
