@@ -9,7 +9,7 @@ String data to assign to a variable or field.
 
 ### AnyVariable (`v`)
 
-Field and variable declarations. It only works in languages that require explicit field declarations; it won't select anything in languages like Python, Ruby, or PHP that use implicit field declarations.
+Field/variable declarations and assignments.
 
 - **Inner selection (`iv`)**: Selects only the value assigned to the field/variable if any
 - **Outer selection (`av`)**: Selects the entire field/variable declaration
