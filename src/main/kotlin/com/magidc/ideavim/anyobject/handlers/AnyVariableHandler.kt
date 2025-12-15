@@ -9,7 +9,7 @@ import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.nextLeaf
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.prevLeaf
 import org.treesitter.TSNode
 
-class AnyFieldHandler : AbstractTSBasedHandler() {
+class AnyVariableHandler : AbstractTSBasedHandler() {
     override val targetTypes = setOf(
         "assignment", "assignment_expression", "property_declaration", "field_declaration", "field_definition", "local_declaration_statement",
         "local_variable_declaration", "declaration"

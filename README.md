@@ -16,7 +16,7 @@ concepts programmers use to think about code: classes, functions, arguments, loo
 | **AnyArgument**    | Function arguments, method parameters, and callable expressions                         | `a`             | ✓             |
 | **AnyFunction**    | Functions, methods, and procedures                                                      | `f`             | x             |
 | **AnyClass**       | Class, interface, struct, and similar type definitions                                  | `c`             | x             |
-| **AnyField**       | Field/variable declarations and assignments                                             | `v`             | x             |
+| **AnyVariable**    | Field/variable declarations and assignments                                             | `v`             | x             |
 | **AnyLoop**        | Loop statements (`for`, `while`, `do`, `repeat`, `until`, `loop`, etc.)                 | `l`             | x             |
 | **AnyConditional** | Conditional statements (`if-else`, `switch`, `try-catch`)                               | `y`             | x             |
 | **AnyItem**        | Items within collections, tuples, lists, or arrays                                      | `i`             | ✓             |
@@ -142,7 +142,7 @@ Function arguments, method parameters, and callable expressions.
 
 **Multiple outer selections are supported**. For example `d2aa` will delete the current argument and the next one including separator
 
-### AnyField (`v`)
+### AnyVariable (`v`)
 
 Field/variable declarations and assignments.
 
