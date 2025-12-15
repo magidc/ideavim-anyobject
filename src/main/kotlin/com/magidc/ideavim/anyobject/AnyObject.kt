@@ -33,6 +33,7 @@ import com.magidc.ideavim.anyobject.handlers.AnyIndentBlockHandler
 import com.magidc.ideavim.anyobject.handlers.AnyItemHandler
 import com.magidc.ideavim.anyobject.handlers.AnyLoopHandler
 import com.magidc.ideavim.anyobject.handlers.AnyQuoteHandler
+import com.magidc.ideavim.anyobject.handlers.AnyStringHandler
 import com.magidc.ideavim.anyobject.handlers.AnySubwordHandler
 import com.magidc.ideavim.anyobject.handlers.base.BaseJumpHandler
 import com.magidc.ideavim.anyobject.handlers.base.BaseSelectionHandler
@@ -52,6 +53,7 @@ val handlerSupplierMap = mapOf(
     "anyconditional" to Pair("y", ::AnyConditionalHandler),
     "anysubword" to Pair("u", ::AnySubwordHandler),
     "anyfield" to Pair("v", ::AnyFieldHandler),
+    "anystring" to Pair("g", ::AnyStringHandler),
 )
 
 val builtInVimTextObjectsMappings = setOf("w", "p", "t", "b", "s")

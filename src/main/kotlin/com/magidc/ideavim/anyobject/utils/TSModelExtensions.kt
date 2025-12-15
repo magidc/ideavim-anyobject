@@ -6,10 +6,9 @@ import java.util.stream.IntStream
 
 class TSModelExtensions {
     companion object {
-        @Suppress("unused")
         fun TSNode.toText(editor: VimEditor, maxSize: Int = 50): String {
             val string = String(editor.text().toString().toByteArray().copyOfRange(startByte, endByte))
-            return "${grammarType}: ${string.take(maxSize)}"
+            return string.take(maxSize)
         }
 
         fun TSNode.isEqual(a: TSNode?) = (a?.isNull == false) && (a.startByte == startByte) && (a.endByte == endByte)

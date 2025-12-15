@@ -1,4 +1,13 @@
 # Changelog
+## 3.0.7
+### AnyString (`g`)
+
+String data to assign to a variable or field.
+
+- **Inner selection (`ig`)**: Selects only the string content
+- **Outer selection (`ag`)**: Selects the entire string including quotes and leading formatting symbols
+
+
 ## 3.0.6
 Improved Ruby on Rails support
 Extended AnyItem scope to include hash collection items. Kudos to **@ZimCodes** for the suggestion.

@@ -137,7 +137,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         return charToByteOffsetTree.headSet(OffsetDelta(charIndex)).asSequence().map { it.delta }.sum() + charIndex
     }
 
-    private fun toCharOffset(byteIndex: Int): Int {
+    fun toCharOffset(byteIndex: Int): Int {
         if (byteIndex == 0 || byteToCharOffsetTree.isEmpty()) return byteIndex
         return byteToCharOffsetTree.headSet(OffsetDelta(byteIndex)).asSequence().map { it.delta }.sum() + byteIndex
     }

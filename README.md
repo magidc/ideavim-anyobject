@@ -16,11 +16,12 @@ concepts programmers use to think about code: classes, functions, arguments, loo
 | **AnyArgument**    | Function arguments, method parameters, and callable expressions                         | `a`             | ✓             |
 | **AnyFunction**    | Functions, methods, and procedures                                                      | `f`             | x             |
 | **AnyClass**       | Class, interface, struct, and similar type definitions                                  | `c`             | x             |
-| **AnyField**       | Field and variable declarations                                                         | `v`             | x             |
+| **AnyField**       | Field/variable declarations and assignments                                             | `v`             | x             |
 | **AnyLoop**        | Loop statements (`for`, `while`, `do`, `repeat`, `until`, `loop`, etc.)                 | `l`             | x             |
 | **AnyConditional** | Conditional statements (`if-else`, `switch`, `try-catch`)                               | `y`             | x             |
 | **AnyItem**        | Items within collections, tuples, lists, or arrays                                      | `i`             | ✓             |
 | **AnyQuote**       | Content enclosed between any type of quotes (single, double, backticks)                 | `q`             | ✗             |
+| **AnyString**      | String content                                                                          | `g`             | ✗             |
 | **AnyBracket**     | Content enclosed between any type of brackets (parentheses, square, curly, angle, etc.) | `o`             | ✗             |
 | **AnySubword**     | Words nested in longer words (`camelCase`, `snake_case`, `dash-case`)                   | `u`             | ✓             |
 | **AnyDocument**    | Entire document content                                                                 | `d`             | ✗             |
@@ -52,7 +53,7 @@ A common use case is to visually select an argument `vaa`, and jump to next ones
 - `c2aa` - Change argument and next one including separator
 - `yia` - Yank/Copy argument
 - `yaa` - Yank/Copy argument and its separator
-- `via` - Visually select argument 
+- `via` - Visually select argument
 - `v3aa` - Visually select three arguments including separator
 - `v3ia` - Visually select three arguments without including separator
 - `]a` - Jump to next argument
@@ -111,14 +112,21 @@ Comments across different programming languages:
 | `--[=[ ]=]`    | Lua (custom delimiters)                                                                 | `--[=[ comment ]=]`    |
 | `#'` to `'`    | R (roxygen comments)                                                                    | `#' comment '`         |
 
+### AnyString (`g`)
+
+String data to assign to a variable or field.
+
+- **Inner selection (`ig`)**: Selects only the string content
+- **Outer selection (`ag`)**: Selects the entire string including quotes and leading formatting symbols
+
 ### AnyItem (`i`)
 
 Items within collections, tuples, lists, or arrays:
 
-| Structure Type    | Example                        |
-|-------------------|--------------------------------|
-| Arrays            | `[item1, item2, item3]`        |
-| List literals     | `(item1, item2, item3)`        |
+| Structure Type | Example                 |
+|----------------|-------------------------|
+| Arrays         | `[item1, item2, item3]` |
+| List literals  | `(item1, item2, item3)` |
 
 - **Inner selection (`ii`)**: Selects only the item itself
 - **Outer selection (`ai`)**: Selects the entire item including the separator and the item itself
@@ -136,11 +144,10 @@ Function arguments, method parameters, and callable expressions.
 
 ### AnyField (`v`)
 
-Field and variable declarations. It only works in languages that require explicit field declarations; it won't select anything in languages like Python, Ruby, or PHP that use implicit field declarations.
+Field/variable declarations and assignments.
 
 - **Inner selection (`iv`)**: Selects only the value assigned to the field/variable if any
 - **Outer selection (`av`)**: Selects the entire field/variable declaration
-
 
 ### AnyFunction (`f`)
 
