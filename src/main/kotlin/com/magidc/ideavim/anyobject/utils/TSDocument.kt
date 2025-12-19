@@ -1,7 +1,6 @@
 package com.magidc.ideavim.anyobject.utils
 
 import com.maddyhome.idea.vim.api.VimEditor
-import com.maddyhome.idea.vim.api.getLineEndForOffset
 import com.maddyhome.idea.vim.common.ChangesListener
 import com.maddyhome.idea.vim.common.TextRange
 import com.maddyhome.idea.vim.state.mode.inBlockSelection
@@ -128,10 +127,10 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
             charIndex += charCount
             byteIndex += byteLength
         }
-        val fromLineIdx = editor.getLineEndForOffset(fromOffSet)
-        lineStartOffsetTree.removeIf { it.line >= fromLineIdx }
-        for (lineIdx in fromLineIdx until editor.lineCount())
-            lineStartOffsetTree.add(LineOffset(toByteOffset(editor.getLineStartOffset(lineIdx)), lineIdx))
+//        val fromLineIdx = editor.getLineEndForOffset(fromOffSet)
+//        lineStartOffsetTree.removeIf { it.line >= fromLineIdx }
+//        for (lineIdx in fromLineIdx until editor.lineCount())
+//            lineStartOffsetTree.add(LineOffset(toByteOffset(editor.getLineStartOffset(lineIdx)), lineIdx))
     }
 
     private fun toByteOffset(charIndex: Int): Int {

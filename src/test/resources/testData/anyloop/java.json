@@ -1,0 +1,32 @@
+{
+  "extension": "java",
+  "code": "public class Test {\n    public void loop() {\n        for (int i = 0; i < 10; i++) {<caret_1>\n            System.out.println(i);<caret_2>\n        }<caret_3>\n\n        int j = 0;\n        while (j < 10) {<caret_4>\n            j++;<caret_5>\n        }<caret_6>\n\n        do {<caret_7>\n            System.out.println(\"do\");<caret_8>\n        } while (false);<caret_9>\n\n        int[] arr = {1, 2, 3};\n        for (int x : arr) {<caret_10>\n            System.out.println(x);<caret_11>\n        }<caret_12>\n    }\n}",
+  "inner": {
+    "1": "System.out.println(i);",
+    "2": "System.out.println(i);",
+    "3": "j++;",
+    "4": "j++;",
+    "5": "j++;",
+    "6": "System.out.println(\"do\");",
+    "7": "System.out.println(\"do\");",
+    "8": "System.out.println(\"do\");",
+    "9": "System.out.println(x);",
+    "10": "System.out.println(x);",
+    "11": "System.out.println(x);",
+    "12": ""
+  },
+  "around": {
+    "1": "for (int i = 0; i < 10; i++) {\n            System.out.println(i);\n        }",
+    "2": "for (int i = 0; i < 10; i++) {\n            System.out.println(i);\n        }",
+    "3": "while (j < 10) {\n            j++;\n        }",
+    "4": "while (j < 10) {\n            j++;\n        }",
+    "5": "while (j < 10) {\n            j++;\n        }",
+    "6": "do {\n            System.out.println(\"do\");\n        } while (false);",
+    "7": "do {\n            System.out.println(\"do\");\n        } while (false);",
+    "8": "do {\n            System.out.println(\"do\");\n        } while (false);",
+    "9": "for (int x : arr) {\n            System.out.println(x);\n        }",
+    "10": "for (int x : arr) {\n            System.out.println(x);\n        }",
+    "11": "for (int x : arr) {\n            System.out.println(x);\n        }",
+    "12": ""
+  }
+}
