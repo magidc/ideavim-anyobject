@@ -87,8 +87,8 @@ class TSLanguageUtils {
         }
 
         fun getLanguage(editor: VimEditor): TSLanguageInfo {
-            getPSILanguage(editor)?.let { languageMap[it.uppercase()] }?.let { return it }
             getLanguageByFileExtension(editor)?.let { return it }
+            getPSILanguage(editor)?.let { languageMap[it.uppercase()] }?.let { return it }
             getDefaultAppLanguage()?.let { return it }
             return UNKNOWN_LANGUAGE
         }
