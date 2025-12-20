@@ -1,0 +1,20 @@
+{
+  "extension": "r",
+  "code": "test <- function() {\n    for (i in 1:10) {<caret_1>\n        print(i)<caret_2>\n    }\n\n    j <- 0\n    while (j < 10) {<caret_3>\n        j <- j + 1<caret_4>\n    }\n\n    repeat {<caret_5>\n        break<caret_6>\n    }\n}",
+  "inner": {
+    "1": "print(i)",
+    "2": "print(i)",
+    "3": "j <- j + 1",
+    "4": "j <- j + 1",
+    "5": "break",
+    "6": "break"
+  },
+  "around": {
+    "1": "for (i in 1:10) {\n        print(i)\n    }",
+    "2": "for (i in 1:10) {\n        print(i)\n    }",
+    "3": "while (j < 10) {\n        j <- j + 1\n    }",
+    "4": "while (j < 10) {\n        j <- j + 1\n    }",
+    "5": "repeat {\n        break\n    }",
+    "6": "repeat {\n        break\n    }"
+  }
+}

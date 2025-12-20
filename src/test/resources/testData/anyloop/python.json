@@ -1,0 +1,22 @@
+{
+  "extension": "py",
+  "code": "def test():\n    for i in range(10):<caret_1>\n        print(i)<caret_2>\n\n    j = 0\n    while j < 10:<caret_3>\n        print(j)<caret_4>\n        j += 1<caret_5>\n\n    while True:<caret_6>\n        break<caret_7>",
+  "inner": {
+    "1": "print(i)",
+    "2": "print(i)",
+    "3": "print(j)\n        j += 1",
+    "4": "print(j)\n        j += 1",
+    "5": "print(j)\n        j += 1",
+    "6": "break",
+    "7": "break"
+  },
+  "around": {
+    "1": "for i in range(10):\n        print(i)",
+    "2": "for i in range(10):\n        print(i)",
+    "3": "while j < 10:\n        print(j)\n        j += 1",
+    "4": "while j < 10:\n        print(j)\n        j += 1",
+    "5": "while j < 10:\n        print(j)\n        j += 1",
+    "6": "while True:\n        break",
+    "7": "while True:\n        break"
+  }
+}

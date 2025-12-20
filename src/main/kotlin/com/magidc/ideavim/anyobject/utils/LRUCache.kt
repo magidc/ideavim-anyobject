@@ -1,6 +1,6 @@
 package com.magidc.ideavim.anyobject.utils
 
-class LRUCache<K, V>(private val maxSize: Int, private val onEvict: ((K, V) -> Unit)? = null) :
+class LRUCache<K, V>(var maxSize: Int, private val onEvict: ((K, V) -> Unit)? = null) :
     LinkedHashMap<K, V>(maxSize, 0.75f, true) {
 
     override fun removeEldestEntry(eldest: MutableMap.MutableEntry<K, V>?): Boolean {
@@ -9,7 +9,7 @@ class LRUCache<K, V>(private val maxSize: Int, private val onEvict: ((K, V) -> U
                 try {
                     onEvict?.invoke(it.key, it.value)
                 }
-                catch (e: Throwable) { }
+                catch (_: Throwable) { }
             }
             return true
         }

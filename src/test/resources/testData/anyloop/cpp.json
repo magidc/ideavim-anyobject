@@ -1,0 +1,24 @@
+{
+  "extension": "cpp",
+  "code": "void test() {\n    for (int i = 0; i < 10; i++) {<caret_1>\n        printf(\"%d\\n\", i);<caret_2>\n    }\n\n    int j = 0;\n    while (j < 10) {<caret_3>\n        j++;<caret_4>\n    }\n\n    do {<caret_5>\n        printf(\"do\\n\");<caret_6>\n    } while (false);\n\n    int arr[] = {1, 2, 3};\n    for (int x : arr) {<caret_7>\n        printf(\"%d\\n\", x);<caret_8>\n    }\n}",
+  "inner": {
+    "1": "printf(\"%d\\n\", i);",
+    "2": "printf(\"%d\\n\", i);",
+    "3": "j++;",
+    "4": "j++;",
+    "5": "printf(\"do\\n\");",
+    "6": "printf(\"do\\n\");",
+    "7": "printf(\"%d\\n\", x);",
+    "8": "printf(\"%d\\n\", x);"
+  },
+  "around": {
+    "1": "for (int i = 0; i < 10; i++) {\n        printf(\"%d\\n\", i);\n    }",
+    "2": "for (int i = 0; i < 10; i++) {\n        printf(\"%d\\n\", i);\n    }",
+    "3": "while (j < 10) {\n        j++;\n    }",
+    "4": "while (j < 10) {\n        j++;\n    }",
+    "5": "do {\n        printf(\"do\\n\");\n    } while (false);",
+    "6": "do {\n        printf(\"do\\n\");\n    } while (false);",
+    "7": "for (int x : arr) {\n        printf(\"%d\\n\", x);\n    }",
+    "8": "for (int x : arr) {\n        printf(\"%d\\n\", x);\n    }"
+  }
+}

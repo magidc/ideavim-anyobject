@@ -1,0 +1,20 @@
+{
+  "extension": "rs",
+  "code": "fn test() {\n    for i in 0..10 {<caret_1>\n        println!(\"{}\", i);<caret_2>\n    }\n\n    let mut j = 0;\n    while j < 10 {<caret_3>\n        j += 1;<caret_4>\n    }\n\n    loop {<caret_5>\n        break;<caret_6>\n    }\n}",
+  "inner": {
+    "1": "println!(\"{}\", i);",
+    "2": "println!(\"{}\", i);",
+    "3": "j += 1;",
+    "4": "j += 1;",
+    "5": "break;",
+    "6": "break;"
+  },
+  "around": {
+    "1": "for i in 0..10 {\n        println!(\"{}\", i);\n    }",
+    "2": "for i in 0..10 {\n        println!(\"{}\", i);\n    }",
+    "3": "while j < 10 {\n        j += 1;\n    }",
+    "4": "while j < 10 {\n        j += 1;\n    }",
+    "5": "loop {\n        break;\n    }",
+    "6": "loop {\n        break;\n    }"
+  }
+}

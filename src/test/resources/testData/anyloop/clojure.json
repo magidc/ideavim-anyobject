@@ -1,0 +1,20 @@
+{
+  "extension": "clj",
+  "code": "(defn test []\n  (dotimes [i 10]<caret_1>\n    (println i)<caret_2>)\n\n  (doseq [x [1 2 3]]<caret_3>\n    (println x)<caret_4>)\n\n  (while true<caret_5>\n    (println \"while\")<caret_6>))",
+  "inner": {
+    "1": "(println i)",
+    "2": "(println i)",
+    "3": "(println x)",
+    "4": "(println x)",
+    "5": "(println \"while\")",
+    "6": "(println \"while\")"
+  },
+  "around": {
+    "1": "(dotimes [i 10]\n    (println i))",
+    "2": "(dotimes [i 10]\n    (println i))",
+    "3": "(doseq [x [1 2 3]]\n    (println x))",
+    "4": "(doseq [x [1 2 3]]\n    (println x))",
+    "5": "(while true\n    (println \"while\"))",
+    "6": "(while true\n    (println \"while\"))"
+  }
+}

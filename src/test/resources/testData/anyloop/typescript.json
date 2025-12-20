@@ -1,0 +1,28 @@
+{
+  "extension": "ts",
+  "code": "function test() {\n    for (let i: number = 0; i < 10; i++) {<caret_1>\n        console.log(i);<caret_2>\n    }\n\n    const arr: number[] = [1, 2, 3];\n    for (const x of arr) {<caret_3>\n        console.log(x);<caret_4>\n    }\n\n    for (const key in arr) {<caret_5>\n        console.log(key);<caret_6>\n    }\n\n    let j: number = 0;\n    while (j < 10) {<caret_7>\n        j++;<caret_8>\n    }\n\n    do {<caret_9>\n        console.log('do');<caret_10>\n    } while (false);\n}",
+  "inner": {
+    "1": "console.log(i);",
+    "2": "console.log(i);",
+    "3": "console.log(x);",
+    "4": "console.log(x);",
+    "5": "console.log(key);",
+    "6": "console.log(key);",
+    "7": "j++;",
+    "8": "j++;",
+    "9": "console.log('do');",
+    "10": "console.log('do');"
+  },
+  "around": {
+    "1": "for (let i: number = 0; i < 10; i++) {\n        console.log(i);\n    }",
+    "2": "for (let i: number = 0; i < 10; i++) {\n        console.log(i);\n    }",
+    "3": "for (const x of arr) {\n        console.log(x);\n    }",
+    "4": "for (const x of arr) {\n        console.log(x);\n    }",
+    "5": "for (const key in arr) {\n        console.log(key);\n    }",
+    "6": "for (const key in arr) {\n        console.log(key);\n    }",
+    "7": "while (j < 10) {\n        j++;\n    }",
+    "8": "while (j < 10) {\n        j++;\n    }",
+    "9": "do {\n        console.log('do');\n    } while (false);",
+    "10": "do {\n        console.log('do');\n    } while (false);"
+  }
+}

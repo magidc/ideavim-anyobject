@@ -2,6 +2,7 @@ package com.magidc.ideavim.anyobject.ts.base
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.maddyhome.idea.vim.api.VimEditor
 import com.magidc.ideavim.anyobject.handlers.base.TSBasedHandler
@@ -12,6 +13,7 @@ import java.io.InputStreamReader
 abstract class TSHandlerBaseTest(val handler: TSBasedHandler) : BasePlatformTestCase() {
     companion object {
         val caretPositionRegex = Regex("<caret_(\\d+)>")
+        private val LOG = Logger.getInstance(TSHandlerBaseTest::class.java)
     }
 
     private data class TestData(
@@ -32,9 +34,10 @@ abstract class TSHandlerBaseTest(val handler: TSBasedHandler) : BasePlatformTest
         val extension = json.get("extension").asString
         val inner = json.getAsJsonObject("inner").entrySet().associate { it.key to it.value.asString }
         val around = json.getAsJsonObject("around").entrySet().associate { it.key to it.value.asString }
+        val testFilePath = "$handlerName.$extension"
 
         var rawCode = json.get("code").asString
-        println("Test code for: $handlerName")
+        println("Test code for: $testFilePath")
         println(rawCode)
         println("--------------------------------------------------")
         val caretPositions: MutableMap<String, Int> = mutableMapOf()
@@ -44,13 +47,14 @@ abstract class TSHandlerBaseTest(val handler: TSBasedHandler) : BasePlatformTest
             rawCode = rawCode.removeRange(match.range)
         }
         val code = rawCode.replace(caretPositionRegex, "")
-        return TestData("$handlerName.$extension", code, inner, around, caretPositions)
+        return TestData(testFilePath, code, inner, around, caretPositions)
     }
 
     override fun setUp() {
         super.setUp()
         val basePath = "testData/$handlerName"
         val testDataDir = javaClass.classLoader.getResource(basePath) ?: throw IllegalArgumentException("Test data not found")
+        TSBasedHandler.setDocumentCacheMaxSize(0)
 
         testFilePaths = File(testDataDir.path).listFiles()
             ?.filter { it.extension == "json" }
@@ -62,15 +66,17 @@ abstract class TSHandlerBaseTest(val handler: TSBasedHandler) : BasePlatformTest
 
     private fun doTestHandler(testData: TestData, inner: Boolean) {
         val assertions = if (inner) testData.inner else testData.around
-        val editor = MockVimEditor(testData.code, "${inner}_${testData.filePath}", 0)
+        val editor = MockVimEditor(testData.code, testData.filePath, 0)
 
         for (caretPositionEntry in testData.caretPositions.entries) {
             val caretKey = caretPositionEntry.key
+            val message = "Testing \"${testData.filePath}\" ${if (inner) "inner" else "around"} selection at caret offset $caretKey"
+            LOG.info(message)
             editor.currentCaretOffset = caretPositionEntry.value
 
             val expected = assertions[caretKey] ?: continue
             val actual = executeHandlerSelection(editor, inner)
-            assertEquals("At caret: $caretKey", expected, actual)
+            assertEquals(message, expected, actual)
         }
     }
 

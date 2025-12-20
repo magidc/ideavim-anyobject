@@ -1,0 +1,20 @@
+{
+  "extension": "scala",
+  "code": "def test(): Unit = {\n    for (i <- 1 to 10) {<caret_1>\n        println(i)<caret_2>\n    }\n\n    var j = 0\n    while (j < 10) {<caret_3>\n        j += 1<caret_4>\n    }\n\n    do {<caret_5>\n        println(\"do\")<caret_6>\n    } while (false)\n}",
+  "inner": {
+    "1": "println(i)",
+    "2": "println(i)",
+    "3": "j += 1",
+    "4": "j += 1",
+    "5": "println(\"do\")",
+    "6": "println(\"do\")"
+  },
+  "around": {
+    "1": "for (i <- 1 to 10) {\n        println(i)\n    }",
+    "2": "for (i <- 1 to 10) {\n        println(i)\n    }",
+    "3": "while (j < 10) {\n        j += 1\n    }",
+    "4": "while (j < 10) {\n        j += 1\n    }",
+    "5": "do {\n        println(\"do\")\n    } while (false)",
+    "6": "do {\n        println(\"do\")\n    } while (false)"
+  }
+}

@@ -12,6 +12,9 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
     companion object {
         private val documentCache = LRUCache<String, TSDocument>(5) { _, v -> v.editor.document.removeChangeListener(v) }
+        fun setDocumentCacheMaxSize(maxSize: Int) {
+            documentCache.maxSize = maxSize
+        }
     }
 
     protected open val innerBlockTypes: Collection<String> = setOf("block")

@@ -1,0 +1,26 @@
+{
+  "extension": "kt",
+  "code": "fun test() {\n    for (i in 1..10) {<caret_1>\n        println(i)<caret_2>\n    }<caret_3>\n\n    var j = 0\n    while (j < 10) {<caret_4>\n        j++<caret_5>\n    }<caret_6>\n\n    do {<caret_7>\n        println(\"do\")<caret_8>\n    } while (false)<caret_9>\n}",
+  "inner": {
+    "1": "println(i)",
+    "2": "println(i)",
+    "3": "j++",
+    "4": "j++",
+    "5": "j++",
+    "6": "println(\"do\")",
+    "7": "println(\"do\")",
+    "8": "println(\"do\")",
+    "9": ""
+  },
+  "around": {
+    "1": "for (i in 1..10) {\n        println(i)\n    }",
+    "2": "for (i in 1..10) {\n        println(i)\n    }",
+    "3": "while (j < 10) {\n        j++\n    }",
+    "4": "while (j < 10) {\n        j++\n    }",
+    "5": "while (j < 10) {\n        j++\n    }",
+    "6": "do {\n        println(\"do\")\n    } while (false)",
+    "7": "do {\n        println(\"do\")\n    } while (false)",
+    "8": "do {\n        println(\"do\")\n    } while (false)",
+    "9": ""
+  }
+}
