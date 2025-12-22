@@ -11,18 +11,15 @@ import org.treesitter.TSNode
 abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
     companion object {
-        private val documentCache = LRUCache<String, TSDocument>(5) { _, v -> v.editor.document.removeChangeListener(v) }
-        fun setDocumentCacheMaxSize(maxSize: Int) {
-            documentCache.maxSize = maxSize
-        }
+        val documentCache = LRUCache<String, TSDocument>(5) { _, v -> v.editor.document.removeChangeListener(v) }
     }
 
     protected open val innerBlockTypes: Collection<String> = setOf("block")
-    protected abstract val targetTypes: Set<String>
+    abstract val targetTypes: Set<String>
 
     protected fun getTSDocument(editor: VimEditor): TSDocument = documentCache.getOrPut(editor.getVirtualFile()?.path ?: "") { TSDocument(editor) }
 
-    protected open fun acceptNode(node: TSNode): Boolean = !node.isNull && node.isNamed && targetTypes.contains(node.grammarType)
+    open var acceptNode: (TSNode) -> Boolean = { n -> !n.isNull && n.isNamed && targetTypes.contains(n.grammarType) }
 
     override fun findSelection(editor: VimEditor, inner: Boolean, size: Int): TextRange? {
         val tsDocument = getTSDocument(editor)
@@ -33,7 +30,7 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
     override fun allowsCountSelection(): Boolean = false
 
-    protected open fun findInnerBlockRange(node: TSNode, offset: Int, tsDocument: TSDocument): TextRange? {
+    open fun findInnerBlockRange(node: TSNode, offset: Int, tsDocument: TSDocument): TextRange? {
         return node.getFirstNamedChildWithGrammar(innerBlockTypes, offset)
             ?.takeIf { it.namedChildCount > 0 }
             ?.let { tsDocument.toTextRange(it.getNamedChild(0), it.getNamedChild(it.namedChildCount - 1)) }

@@ -5,13 +5,10 @@ import com.magidc.ideavim.anyobject.handlers.base.TSBasedHandler
 
 class AnyLoopHandler : TSBasedHandler() {
     // Keep it as a list to set an order of evaluation
-    override val innerBlockTypes = listOf("block", "compound_statement", "expression_statement", "statements", "control_structure_body", "brace_list", "do")
+    override val innerBlockTypes = listOf("block", "compound_statement", "expression_statement", "statements", "control_structure_body", "brace_list", "do", "statement_block")
     override val targetTypes = setOf(
-        "do", "until", "while", "for", "repeat", "for_statement", "enhanced_for_statement", "while_statement", "do_statement",
-        "for_each_statement", "foreach_statement", "for_range_statement", "range_for_statement",
-        "indexed_for_statement", "for_of_statement", "for_in_statement", "while_expression",
-        "do_while_statement", "do_until_statement", "async_for_statement", "loop_expression",
-        "for_expression", "while_expression", "do_while_expression", "until_expression",
-        "for_in_expression"
+        "until", "while", "for", "repeat", "for_statement", "enhanced_for_statement", "while_statement", "do_statement",
+        "for_range_loop", "foreach_statement", "for_in_statement", "while_expression", "do_while_statement", "loop_expression",
+        "for_expression", "while_expression", "do_while_expression", "repeat_while_statement"
     )
 }

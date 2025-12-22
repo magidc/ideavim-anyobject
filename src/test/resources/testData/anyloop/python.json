@@ -1,6 +1,6 @@
 {
   "extension": "py",
-  "code": "def test():\n    for i in range(10):<caret_1>\n        print(i)<caret_2>\n\n    j = 0\n    while j < 10:<caret_3>\n        print(j)<caret_4>\n        j += 1<caret_5>\n\n    while True:<caret_6>\n        break<caret_7>",
+  "code": "def test():\n    for i in range(10):<caret_1>\n        print<caret_2>(i)\n\n    j = 0\n    while j < 10:<caret_3>\n        print(j)<caret_4>\n        j +=<caret_5> 1\n\n    while True:<caret_6>\n        brea<caret_7>k",
   "inner": {
     "1": "print(i)",
     "2": "print(i)",

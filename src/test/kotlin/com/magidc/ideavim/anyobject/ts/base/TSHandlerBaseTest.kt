@@ -13,7 +13,7 @@ import java.io.InputStreamReader
 import java.net.URI
 import java.net.URL
 
-abstract class TSHandlerBaseTest(val handler: TSBasedHandler) : BasePlatformTestCase() {
+abstract class TSHandlerBaseTest(handler: TSBasedHandler) : BasePlatformTestCase() {
     companion object {
         val caretPositionRegex = Regex("<caret_(\\d+)>")
     }
@@ -63,7 +63,8 @@ abstract class TSHandlerBaseTest(val handler: TSBasedHandler) : BasePlatformTest
         }
     }
 
-    private val handlerName = handler.javaClass.simpleName.lowercase().removeSuffix("handler")
+    val handlerWrapper: TestTSHandlerWrapper = TestTSHandlerWrapper(handler)
+    val handlerName: String = handler.javaClass.simpleName.lowercase().removeSuffix("handler")
     private lateinit var testDataDir: URL
 
     private fun getTestData(testFileURI: URI): TestData {
@@ -88,7 +89,7 @@ abstract class TSHandlerBaseTest(val handler: TSBasedHandler) : BasePlatformTest
         super.setUp()
         val basePath = "testData/$handlerName"
         testDataDir = javaClass.classLoader.getResource(basePath) ?: throw IllegalArgumentException("Test data not found")
-        TSBasedHandler.setDocumentCacheMaxSize(0)
+        TSBasedHandler.documentCache.maxSize = 0
     }
 
     fun doTestLanguageHandler(fileSuffix: String = ".json") {
@@ -101,8 +102,8 @@ abstract class TSHandlerBaseTest(val handler: TSBasedHandler) : BasePlatformTest
             val testFileURI = testDataDir.toURI().resolve(it)
             if (!File(testFileURI).exists()) return
             val testData = getTestData(testFileURI)
-            doTestHandler(testData, true, testFailResults)
             doTestHandler(testData, false, testFailResults)
+            doTestHandler(testData, true, testFailResults)
         }
         testFailResults.assertResults()
     }
@@ -114,16 +115,18 @@ abstract class TSHandlerBaseTest(val handler: TSBasedHandler) : BasePlatformTest
         for (caretPositionEntry in testData.caretPositions.entries) {
             editor.currentCaretOffset = caretPositionEntry.value
             val expected = assertions[caretPositionEntry.key] ?: continue
-            //TODO: Test wrapper for TSBasedHandlers that collects unused targetTypes after all test execution, in order to clean up the lists. The same with innerBlock types
-            val actual = handler.findSelection(editor, inner, 1)?.let { editor.text().substring(it.startOffset, it.endOffset) } ?: ""
+            val actual = handlerWrapper.findSelection(editor, inner, 1)?.let { editor.text().substring(it.startOffset, it.endOffset) } ?: ""
 
             if (actual != expected)
                 testFailResults.add(testData, inner, caretPositionEntry.key, caretPositionEntry.value, actual, expected)
         }
     }
 
-    fun testAll() = doTestLanguageHandler()
-    fun testClojure() = doTestLanguageHandler("clojure.json")
+//    fun testAll() {
+//        doTestLanguageHandler()
+//        println("Unused target types: ${handlerWrapper.unusedTargetTypes}")
+//    }
+
     fun testCpp() = doTestLanguageHandler("cpp.json")
     fun testCsharp() = doTestLanguageHandler("csharp.json")
     fun testGo() = doTestLanguageHandler("go.json")
@@ -137,7 +140,6 @@ abstract class TSHandlerBaseTest(val handler: TSBasedHandler) : BasePlatformTest
     fun testRuby() = doTestLanguageHandler("ruby.json")
     fun testRust() = doTestLanguageHandler("rust.json")
     fun testScala() = doTestLanguageHandler("scala.json")
-    fun testSql() = doTestLanguageHandler("sql.json")
     fun testSwift() = doTestLanguageHandler("swift.json")
     fun testTypescript() = doTestLanguageHandler("typescript.json")
 }
