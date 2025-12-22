@@ -1,0 +1,30 @@
+{
+  "extension": "rb",
+  "code": "def test<caret_1>\n  puts \"test\"<caret_2>\nend<caret_3>\n\ndef add(a, b)<caret_4>\n  a + b<caret_5>\nend<caret_6>\n\n<caret_7>lambda_proc = ->(x) { <caret_8>puts x<caret_9> }\n\nproc_obj = Proc.new do |x|<caret_10>\n  puts x<caret_11>\nend",
+  "inner": {
+    "1": "puts \"test\"",
+    "2": "puts \"test\"",
+    "3": "a + b",
+    "4": "a + b",
+    "5": "a + b",
+    "6": "puts x",
+    "7": "puts x",
+    "8": "puts x",
+    "9": "puts x",
+    "10": "puts x",
+    "11": "puts x"
+  },
+  "around": {
+    "1": "def test\n  puts \"test\"\nend",
+    "2": "def test\n  puts \"test\"\nend",
+    "3": "def add(a, b)\n  a + b\nend",
+    "4": "def add(a, b)\n  a + b\nend",
+    "5": "def add(a, b)\n  a + b\nend",
+    "6": "->(x) { puts x }",
+    "7": "->(x) { puts x }",
+    "8": "->(x) { puts x }",
+    "9": "->(x) { puts x }",
+    "10": "do |x|\n  puts x\nend",
+    "11": "do |x|\n  puts x\nend"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "extension": "swift",
+  "code": "func test() {<caret_1>\n    print(\"test\")<caret_2>\n}<caret_3>\n\nfunc add(a: Int, b: Int) -> Int {<caret_4>\n    return a + b<caret_5>\n}<caret_6>\n\n<caret_7>let closure = { (x: Int) in<caret_8>\n    print(x)<caret_9>\n}<caret_10>\n\nfunc asyncTest() async {<caret_11>\n    try? await Task.sleep(nanoseconds: 100_000_000)<caret_12>\n}",
+  "inner": {
+    "1": "print(\"test\")",
+    "2": "print(\"test\")",
+    "3": "return a + b",
+    "4": "return a + b",
+    "5": "return a + b",
+    "6": "print(x)",
+    "7": "print(x)",
+    "8": "print(x)",
+    "9": "print(x)",
+    "10": "try? await Task.sleep(nanoseconds: 100_000_000)",
+    "11": "try? await Task.sleep(nanoseconds: 100_000_000)",
+    "12": "try? await Task.sleep(nanoseconds: 100_000_000)"
+  },
+  "around": {
+    "1": "func test() {\n    print(\"test\")\n}",
+    "2": "func test() {\n    print(\"test\")\n}",
+    "3": "func add(a: Int, b: Int) -> Int {\n    return a + b\n}",
+    "4": "func add(a: Int, b: Int) -> Int {\n    return a + b\n}",
+    "5": "func add(a: Int, b: Int) -> Int {\n    return a + b\n}",
+    "6": "{ (x: Int) in\n    print(x)\n}",
+    "7": "{ (x: Int) in\n    print(x)\n}",
+    "8": "{ (x: Int) in\n    print(x)\n}",
+    "9": "{ (x: Int) in\n    print(x)\n}",
+    "10": "func asyncTest() async {\n    try? await Task.sleep(nanoseconds: 100_000_000)\n}",
+    "11": "func asyncTest() async {\n    try? await Task.sleep(nanoseconds: 100_000_000)\n}",
+    "12": "func asyncTest() async {\n    try? await Task.sleep(nanoseconds: 100_000_000)\n}"
+  }
+}

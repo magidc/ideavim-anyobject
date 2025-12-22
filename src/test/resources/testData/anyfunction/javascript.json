@@ -1,0 +1,32 @@
+{
+  "extension": "js",
+  "code": "function test() {<caret_1>\n  console.log('test');<caret_2>\n}<caret_3>\n\nconst add = (a, b) => {<caret_4>\n  return a + b;<caret_5>\n};<caret_6>\n\n<caret_7>async function asyncTest() {\n  await new Promise(r => setTimeout(r, 100));<caret_8>\n}\n\nconst arrow = x => <caret_9>x * x;<caret_10>\n\nfunction* generator() {<caret_11>\n  yield 1;<caret_12>\n}",
+  "inner": {
+    "1": "console.log('test');",
+    "2": "console.log('test');",
+    "3": "return a + b;",
+    "4": "return a + b;",
+    "5": "return a + b;",
+    "6": "await new Promise(r => setTimeout(r, 100));",
+    "7": "await new Promise(r => setTimeout(r, 100));",
+    "8": "await new Promise(r => setTimeout(r, 100));",
+    "9": "x * x",
+    "10": "yield 1;",
+    "11": "yield 1;",
+    "12": "yield 1;"
+  },
+  "around": {
+    "1": "function test() {\n  console.log('test');\n}",
+    "2": "function test() {\n  console.log('test');\n}",
+    "3": "const add = (a, b) => {\n  return a + b;\n}",
+    "4": "const add = (a, b) => {\n  return a + b;\n}",
+    "5": "const add = (a, b) => {\n  return a + b;\n}",
+    "6": "async function asyncTest() {\n  await new Promise(r => setTimeout(r, 100));\n}",
+    "7": "async function asyncTest() {\n  await new Promise(r => setTimeout(r, 100));\n}",
+    "8": "async function asyncTest() {\n  await new Promise(r => setTimeout(r, 100));\n}",
+    "9": "x => x * x",
+    "10": "function* generator() {\n  yield 1;\n}",
+    "11": "function* generator() {\n  yield 1;\n}",
+    "12": "function* generator() {\n  yield 1;\n}"
+  }
+}

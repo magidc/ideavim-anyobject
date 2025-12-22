@@ -1,0 +1,36 @@
+{
+  "extension": "php",
+  "code": "<?php\nfunction test() {<caret_1>\n    echo \"test\";<caret_2>\n}<caret_3>\n\nfunction add($a, $b) {<caret_4>\n    return $a + $b;<caret_5>\n}<caret_6>\n\n<caret_7>$lambda = function($x) {<caret_8>\n    echo $x;<caret_9>\n};<caret_10>\n\n$fn = fn($x) => <caret_11>$x * $x;<caret_12>\n\nclass MyClass {\n    public function method() {<caret_13>\n        $this->add(1, 2);<caret_14>\n    }\n}",
+  "inner": {
+    "1": "echo \"test\";",
+    "2": "echo \"test\";",
+    "3": "return $a + $b;",
+    "4": "return $a + $b;",
+    "5": "return $a + $b;",
+    "6": "echo $x;",
+    "7": "echo $x;",
+    "8": "echo $x;",
+    "9": "echo $x;",
+    "10": "$x * $x",
+    "11": "$x * $x",
+    "12": "$this->add(1, 2);",
+    "13": "$this->add(1, 2);",
+    "14": "$this->add(1, 2);"
+  },
+  "around": {
+    "1": "function test() {\n    echo \"test\";\n}",
+    "2": "function test() {\n    echo \"test\";\n}",
+    "3": "function add($a, $b) {\n    return $a + $b;\n}",
+    "4": "function add($a, $b) {\n    return $a + $b;\n}",
+    "5": "function add($a, $b) {\n    return $a + $b;\n}",
+    "6": "function($x) {\n    echo $x;\n}",
+    "7": "function($x) {\n    echo $x;\n}",
+    "8": "function($x) {\n    echo $x;\n}",
+    "9": "function($x) {\n    echo $x;\n}",
+    "10": "fn($x) => $x * $x",
+    "11": "fn($x) => $x * $x",
+    "12": "public function method() {\n        $this->add(1, 2);\n    }",
+    "13": "public function method() {\n        $this->add(1, 2);\n    }",
+    "14": "public function method() {\n        $this->add(1, 2);\n    }"
+  }
+}

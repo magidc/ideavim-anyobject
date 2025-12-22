@@ -1,0 +1,26 @@
+{
+  "extension": "scala",
+  "code": "object Test {\n  def test(): Unit = {<caret_1>\n    println(\"test\")<caret_2>\n  }<caret_3>\n\n  def add(a: Int, b: Int): Int = <caret_4>a + b<caret_5>\n\n  <caret_6>val lambda = (x: Int) => {<caret_7>\n    println(x)<caret_8>\n  }<caret_9>\n}",
+  "inner": {
+    "1": "println(\"test\")",
+    "2": "println(\"test\")",
+    "3": "a + b",
+    "4": "a + b",
+    "5": "println(x)",
+    "6": "println(x)",
+    "7": "println(x)",
+    "8": "println(x)",
+    "9": ""
+  },
+  "around": {
+    "1": "def test(): Unit = {\n    println(\"test\")\n  }",
+    "2": "def test(): Unit = {\n    println(\"test\")\n  }",
+    "3": "def add(a: Int, b: Int): Int = a + b",
+    "4": "def add(a: Int, b: Int): Int = a + b",
+    "5": "(x: Int) => {\n    println(x)\n  }",
+    "6": "(x: Int) => {\n    println(x)\n  }",
+    "7": "(x: Int) => {\n    println(x)\n  }",
+    "8": "(x: Int) => {\n    println(x)\n  }",
+    "9": ""
+  }
+}

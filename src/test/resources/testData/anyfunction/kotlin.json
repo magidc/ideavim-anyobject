@@ -1,0 +1,30 @@
+{
+  "extension": "kt",
+  "code": "fun test() {<caret_1>\n    println(\"test\")<caret_2>\n}<caret_3>\n\nfun add(a: Int, b: Int): Int = <caret_4>a + b<caret_5>\n\n<caret_6>suspend fun asyncTest() {\n    delay(100)<caret_7>\n}\n\nval lambda = { x: Int -> <caret_8>println(x)<caret_9> }\n\ninline fun inlineFunc(block: () -> Unit) {<caret_10>\n    block()<caret_11>\n}",
+  "inner": {
+    "1": "println(\"test\")",
+    "2": "println(\"test\")",
+    "3": "a + b",
+    "4": "a + b",
+    "5": "delay(100)",
+    "6": "delay(100)",
+    "7": "delay(100)",
+    "8": "println(x)",
+    "9": "println(x)",
+    "10": "block()",
+    "11": "block()"
+  },
+  "around": {
+    "1": "fun test() {\n    println(\"test\")\n}",
+    "2": "fun test() {\n    println(\"test\")\n}",
+    "3": "fun add(a: Int, b: Int): Int = a + b",
+    "4": "fun add(a: Int, b: Int): Int = a + b",
+    "5": "suspend fun asyncTest() {\n    delay(100)\n}",
+    "6": "suspend fun asyncTest() {\n    delay(100)\n}",
+    "7": "suspend fun asyncTest() {\n    delay(100)\n}",
+    "8": "{ x: Int -> println(x) }",
+    "9": "{ x: Int -> println(x) }",
+    "10": "inline fun inlineFunc(block: () -> Unit) {\n    block()\n}",
+    "11": "inline fun inlineFunc(block: () -> Unit) {\n    block()\n}"
+  }
+}

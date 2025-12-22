@@ -1,0 +1,32 @@
+{
+  "extension": "cs",
+  "code": "public class Test {\n    public void Method() {<caret_1>\n        Console.WriteLine(\"test\");<caret_2>\n    }<caret_3>\n\n    public int Add(int a, int b) => <caret_4>a + b;<caret_5>\n\n    <caret_6>public async Task AsyncMethod() {\n        await Task.Delay(100);<caret_7>\n    }\n\n    public void Lambda() {\n        Action a = () => {<caret_8>\n            Console.WriteLine(\"lambda\");<caret_9>\n        };<caret_10>\n        Func<int, int> f = x => <caret_11>x * x;<caret_12>\n    }\n}",
+  "inner": {
+    "1": "Console.WriteLine(\"test\");",
+    "2": "Console.WriteLine(\"test\");",
+    "3": "a + b",
+    "4": "a + b",
+    "5": "await Task.Delay(100);",
+    "6": "await Task.Delay(100);",
+    "7": "await Task.Delay(100);",
+    "8": "Console.WriteLine(\"lambda\");",
+    "9": "Console.WriteLine(\"lambda\");",
+    "10": "x * x",
+    "11": "x * x",
+    "12": ""
+  },
+  "around": {
+    "1": "public void Method() {\n        Console.WriteLine(\"test\");\n    }",
+    "2": "public void Method() {\n        Console.WriteLine(\"test\");\n    }",
+    "3": "public int Add(int a, int b) => a + b;",
+    "4": "public int Add(int a, int b) => a + b;",
+    "5": "public async Task AsyncMethod() {\n        await Task.Delay(100);\n    }",
+    "6": "public async Task AsyncMethod() {\n        await Task.Delay(100);\n    }",
+    "7": "public async Task AsyncMethod() {\n        await Task.Delay(100);\n    }",
+    "8": "() => {\n            Console.WriteLine(\"lambda\");\n        }",
+    "9": "() => {\n            Console.WriteLine(\"lambda\");\n        }",
+    "10": "x => x * x",
+    "11": "x => x * x",
+    "12": ""
+  }
+}

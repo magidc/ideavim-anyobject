@@ -1,0 +1,30 @@
+{
+  "extension": "py",
+  "code": "def test():<caret_1>\n    print(\"test\")<caret_2>\n<caret_3>\ndef add(a, b):<caret_4>\n    return a + b<caret_5>\n<caret_6>\nasync def async_test():<caret_7>\n    await asyncio.sleep(1)<caret_8>\n<caret_9>\nlambda_var = lambda x: <caret_10>x * x<caret_11>",
+  "inner": {
+    "1": "print(\"test\")",
+    "2": "print(\"test\")",
+    "3": "return a + b",
+    "4": "return a + b",
+    "5": "return a + b",
+    "6": "await asyncio.sleep(1)",
+    "7": "await asyncio.sleep(1)",
+    "8": "await asyncio.sleep(1)",
+    "9": "x * x",
+    "10": "x * x",
+    "11": ""
+  },
+  "around": {
+    "1": "def test():\n    print(\"test\")",
+    "2": "def test():\n    print(\"test\")",
+    "3": "def add(a, b):\n    return a + b",
+    "4": "def add(a, b):\n    return a + b",
+    "5": "def add(a, b):\n    return a + b",
+    "6": "async def async_test():\n    await asyncio.sleep(1)",
+    "7": "async def async_test():\n    await asyncio.sleep(1)",
+    "8": "async def async_test():\n    await asyncio.sleep(1)",
+    "9": "lambda x: x * x",
+    "10": "lambda x: x * x",
+    "11": ""
+  }
+}

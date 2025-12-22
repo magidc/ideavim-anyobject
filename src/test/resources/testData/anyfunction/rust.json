@@ -1,0 +1,30 @@
+{
+  "extension": "rs",
+  "code": "fn test() {<caret_1>\n    println!(\"test\");<caret_2>\n}<caret_3>\n\nfn add(a: i32, b: i32) -> i32 {<caret_4>\n    a + b<caret_5>\n}<caret_6>\n\n<caret_7>async fn async_test() {\n    tokio::time::sleep(Duration::from_millis(100)).await;<caret_8>\n}\n\nfn closure() {\n    let closure = |x: i32| {<caret_9>\n        println!(\"{}\", x);<caret_10>\n    };<caret_11>\n}",
+  "inner": {
+    "1": "println!(\"test\");",
+    "2": "println!(\"test\");",
+    "3": "a + b",
+    "4": "a + b",
+    "5": "a + b",
+    "6": "tokio::time::sleep(Duration::from_millis(100)).await;",
+    "7": "tokio::time::sleep(Duration::from_millis(100)).await;",
+    "8": "tokio::time::sleep(Duration::from_millis(100)).await;",
+    "9": "println!(\"{}\", x);",
+    "10": "println!(\"{}\", x);",
+    "11": ""
+  },
+  "around": {
+    "1": "fn test() {\n    println!(\"test\");\n}",
+    "2": "fn test() {\n    println!(\"test\");\n}",
+    "3": "fn add(a: i32, b: i32) -> i32 {\n    a + b\n}",
+    "4": "fn add(a: i32, b: i32) -> i32 {\n    a + b\n}",
+    "5": "fn add(a: i32, b: i32) -> i32 {\n    a + b\n}",
+    "6": "async fn async_test() {\n    tokio::time::sleep(Duration::from_millis(100)).await;\n}",
+    "7": "async fn async_test() {\n    tokio::time::sleep(Duration::from_millis(100)).await;\n}",
+    "8": "async fn async_test() {\n    tokio::time::sleep(Duration::from_millis(100)).await;\n}",
+    "9": "|x: i32| {\n        println!(\"{}\", x);\n    }",
+    "10": "|x: i32| {\n        println!(\"{}\", x);\n    }",
+    "11": ""
+  }
+}
