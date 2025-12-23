@@ -194,8 +194,8 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         for (i in 1..2) {
             generateSequence(node) { nextNodeFunction(it) }.filter { acceptNodeFunction(it) }.firstOrNull()?.let { return it }
             if (!loop) break
-            node = tsTree.rootNode.let { if (forward) it else it.lastNamedLeafOrSelf() }
-            caretOffset = if (forward) node.startByte else tsTree.rootNode.endByte
+            node = if (forward) tsTree.rootNode else tsTree.rootNode.lastNamedLeafOrSelf()
+            caretOffset = if (forward) 0 else tsTree.rootNode.endByte
         }
         return null
     }

@@ -123,7 +123,6 @@ abstract class TSHandlerBaseTest(handler: TSBasedHandler) : BasePlatformTestCase
 
     fun testAll() {
         doTestLanguageHandler()
-        println("Unused target types: ${handlerWrapper.unusedTargetTypes}")
         println("Sorted target types: ${handlerWrapper.sortedTargetTypes.joinToString(", ") { "\"$it\"" }}")
     }
 

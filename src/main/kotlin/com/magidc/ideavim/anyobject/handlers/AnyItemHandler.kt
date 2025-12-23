@@ -11,7 +11,7 @@ open class AnyItemHandler : TSBasedHandler() {
 
     override val targetTypes: Set<String> = setOf("array", "array_initializer", "list", "tuple", "initializer_expression")
 
-    override var acceptNode: (TSNode) -> Boolean = { n -> n.grammarType == "pair" || !n.parent.isNull && n.isNamed && targetTypes.contains(n.parent.grammarType) }
+    override val acceptNode: (TSNode) -> Boolean = { n -> n.grammarType == "pair" || !n.parent.isNull && n.isNamed && targetTypes.contains(n.parent.grammarType) }
 
     override fun allowsCountSelection(): Boolean = true
 

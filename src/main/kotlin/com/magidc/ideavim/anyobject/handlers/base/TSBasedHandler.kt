@@ -19,7 +19,7 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
     protected fun getTSDocument(editor: VimEditor): TSDocument = documentCache.getOrPut(editor.getVirtualFile()?.path ?: "") { TSDocument(editor) }
 
-    open var acceptNode: (TSNode) -> Boolean = { n -> !n.isNull && n.isNamed && targetTypes.contains(n.grammarType) }
+    protected open val acceptNode: (TSNode) -> Boolean = { n -> !n.isNull && n.isNamed && targetTypes.contains(n.grammarType) }
 
     override fun findSelection(editor: VimEditor, inner: Boolean, size: Int): TextRange? {
         val tsDocument = getTSDocument(editor)

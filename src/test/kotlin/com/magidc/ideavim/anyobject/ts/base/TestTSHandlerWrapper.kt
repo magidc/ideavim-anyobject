@@ -9,18 +9,7 @@ import org.treesitter.TSNode
 class TestTSHandlerWrapper(val handler: TSBasedHandler) : TSBasedHandler() {
     override val targetTypes: Set<String> get() = TODO("Unused")
 
-    val unusedTargetTypes = handler.targetTypes.toMutableSet()
     val sortedTargetTypes = handler.targetTypes.toMutableSet().toList().sortedBy { it }
-
-    init {
-        val handlerAcceptNode = handler.acceptNode
-        handler.acceptNode = { n ->
-            if (handlerAcceptNode(n)) {
-                unusedTargetTypes.remove(n.grammarType)
-                true
-            } else false
-        }
-    }
 
     override fun findSelection(editor: VimEditor, inner: Boolean, size: Int): TextRange? = handler.findSelection(editor, inner, size)
 
