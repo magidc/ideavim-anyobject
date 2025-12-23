@@ -1,6 +1,6 @@
 {
   "extension": "ts",
-  "code": "function test(): void {<caret_1>\n  console.log('test');<caret_2>\n}<caret_3>\n\nconst add = (a: number, b: number): number => {<caret_4>\n  return a + b;<caret_5>\n};<caret_6>\n\n<caret_7>async function asyncTest(): Promise<void> {\n  await new Promise(r => setTimeout(r, 100));<caret_8>\n}\n\ninterface MyInterface {\n  myMethod(x: string): void;<caret_9>\n}",
+  "code": "function test(): void {<caret_1>\n  console.log('test');<caret_2>\n}<caret_3>\n\nconst add = (a: number, b: number): number => {<caret_4>\n  return a + b;<caret_5>\n};<caret_6>\n\n<caret_7>async function asyncTest(): Promise<void> {\n  await new Promise(r => setTimeout(r, 100));<caret_8>\n}\n\ninterface MyInterface {\n  myMethod(x: string): voi<caret_9>d;\n}",
   "inner": {
     "1": "console.log('test');",
     "2": "console.log('test');",
@@ -15,12 +15,12 @@
   "around": {
     "1": "function test(): void {\n  console.log('test');\n}",
     "2": "function test(): void {\n  console.log('test');\n}",
-    "3": "const add = (a: number, b: number): number => {\n  return a + b;\n}",
-    "4": "const add = (a: number, b: number): number => {\n  return a + b;\n}",
-    "5": "const add = (a: number, b: number): number => {\n  return a + b;\n}",
+    "3": "(a: number, b: number): number => {\n  return a + b;\n}",
+    "4": "(a: number, b: number): number => {\n  return a + b;\n}",
+    "5": "(a: number, b: number): number => {\n  return a + b;\n}",
     "6": "async function asyncTest(): Promise<void> {\n  await new Promise(r => setTimeout(r, 100));\n}",
     "7": "async function asyncTest(): Promise<void> {\n  await new Promise(r => setTimeout(r, 100));\n}",
     "8": "async function asyncTest(): Promise<void> {\n  await new Promise(r => setTimeout(r, 100));\n}",
-    "9": "myMethod(x: string): void;"
+    "9": "myMethod(x: string): void"
   }
 }

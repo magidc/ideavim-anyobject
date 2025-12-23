@@ -1,6 +1,6 @@
 {
   "extension": "py",
-  "code": "def test():<caret_1>\n    print(\"test\")<caret_2>\n<caret_3>\ndef add(a, b):<caret_4>\n    return a + b<caret_5>\n<caret_6>\nasync def async_test():<caret_7>\n    await asyncio.sleep(1)<caret_8>\n<caret_9>\nlambda_var = lambda x: <caret_10>x * x<caret_11>",
+  "code": "def test():<caret_1>\n    print(\"test\"<caret_2>)\n<caret_3>\ndef add(a, b):<caret_4>\n    return a + <caret_5>b\n<caret_6>\nasync def async_test():<caret_7>\n    await asyncio.sleep(<caret_8>1)\n<caret_9>\nlambda_var = lambda x: <caret_10>x * x<caret_11>",
   "inner": {
     "1": "print(\"test\")",
     "2": "print(\"test\")",

@@ -10,6 +10,7 @@ class TestTSHandlerWrapper(val handler: TSBasedHandler) : TSBasedHandler() {
     override val targetTypes: Set<String> get() = TODO("Unused")
 
     val unusedTargetTypes = handler.targetTypes.toMutableSet()
+    val sortedTargetTypes = handler.targetTypes.toMutableSet().toList().sortedBy { it }
 
     init {
         val handlerAcceptNode = handler.acceptNode

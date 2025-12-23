@@ -18,9 +18,9 @@
   "around": {
     "1": "function test() {\n  console.log('test');\n}",
     "2": "function test() {\n  console.log('test');\n}",
-    "3": "const add = (a, b) => {\n  return a + b;\n}",
-    "4": "const add = (a, b) => {\n  return a + b;\n}",
-    "5": "const add = (a, b) => {\n  return a + b;\n}",
+    "3": "(a, b) => {\n  return a + b;\n}",
+    "4": "(a, b) => {\n  return a + b;\n}",
+    "5": "(a, b) => {\n  return a + b;\n}",
     "6": "async function asyncTest() {\n  await new Promise(r => setTimeout(r, 100));\n}",
     "7": "async function asyncTest() {\n  await new Promise(r => setTimeout(r, 100));\n}",
     "8": "async function asyncTest() {\n  await new Promise(r => setTimeout(r, 100));\n}",

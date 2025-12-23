@@ -114,18 +114,18 @@ abstract class TSHandlerBaseTest(handler: TSBasedHandler) : BasePlatformTestCase
 
         for (caretPositionEntry in testData.caretPositions.entries) {
             editor.currentCaretOffset = caretPositionEntry.value
-            val expected = assertions[caretPositionEntry.key] ?: continue
-            val actual = handlerWrapper.findSelection(editor, inner, 1)?.let { editor.text().substring(it.startOffset, it.endOffset) } ?: ""
-
+            val expected = assertions[caretPositionEntry.key]?.trim() ?: continue
+            val actual = handlerWrapper.findSelection(editor, inner, 1)?.let { editor.text().substring(it.startOffset, it.endOffset) }?.trim() ?: ""
             if (actual != expected)
                 testFailResults.add(testData, inner, caretPositionEntry.key, caretPositionEntry.value, actual, expected)
         }
     }
 
-//    fun testAll() {
-//        doTestLanguageHandler()
-//        println("Unused target types: ${handlerWrapper.unusedTargetTypes}")
-//    }
+    fun testAll() {
+        doTestLanguageHandler()
+        println("Unused target types: ${handlerWrapper.unusedTargetTypes}")
+        println("Sorted target types: ${handlerWrapper.sortedTargetTypes.joinToString(", ") { "\"$it\"" }}")
+    }
 
     fun testCpp() = doTestLanguageHandler("cpp.json")
     fun testCsharp() = doTestLanguageHandler("csharp.json")

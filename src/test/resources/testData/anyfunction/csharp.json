@@ -11,9 +11,9 @@
     "7": "await Task.Delay(100);",
     "8": "Console.WriteLine(\"lambda\");",
     "9": "Console.WriteLine(\"lambda\");",
-    "10": "x * x",
+    "10": "Action a = () => {\n            Console.WriteLine(\"lambda\");\n        };\n        Func<int, int> f = x => x * x;",
     "11": "x * x",
-    "12": ""
+    "12": "Action a = () => {\n            Console.WriteLine(\"lambda\");\n        };\n        Func<int, int> f = x => x * x;"
   },
   "around": {
     "1": "public void Method() {\n        Console.WriteLine(\"test\");\n    }",
@@ -25,8 +25,8 @@
     "7": "public async Task AsyncMethod() {\n        await Task.Delay(100);\n    }",
     "8": "() => {\n            Console.WriteLine(\"lambda\");\n        }",
     "9": "() => {\n            Console.WriteLine(\"lambda\");\n        }",
-    "10": "x => x * x",
+    "10": "public void Lambda() {\n        Action a = () => {\n            Console.WriteLine(\"lambda\");\n        };\n        Func<int, int> f = x => x * x;\n    }",
     "11": "x => x * x",
-    "12": ""
+    "12": "public void Lambda() {\n        Action a = () => {\n            Console.WriteLine(\"lambda\");\n        };\n        Func<int, int> f = x => x * x;\n    }"
   }
 }
