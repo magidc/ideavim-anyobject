@@ -1,0 +1,20 @@
+{
+  "extension": "swift",
+  "code": "func test(a: Int, <caret_1>b: String) {\n    print(a)\n}\n\ntest(a: 1, <caret_2>b: \"hello\")\n\nlet array = [1, <caret_3>2, 3]\nlet dict = [\"a\": 1, <caret_4>\"b\": 2]\n\ntest(a: abs(-1), <caret_5>b: \"nested\".lowercased())\n\nfunc complex(a: [String], <caret_6>b: [String: [Int]]) {}",
+  "inner": {
+    "1": "b: String",
+    "2": "b: \"hello\"",
+    "3": "2",
+    "4": "\"b\": 2",
+    "5": "b: \"nested\".lowercased()",
+    "6": "b: [String: [Int]]"
+  },
+  "around": {
+    "1": ", b: String",
+    "2": ", b: \"hello\"",
+    "3": ", 2",
+    "4": ", \"b\": 2",
+    "5": ", b: \"nested\".lowercased()",
+    "6": ", b: [String: [Int]]"
+  }
+}

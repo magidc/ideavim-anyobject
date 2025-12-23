@@ -9,7 +9,10 @@ import org.treesitter.TSNode
 
 open class AnyItemHandler : TSBasedHandler() {
 
-    override val targetTypes: Set<String> = setOf("array", "array_initializer", "list", "tuple", "initializer_expression")
+    override val targetTypes: Set<String> = setOf(
+        "array", "array_initializer", "list", "tuple", "initializer_expression", "composite_literal",
+        "literal_value", "dictionary", "set", "element_list", "sequence", "collection", "object", "array_literal"
+    )
 
     override val acceptNode: (TSNode) -> Boolean = { n -> n.grammarType == "pair" || !n.parent.isNull && n.isNamed && targetTypes.contains(n.parent.grammarType) }
 
@@ -33,9 +36,9 @@ open class AnyItemHandler : TSBasedHandler() {
         if (nodes.isEmpty()) return null
         if (!inner) {
             if (firstNode.isEqual(firstNode.parent.getNamedChild(0)))
-                nodes.last().nextSibling?.takeIf { it.grammarType == "," }?.let { nodes.add(it) }
+                nodes.last().nextSibling?.takeIf { !it.isNull && it.grammarType == "," }?.let { nodes.add(it) }
             else
-                firstNode.prevSibling?.takeIf { it.grammarType == "," }?.let { nodes.add(0, it) }
+                firstNode.prevSibling?.takeIf { !it.isNull && it.grammarType == "," }?.let { nodes.add(0, it) }
         }
         return tsDocument.toTextRange(nodes.first(), nodes.last())
     }

@@ -1,0 +1,18 @@
+{
+  "extension": "cs",
+  "code": "public class Test {\n    public void Method(int a, <caret_1>string b) {\n        Console.WriteLine(a);\n    }\n\n    public void Main() {\n        Method(1, <caret_2>\"hello\");\n        int[] arr = {1, <caret_3>2, 3};\n        Method(Math.Abs(-1), <caret_4>\"nested\".ToLower());\n    }\n\n    public void Complex<T>(List<T> a, <caret_5>Dictionary<string, List<T>> b) {}\n}",
+  "inner": {
+    "1": "string b",
+    "2": "\"hello\"",
+    "3": "2",
+    "4": "\"nested\".ToLower()",
+    "5": "Dictionary<string, List<T>> b"
+  },
+  "around": {
+    "1": ", string b",
+    "2": ", \"hello\"",
+    "3": ", 2",
+    "4": ", \"nested\".ToLower()",
+    "5": ", Dictionary<string, List<T>> b"
+  }
+}

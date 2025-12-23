@@ -1,0 +1,20 @@
+{
+  "extension": "php",
+  "code": "<?php\nfunction test($a, <caret_1>$b) {\n    echo $a;\n}\n\ntest(1, <caret_2>2);\n\n$arr = [1, <caret_3>2, 3];\n$arr2 = array(1, <caret_4>2, 3);\n\ntest(abs(-1), <caret_5>strtolower(\"NESTED\"));\n\nfunction complex(array $a, <caret_6>stdClass $b) {}",
+  "inner": {
+    "1": "$b",
+    "2": "2",
+    "3": "2",
+    "4": "2",
+    "5": "strtolower(\"NESTED\")",
+    "6": "stdClass $b"
+  },
+  "around": {
+    "1": ", $b",
+    "2": ", 2",
+    "3": ", 2",
+    "4": ", 2",
+    "5": ", strtolower(\"NESTED\")",
+    "6": ", stdClass $b"
+  }
+}
