@@ -13,6 +13,6 @@ class AnyFunctionHandler : TSBasedHandler() {
         "anonymous_function", "anonymous_function_expression", "anonymous_initializer", "arrow_function", "block_expression", "closure_expression", "constructor_declaration",
         "defn_def", "delegate_declaration", "do_block", "fn_declaration", "func_literal", "function_declaration", "function_definition", "function_item", "function_specification",
         "function_statement", "generator_function_declaration", "init_block", "lambda", "lambda_expression", "lambda_literal", "local_function_declaration",
-        "method", "method_declaration", "method_definition", "method_signature", "primary_constructor", "procedure_definition", "secondary_constructor", "subroutine_declaration"
+        "method", "method_declaration", "method_definition", "method_signature", "procedure_definition", "subroutine_declaration"
     )
 }
