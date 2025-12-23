@@ -1,0 +1,18 @@
+{
+  "extension": "java",
+  "code": "public class SimpleClass {<caret_1>\n    private int x = 1;\n}\n\n<caret_2>public interface SimpleInterface {\n    <caret_3>void hello();\n}\n\npublic record SimpleRecord(String name) {<caret_4>}\n\npublic enum SimpleEnum {\n    <caret_5>A, B\n}",
+  "inner": {
+    "1": "private int x = 1;",
+    "2": "void hello();",
+    "3": "void hello();",
+    "4": "",
+    "5": "A, B"
+  },
+  "around": {
+    "1": "public class SimpleClass {\n    private int x = 1;\n}",
+    "2": "public interface SimpleInterface {\n    void hello();\n}",
+    "3": "public interface SimpleInterface {\n    void hello();\n}",
+    "4": "public record SimpleRecord(String name) {}",
+    "5": "public enum SimpleEnum {\n    A, B\n}"
+  }
+}

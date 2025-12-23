@@ -1,0 +1,18 @@
+{
+  "extension": "swift",
+  "code": "class SimpleClass {<caret_1>\n    var x = 1\n}\n\n<caret_2>struct SimpleStruct {\n    <caret_3>var y = 2\n}\n\nenum SimpleEnum {\n    <caret_4>case a, b\n}\n\nprotocol SimpleProtocol {\n    <caret_5>func hello()\n}",
+  "inner": {
+    "1": "var x = 1",
+    "2": "var y = 2",
+    "3": "var y = 2",
+    "4": "case a, b",
+    "5": "func hello()"
+  },
+  "around": {
+    "1": "class SimpleClass {\n    var x = 1\n}",
+    "2": "struct SimpleStruct {\n    var y = 2\n}",
+    "3": "struct SimpleStruct {\n    var y = 2\n}",
+    "4": "enum SimpleEnum {\n    case a, b\n}",
+    "5": "protocol SimpleProtocol {\n    func hello()\n}"
+  }
+}

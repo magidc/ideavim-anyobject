@@ -5,6 +5,9 @@ import com.maddyhome.idea.vim.common.TextRange
 import com.magidc.ideavim.anyobject.utils.LRUCache
 import com.magidc.ideavim.anyobject.utils.TSDocument
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.getFirstNamedChildWithGrammar
+import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.lastNamedLeafOrSelf
+import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.nextNamedLeaf
+import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.prevLeaf
 import org.treesitter.TSNode
 
 
@@ -33,7 +36,12 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
     open fun findInnerBlockRange(node: TSNode, offset: Int, tsDocument: TSDocument): TextRange? {
         return node.getFirstNamedChildWithGrammar(innerBlockTypes, offset)
             ?.takeIf { it.namedChildCount > 0 }
-            ?.let { tsDocument.toTextRange(it.getNamedChild(0), it.getNamedChild(it.namedChildCount - 1)) }
+            ?.let {
+                val fromNode = it.nextNamedLeaf() ?: it
+                val toNode = (it.getChild(it.childCount - 1).let { x -> if (x.grammarType == "}" || x.grammarType == "end") x.prevLeaf() else x })?.takeIf { x -> !x.isNull }
+                    ?: it.lastNamedLeafOrSelf()
+                tsDocument.toTextRange(fromNode, toNode)
+            }
     }
 
     final override fun findJumpElementStartOffset(editor: VimEditor, forward: Boolean): Int? {

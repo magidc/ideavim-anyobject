@@ -1,0 +1,14 @@
+{
+  "extension": "py",
+  "code": "class SimpleClass:<caret_1>\n    def __init__(self):\n        self.x = 1<caret_2>\n\nclass AnotherClass(SimpleClass):<caret_3>\n    pass",
+  "inner": {
+    "1": "def __init__(self):\n        self.x = 1",
+    "2": "pass",
+    "3": "pass"
+  },
+  "around": {
+    "1": "class SimpleClass:\n    def __init__(self):\n        self.x = 1",
+    "2": "class AnotherClass(SimpleClass):\n    pass",
+    "3": "class AnotherClass(SimpleClass):\n    pass"
+  }
+}

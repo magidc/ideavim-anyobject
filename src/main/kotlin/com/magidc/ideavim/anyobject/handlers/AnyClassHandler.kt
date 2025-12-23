@@ -4,9 +4,14 @@ import com.magidc.ideavim.anyobject.handlers.base.TSBasedHandler
 
 
 class AnyClassHandler : TSBasedHandler() {
-    override val innerBlockTypes = setOf("class_body", "interface_body", "field_declaration_list", "declaration_list", "body_statement")
+    override val innerBlockTypes = setOf(
+        "class_body", "interface_body", "field_declaration_list", "declaration_list", "body_statement", "enum_body",
+        "enum_class_body", "block", "interface_type", "enum_variant_list", "protocol_body", "template_body", "object_type"
+    )
     override val targetTypes: Set<String> = setOf(
-        "class", "class_declaration", "class_definition", "class_specifier", "interface_declaration", "record_declaration",
-        "class_specifier", "superclass", "object_declaration", "struct_declaration", "trait_declaration", "mixin_declaration", "enum_declaration",
+        "class", "class_declaration", "class_definition", "class_specifier", "enum_declaration", "enum_item", "impl_item",
+        "interface_declaration", "mixin_declaration", "module", "object_declaration", "object_definition", "protocol_declaration",
+        "record_declaration", "struct_declaration", "struct_item", "struct_specifier", "superclass", "trait_declaration", "trait_definition",
+        "trait_item", "type_alias_declaration", "type_declaration"
     )
 }

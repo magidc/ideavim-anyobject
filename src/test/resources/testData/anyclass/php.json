@@ -1,0 +1,16 @@
+{
+  "extension": "php",
+  "code": "<?php\nclass SimpleClass {<caret_1>\n    public $x = 1;\n}\n\n<caret_2>interface SimpleInterface {\n    <caret_3>public function hello();\n}\n\ntrait SimpleTrait {\n    <caret_4>public function world() {}\n}",
+  "inner": {
+    "1": "public $x = 1;",
+    "2": "public function hello();",
+    "3": "public function hello();",
+    "4": "public function world() {}"
+  },
+  "around": {
+    "1": "class SimpleClass {\n    public $x = 1;\n}",
+    "2": "interface SimpleInterface {\n    public function hello();\n}",
+    "3": "interface SimpleInterface {\n    public function hello();\n}",
+    "4": "trait SimpleTrait {\n    public function world() {}\n}"
+  }
+}

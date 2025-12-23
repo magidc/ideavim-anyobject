@@ -1,0 +1,16 @@
+{
+  "extension": "scala",
+  "code": "class SimpleClass {<caret_1>\n  val x = 1\n}\n\n<caret_2>object SimpleObject {\n  <caret_3>val y = 2\n}\n\ntrait SimpleTrait {\n  <caret_4>def hello(): Unit\n}",
+  "inner": {
+    "1": "val x = 1",
+    "2": "val y = 2",
+    "3": "val y = 2",
+    "4": "def hello(): Unit"
+  },
+  "around": {
+    "1": "class SimpleClass {\n  val x = 1\n}",
+    "2": "object SimpleObject {\n  val y = 2\n}",
+    "3": "object SimpleObject {\n  val y = 2\n}",
+    "4": "trait SimpleTrait {\n  def hello(): Unit\n}"
+  }
+}

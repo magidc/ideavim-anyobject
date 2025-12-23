@@ -1,0 +1,14 @@
+{
+  "extension": "cpp",
+  "code": "class SimpleClass {<caret_1>\npublic:\n    int x;\n};\n\n<caret_2>struct SimpleStruct {\n    <caret_3>int y;\n};",
+  "inner": {
+    "1": "public:\n    int x;",
+    "2": "int y;",
+    "3": "int y;"
+  },
+  "around": {
+    "1": "class SimpleClass {\npublic:\n    int x;\n}",
+    "2": "struct SimpleStruct {\n    int y;\n}",
+    "3": "struct SimpleStruct {\n    int y;\n}"
+  }
+}

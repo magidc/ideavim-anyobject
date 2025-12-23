@@ -1,0 +1,20 @@
+{
+  "extension": "rs",
+  "code": "struct SimpleStruct {<caret_1>\n    x: i32,<caret_2>\n}\n\n<caret_6>enum SimpleEnum {\n    <caret_3>A,\n    B,\n}\n\ntrait SimpleTrait {\n    <caret_4>fn hello(&self);\n}\n\nimpl SimpleTrait for SimpleStruct {\n    <caret_5>fn hello(&self) {\n        println!(\"{}\", self.x);\n    }\n}",
+  "inner": {
+    "1": "x: i32,",
+    "2": "x: i32,",
+    "3": "A,\n    B,",
+    "4": "fn hello(&self);",
+    "5": "fn hello(&self) {\n        println!(\"{}\", self.x);\n    }",
+    "6": "A,\n    B,"
+  },
+  "around": {
+    "1": "struct SimpleStruct {\n    x: i32,\n}",
+    "2": "struct SimpleStruct {\n    x: i32,\n}",
+    "3": "enum SimpleEnum {\n    A,\n    B,\n}",
+    "4": "trait SimpleTrait {\n    fn hello(&self);\n}",
+    "5": "impl SimpleTrait for SimpleStruct {\n    fn hello(&self) {\n        println!(\"{}\", self.x);\n    }\n}",
+    "6": "enum SimpleEnum {\n    A,\n    B,\n}"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "extension": "cs",
+  "code": "public class SimpleClass {<caret_1>\n    public int x = 1;\n}\n\n<caret_2>public interface SimpleInterface {\n    <caret_3>void Hello();\n}\n\npublic record SimpleRecord(string Name)<caret_4>;\n\npublic struct SimpleStruct {\n    <caret_5>public int Y;\n}",
+  "inner": {
+    "1": "public int x = 1;",
+    "2": "void Hello();",
+    "3": "void Hello();",
+    "4": "",
+    "5": "public int Y;"
+  },
+  "around": {
+    "1": "public class SimpleClass {\n    public int x = 1;\n}",
+    "2": "public interface SimpleInterface {\n    void Hello();\n}",
+    "3": "public interface SimpleInterface {\n    void Hello();\n}",
+    "4": "public record SimpleRecord(string Name);",
+    "5": "public struct SimpleStruct {\n    public int Y;\n}"
+  }
+}

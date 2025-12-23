@@ -1,0 +1,16 @@
+{
+  "extension": "rb",
+  "code": "class SimpleClass<caret_1>\n  def hello\n    puts \"hello\"<caret_2>\n  end\nend\n\n<caret_4>module SimpleModule\n  <caret_3>def self.world\n    puts \"world\"\n  end\nend",
+  "inner": {
+    "1": "def hello\n    puts \"hello\"\n  end",
+    "2": "def hello\n    puts \"hello\"\n  end",
+    "3": "def self.world\n    puts \"world\"\n  end",
+    "4": "def self.world\n    puts \"world\"\n  end"
+  },
+  "around": {
+    "1": "class SimpleClass\n  def hello\n    puts \"hello\"\n  end\nend",
+    "2": "class SimpleClass\n  def hello\n    puts \"hello\"\n  end\nend",
+    "3": "module SimpleModule\n  def self.world\n    puts \"world\"\n  end\nend",
+    "4": "module SimpleModule\n  def self.world\n    puts \"world\"\n  end\nend"
+  }
+}

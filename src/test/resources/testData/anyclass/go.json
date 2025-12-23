@@ -1,0 +1,14 @@
+{
+  "extension": "go",
+  "code": "type SimpleStruct struct {<caret_1>\n    X int\n}\n\n<caret_2>type SimpleInterface interface {\n    <caret_3>Hello()\n}",
+  "inner": {
+    "1": "X int",
+    "2": "Hello()",
+    "3": "Hello()"
+  },
+  "around": {
+    "1": "type SimpleStruct struct {\n    X int\n}",
+    "2": "type SimpleInterface interface {\n    Hello()\n}",
+    "3": "type SimpleInterface interface {\n    Hello()\n}"
+  }
+}
