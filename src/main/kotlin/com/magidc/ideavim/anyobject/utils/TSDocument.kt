@@ -187,14 +187,15 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
                 else it.prevNamedSibling
             }
         }
-        val caretOffset = editor.getCareOffset()
+        var caretOffset = editor.getCareOffset()
         val nextNodeFunction = if (forward) { n: TSNode -> n.nextNamedLeaf() } else { n: TSNode -> n.prevNamedLeaf() }
         val acceptNodeFunction = if (forward) { n: TSNode -> n.startByte >= caretOffset && acceptNode(n) } else { n: TSNode -> n.endByte <= caretOffset && acceptNode(n) }
         @Suppress("unused")
         for (i in 1..2) {
-            generateSequence(node) { nextNodeFunction(it) }.filter { acceptNodeFunction.invoke(it) }.firstOrNull()?.let { return it }
+            generateSequence(node) { nextNodeFunction(it) }.filter { acceptNodeFunction(it) }.firstOrNull()?.let { return it }
             if (!loop) break
             node = tsTree.rootNode.let { if (forward) it else it.lastNamedLeafOrSelf() }
+            caretOffset = if (forward) node.startByte else tsTree.rootNode.endByte
         }
         return null
     }
