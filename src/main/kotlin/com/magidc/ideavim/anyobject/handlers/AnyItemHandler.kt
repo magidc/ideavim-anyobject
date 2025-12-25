@@ -11,7 +11,8 @@ open class AnyItemHandler : TSBasedHandler() {
 
     override val targetTypes: Set<String> = setOf(
         "array", "array_initializer", "list", "tuple", "initializer_expression", "composite_literal",
-        "literal_value", "dictionary", "set", "element_list", "sequence", "collection", "object", "array_literal"
+        "literal_value", "dictionary", "set", "element_list", "sequence", "collection", "object", "array_literal",
+        "tuple_expression", "token_tree"
     )
 
     override val acceptNode: (TSNode) -> Boolean = { n -> n.grammarType == "pair" || !n.parent.isNull && n.isNamed && targetTypes.contains(n.parent.grammarType) }
