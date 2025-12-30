@@ -1,0 +1,10 @@
+{
+  "extension": "go",
+  "code": "func test(a int, b string) {\n    fmt.Println(a)\n}\n\nfunc main() {\n    test(1, \"hello\")\n    arr := []int{1, <caret_1>2, 3}\n    test(int(math.Abs(-1)), strings.ToLower(\"NESTED\"))\n}\n\nfunc complex(a []string, b map[string][]int) {}",
+  "inner": {
+    "1": "2"
+  },
+  "around": {
+    "1": ", 2"
+  }
+}

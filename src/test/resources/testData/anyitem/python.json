@@ -1,0 +1,16 @@
+{
+  "extension": "py",
+  "code": "def func(a, b=10):\n    print(a)\n\nfunc(1, b=20)\n\nmy_list = [1, <caret_1>2, 3]\nmy_dict = {\"a\": 1, <caret_2>\"b\": 2}\nmy_tuple = (1, <caret_3>2, 3)\nmy_set = {1, <caret_4>2, 3}\n\nfunc(len([1, 2]), abs(-5))\n\ndef complex_func(a: List[int], b: Dict[str, List[int]]):\n    pass",
+  "inner": {
+    "1": "2",
+    "2": "\"b\": 2",
+    "3": "2",
+    "4": "2"
+  },
+  "around": {
+    "1": ", 2",
+    "2": ", \"b\": 2",
+    "3": ", 2",
+    "4": ", 2"
+  }
+}

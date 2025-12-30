@@ -1,7 +1,6 @@
 # Changelog
 ## 3.0.9
-AnyArgument extends its scope to include collection items. Removed AnyArgOrItem.
-Unit tests for AnyLoop
+Unit tests for AnyLoop, AnyFunction, AnyClass and AnyArgument
 
 ## 3.0.8
 

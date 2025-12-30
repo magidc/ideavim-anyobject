@@ -1,0 +1,10 @@
+{
+  "extension": "cpp",
+  "code": "void test(int a, const char* b) {\n    printf(\"%d\", a);\n}\n\nint main() {\n    test(1, \"hello\");\n    int arr[] = {1, <caret_1>2, 3};\n    test(abs(-1), std::string(\"nested\").c_str());\n}\n\ntemplate<typename T>\nvoid complex(std::vector<T> a, std::map<std::string, std::vector<T>> b) {}",
+  "inner": {
+    "1": "2"
+  },
+  "around": {
+    "1": ", 2"
+  }
+}

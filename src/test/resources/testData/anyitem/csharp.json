@@ -1,0 +1,10 @@
+{
+  "extension": "cs",
+  "code": "public class Test {\n\n    public void Method(int a, string b) {\n        Console.WriteLine(a);\n    }\n\n    public void Main() {\n        Method(1, \"hello\");\n        int[] arr = {1, <caret_1>2, 3};\n        Method(Math.Abs(-1), \"nested\".ToLower());\n    }\n\n    public void Complex<T>(List<T> a, Dictionary<string, List<T>> b) {}\n\n    [ObservableProperty]\n    [CustomValidation(typeof(IronTowerPlatform), nameof(ValidateAcToDcModule), ErrorMessage = \"error\")]\n    private string _acToDcModule = string.Empty;\n}\n",
+  "inner": {
+    "1": "2"
+  },
+  "around": {
+    "1": ", 2"
+  }
+}

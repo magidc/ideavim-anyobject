@@ -1,0 +1,12 @@
+{
+  "extension": "ts",
+  "code": "function test(a: number, b: string) {\n    console.log(a);\n}\n\ntest(1, \"hello\");\n\nconst arr = [1, <caret_1>2, 3];\nconst obj = { a: 1, <caret_2>b: 2 };\n\ntest(Math.max(1, 2), \"nested\".toUpperCase());\n\nfunction complex<T>(a: Array<T>, b: Map<string, T[]>) {}",
+  "inner": {
+    "1": "2",
+    "2": "b: 2"
+  },
+  "around": {
+    "1": ", 2",
+    "2": ", b: 2"
+  }
+}

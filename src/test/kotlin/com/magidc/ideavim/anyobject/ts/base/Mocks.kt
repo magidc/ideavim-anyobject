@@ -31,6 +31,7 @@ class MockVimEditor(val text: String, val filePath: String, var currentCaretOffs
     override fun text(): CharSequence = text
     override fun getVirtualFile(): VimVirtualFile = MockVirtualFile(filePath, "", null)
     override fun currentCaret(): VimCaret = MockCaret(currentCaretOffset)
+    override fun toString(): String = getVirtualFile().path
 
     override var mode: Mode get() = TODO("Mock"); set(value) {}
     override var isReplaceCharacter: Boolean get() = TODO("Mock"); set(value) {}
@@ -40,7 +41,6 @@ class MockVimEditor(val text: String, val filePath: String, var currentCaretOffs
     override val projectId: String get() = TODO("Mock")
     override var vimLastSelectionType: SelectionType? get() = TODO("Mock"); set(value) {}
     override var insertMode: Boolean get() = TODO("Mock"); set(value) {}
-
     override fun fileSize(): Long = TODO("Mock")
     override fun nativeLineCount(): Int = TODO("Mock")
     override fun getLineRange(line: Int): Pair<Int, Int> = TODO("Mock")

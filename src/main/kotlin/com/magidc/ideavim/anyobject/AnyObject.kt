@@ -21,6 +21,7 @@ import com.maddyhome.idea.vim.handler.MotionActionHandler
 import com.maddyhome.idea.vim.handler.TextObjectActionHandler
 import com.maddyhome.idea.vim.handler.toMotion
 import com.maddyhome.idea.vim.state.mode.SelectionType
+import com.magidc.ideavim.anyobject.handlers.AnyArgOrItemHandler
 import com.magidc.ideavim.anyobject.handlers.AnyArgumentHandler
 import com.magidc.ideavim.anyobject.handlers.AnyBracketHandler
 import com.magidc.ideavim.anyobject.handlers.AnyClassHandler
@@ -54,6 +55,7 @@ val handlerSupplierMap = mapOf(
     "anysubword" to Pair("u", ::AnySubwordHandler),
     "anyvariable" to Pair("v", ::AnyVariableHandler),
     "anystring" to Pair("g", ::AnyStringHandler),
+    "anyargoritem" to Pair("x", ::AnyArgOrItemHandler),
 )
 
 val builtInVimTextObjectsMappings = setOf("w", "p", "t", "b", "s")
@@ -181,7 +183,7 @@ class AnyObject : VimExtension {
 
         override fun execute(editor: VimEditor, context: ExecutionContext, operatorArguments: OperatorArguments) {
             val textObjectHandler = object : TextObjectActionHandler() {
-                override val visualType: TextObjectVisualType = TextObjectVisualType.CHARACTER_WISE
+                override val visualType: TextObjectVisualType = handler.getVisualType(inner)
                 override fun getRange(editor: VimEditor, caret: ImmutableVimCaret, context: ExecutionContext, count: Int, rawCount: Int): TextRange? {
                     val range = handler.findSelection(editor, inner, count) ?: return null
                     // Avoiding change caret position in yank actions

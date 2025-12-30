@@ -1,6 +1,7 @@
 package com.magidc.ideavim.anyobject.handlers.base
 
 import com.maddyhome.idea.vim.api.VimEditor
+import com.maddyhome.idea.vim.command.TextObjectVisualType
 import com.maddyhome.idea.vim.common.TextRange
 
 fun VimEditor.getCareOffset(): Int = currentCaret().offset
@@ -13,6 +14,7 @@ interface BaseSelectionHandler : BaseHandler {
      */
     fun findSelection(editor: VimEditor, inner: Boolean, size: Int): TextRange?
     fun allowsCountSelection(): Boolean = false
+    fun getVisualType(inner: Boolean): TextObjectVisualType = TextObjectVisualType.CHARACTER_WISE
 }
 
 interface BaseJumpHandler : BaseSelectionHandler {

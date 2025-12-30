@@ -1,0 +1,20 @@
+{
+  "extension": "rs",
+  "code": "fn test(a: i32, <caret_1>b: i32) {\n    println!(\"{}\", a);\n}\n\nfn main() {\n    test(1, <caret_2>2);\n    let v = vec![1, <caret_3>2, 3];\n    let tuple = (1, <caret_4>2);\n    test(i32::abs(-1), <caret_5>i32::pow(2, 3));\n}\n\nfn complex<T>(a: Vec<T>, <caret_6>b: HashMap<String, Vec<T>>) {}\n",
+  "inner": {
+    "1": "b: i32",
+    "2": "2",
+    "3": "2",
+    "4": "2",
+    "5": "i32::pow(2, 3)",
+    "6": "b: HashMap<String, Vec<T>>"
+  },
+  "around": {
+    "1": ", b: i32",
+    "2": ", 2",
+    "3": ", 2",
+    "4": ", 2",
+    "5": ", i32::pow(2, 3)",
+    "6": ", b: HashMap<String, Vec<T>>"
+  }
+}

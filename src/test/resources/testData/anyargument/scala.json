@@ -1,20 +1,16 @@
 {
   "extension": "scala",
-  "code": "def test(a: Int, <caret_1>b: String): Unit = {\n  println(a)\n}\n\ntest(1, <caret_2>\"hello\")\n\nval list = List(1, <caret_3>2, 3)\nval tuple = (1, <caret_4>2)\n\ntest(math.abs(-1), <caret_5>\"nested\".toLowerCase())\n\ndef complex[T](a: List[T], <caret_6>b: Map[String, List[T]]): Unit = {}",
+  "code": "def test(a: Int, <caret_1>b: String): Unit = {\n  println(a)\n}\n\ntest(1, <caret_2>\"hello\")\n\nval list = List(1, 2, 3)\nval tuple = (1, 2)\n\ntest(math.abs(-1), <caret_3>\"nested\".toLowerCase())\n\ndef complex[T](a: List[T], <caret_4>b: Map[String, List[T]]): Unit = {}",
   "inner": {
     "1": "b: String",
     "2": "\"hello\"",
-    "3": "2",
-    "4": "2",
-    "5": "\"nested\".toLowerCase()",
-    "6": "b: Map[String, List[T]]"
+    "3": "\"nested\".toLowerCase()",
+    "4": "b: Map[String, List[T]]"
   },
   "around": {
     "1": ", b: String",
     "2": ", \"hello\"",
-    "3": ", 2",
-    "4": ", 2",
-    "5": ", \"nested\".toLowerCase()",
-    "6": ", b: Map[String, List[T]]"
+    "3": ", \"nested\".toLowerCase()",
+    "4": ", b: Map[String, List[T]]"
   }
 }

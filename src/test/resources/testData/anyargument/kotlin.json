@@ -1,24 +1,18 @@
 {
   "extension": "kt",
-  "code": "fun test(a: Int, <caret_1>b: String) {\n    println(a)\n}\n\nval list = listOf(1, <caret_2>2, 3)\n\nval map = mapOf(\"a\" to 1, <caret_3>\"b\" to 2)\n\nfun main() {\n    test(10, <caret_4>\"hello\")\n}\n\nval lambda = { x: Int, <caret_5>y: Int -> x + y }\n\nfun complex(list: List<String>, <caret_6>map: Map<Int, List<Int>>) {}\n\nfun nested() {\n    test(Math.abs(-1), <caret_7>\"nested\")\n}\n\nval set = setOf(1, <caret_8>2, 3)",
+  "code": "fun test(a: Int, <caret_1>b: String) {\n    println(a)\n}\n\nval list = listOf(1, 2, 3)\n\nval map = mapOf(\"a\" to 1, \"b\" to 2)\n\nfun main() {\n    test(10, <caret_2>\"hello\")\n}\n\nval lambda = { x: Int, <caret_3>y: Int -> x + y }\n\nfun complex(list: List<String>, <caret_4>map: Map<Int, List<Int>>) {}\n\nfun nested() {\n    test(Math.abs(-1), <caret_5>\"nested\")\n}\n\nval set = setOf(1, 2, 3)",
   "inner": {
     "1": "b: String",
-    "2": "2",
-    "3": "\"b\" to 2",
-    "4": "\"hello\"",
-    "5": "y: Int",
-    "6": "map: Map<Int, List<Int>>",
-    "7": "\"nested\"",
-    "8": "2"
+    "2": "\"hello\"",
+    "3": "y: Int",
+    "4": "map: Map<Int, List<Int>>",
+    "5": "\"nested\""
   },
   "around": {
     "1": ", b: String",
-    "2": ", 2",
-    "3": ", \"b\" to 2",
-    "4": ", \"hello\"",
-    "5": ", y: Int",
-    "6": ", map: Map<Int, List<Int>>",
-    "7": ", \"nested\"",
-    "8": ", 2"
+    "2": ", \"hello\"",
+    "3": ", y: Int",
+    "4": ", map: Map<Int, List<Int>>",
+    "5": ", \"nested\""
   }
 }

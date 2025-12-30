@@ -1,18 +1,16 @@
 {
   "extension": "java",
-  "code": "public class Test {\n    public void method(int a, <caret_1>String b) {\n        System.out.println(a);\n    }\n\n    public void main() {\n        method(1, <caret_2>\"test\");\n        int[] array = {1, <caret_3>2, 3};\n        method(Math.max(1, 2), <caret_4>\"nested\");\n    }\n\n    public void complex(List<String> list, <caret_5>Map<Integer, List<String>> map) {\n    }\n}",
+  "code": "public class Test {\n    public void method(int a, <caret_1>String b) {\n        System.out.println(a);\n    }\n\n    public void main() {\n        method(1, <caret_2>\"test\");\n        int[] array = {1, 2, 3};\n        method(Math.max(1, 2), <caret_3>\"nested\");\n    }\n\n    public void complex(List<String> list, <caret_4>Map<Integer, List<String>> map) {\n    }\n}",
   "inner": {
     "1": "String b",
     "2": "\"test\"",
-    "3": "2",
-    "4": "\"nested\"",
-    "5": "Map<Integer, List<String>> map"
+    "3": "\"nested\"",
+    "4": "Map<Integer, List<String>> map"
   },
   "around": {
     "1": ", String b",
     "2": ", \"test\"",
-    "3": ", 2",
-    "4": ", \"nested\"",
-    "5": ", Map<Integer, List<String>> map"
+    "3": ", \"nested\"",
+    "4": ", Map<Integer, List<String>> map"
   }
 }

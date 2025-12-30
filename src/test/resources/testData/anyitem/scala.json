@@ -1,0 +1,10 @@
+{
+  "extension": "scala",
+  "code": "def test(a: Int, b: String): Unit = {\n  println(a)\n}\n\ntest(1, \"hello\")\n\nval list = List(1, <caret_1>2, 3)\nval tuple = (1, <caret_2>2)\n\ntest(math.abs(-1), \"nested\".toLowerCase())\n\ndef complex[T](a: List[T], b: Map[String, List[T]]): Unit = {}",
+  "inner": {
+    "2": "2"
+  },
+  "around": {
+    "2": ", 2"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "extension": "java",
+  "code": "public class Test {\n    public void method(int a, String b) {\n        System.out.println(a);\n    }\n\n    public void main() {\n        method(1, \"test\");\n        int[] array = {1, <caret_1>2, 3};\n        method(Math.max(1, 2), \"nested\");\n    }\n\n    public void complex(List<String> list, Map<Integer, List<String>> map) {\n    }\n}",
+  "inner": {
+    "1": "2"
+  },
+  "around": {
+    "1": ", 2"
+  }
+}

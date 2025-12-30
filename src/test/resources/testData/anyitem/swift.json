@@ -1,0 +1,10 @@
+{
+  "extension": "swift",
+  "code": "func test(a: Int, b: String) {\n    print(a)\n}\n\ntest(a: 1, b: \"hello\")\n\nlet array = [1, <caret_1>2, 3]\nlet dict = [\"a\": 1, <caret_2>\"b\": 2]\n\ntest(a: abs(-1), b: \"nested\".lowercased())\n\nfunc complex(a: [String], b: [String: [Int]]) {}",
+  "inner": {
+    "1": "2"
+  },
+  "around": {
+    "1": ", 2"
+  }
+}

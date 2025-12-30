@@ -11,22 +11,23 @@ concepts programmers use to think about code: classes, functions, arguments, loo
 
 ## Available Text Objects
 
-| Text Object                         | Description                                                                                                        | Default mapping | Count motions |
-|-------------------------------------|--------------------------------------------------------------------------------------------------------------------|-----------------|---------------|
-| [AnyArgument](#anyargument-a)       | Function arguments, method parameters, callable expressions and items within collections, tuples, lists, or arrays | `a`             | ✓             |
-| [AnyFunction](#anyfunction-f)       | Functions, methods, and procedures                                                                                 | `f`             | x             |
-| [AnyClass](#anyclass-c)             | Class, interface, struct, and similar type definitions                                                             | `c`             | x             |
-| [AnyVariable](#anyvariable-v)       | Field/variable declarations and assignments                                                                        | `v`             | x             |
-| [AnyLoop](#anyloop-l)               | Loop statements (`for`, `while`, `do`, `repeat`, `until`, `loop`, etc.)                                            | `l`             | x             |
-| [AnyConditional](#anyconditional-y) | Conditional statements (`if-else`, `switch`, `try-catch`)                                                          | `y`             | x             |
-| [AnyItem](#anyitem-i)               | Items within collections, tuples, lists, or arrays                                                                 | `i`             | ✓             |
-| [AnyQuote](#anyquote-q)             | Content enclosed between any type of quotes (single, double, backticks)                                            | `q`             | ✗             |
-| [AnyString](#anystring-g)           | String content                                                                                                     | `g`             | ✗             |
-| [AnyBracket](#anybracket-o)         | Content enclosed between any type of brackets (parentheses, square, curly, angle, etc.)                            | `o`             | ✗             |
-| [AnySubword](#anysubword-u)         | Words nested in longer words (`camelCase`, `snake_case`, `dash-case`)                                              | `u`             | ✓             |
-| [AnyDocument](#anydocument-d)       | Entire document content                                                                                            | `d`             | ✗             |
-| [AnyComment](#anycomment-k)         | Comments across different programming languages (`/* */`, `<!-- -->`, etc.)                                        | `k`             | ✗             |
-| [AnyIndentBlock](#anyindentblock-n) | Code blocks based on indentation levels                                                                            | `n`             | ✗             |
+| Text Object                         | Description                                                                             | Default mapping | Count motions |
+|-------------------------------------|-----------------------------------------------------------------------------------------|-----------------|---------------|
+| [AnyArgument](#anyargument-a)       | Function arguments, method parameters, and callable expressions                         | `a`             | ✓             |
+| [AnyFunction](#anyfunction-f)       | Functions, methods, and procedures                                                      | `f`             | x             |
+| [AnyClass](#anyclass-c)             | Class, interface, struct, and similar type definitions                                  | `c`             | x             |
+| [AnyVariable](#anyvariable-v)       | Field/variable declarations and assignments                                             | `v`             | x             |
+| [AnyLoop](#anyloop-l)               | Loop statements (`for`, `while`, `do`, `repeat`, `until`, `loop`, etc.)                 | `l`             | x             |
+| [AnyConditional](#anyconditional-y) | Conditional statements (`if-else`, `switch`, `try-catch`)                               | `y`             | x             |
+| [AnyItem](#anyitem-i)               | Items within collections, tuples, lists, or arrays                                      | `i`             | ✓             |
+| [AnyArgOrItem](#anyargoritem-x)     | Combines objects targeted by AnyArgument and AnyItem                                    | `x`             | ✓             |
+| [AnyQuote](#anyquote-q)             | Content enclosed between any type of quotes (single, double, backticks)                 | `q`             | ✗             |
+| [AnyString](#anystring-g)           | String content                                                                          | `g`             | ✗             |
+| [AnyBracket](#anybracket-o)         | Content enclosed between any type of brackets (parentheses, square, curly, angle, etc.) | `o`             | ✗             |
+| [AnySubword](#anysubword-u)         | Words nested in longer words (`camelCase`, `snake_case`, `dash-case`)                   | `u`             | ✓             |
+| [AnyDocument](#anydocument-d)       | Entire document content                                                                 | `d`             | ✗             |
+| [AnyComment](#anycomment-k)         | Comments across different programming languages (`/* */`, `<!-- -->`, etc.)             | `k`             | ✗             |
+| [AnyIndentBlock](#anyindentblock-n) | Code blocks based on indentation levels                                                 | `n`             | ✗             |
 
 - **Inner/Outer**: All text objects support both `i` (inner) and `a` (around/outer) selection modes following standard Vim conventions
 - **Jump**: All text objects allow navigation using `]` (next) and `[` (previous) motions unless other mappings are specified (see [Customization](#customization))
@@ -135,12 +136,17 @@ Items within collections, tuples, lists, or arrays:
 
 ### AnyArgument (`a`)
 
-Function arguments, method parameters, callable expressions, and items within collections, tuples, lists, or arrays.
+Function arguments, method parameters, and callable expressions.
 
 - **Inner selection (`ia`)**: Selects only the argument itself
 - **Outer selection (`ia`)**: Selects the entire argument including the separator and the argument itself
 
 **Multiple outer selections are supported**. For example `d2aa` will delete the current argument and the next one including separator
+
+### AnyArgOrItem (`x`)
+
+Combines objects targeted by AnyArgument and AnyItem.
+Selects any function argument, method parameter, callable expression, or collection items.
 
 ### AnyVariable (`v`)
 

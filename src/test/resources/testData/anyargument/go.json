@@ -1,18 +1,16 @@
 {
   "extension": "go",
-  "code": "func test(a int, <caret_1>b string) {\n    fmt.Println(a)\n}\n\nfunc main() {\n    test(1, <caret_2>\"hello\")\n    arr := []int{1, <caret_3>2, 3}\n    test(int(math.Abs(-1)), <caret_4>strings.ToLower(\"NESTED\"))\n}\n\nfunc complex(a []string, <caret_5>b map[string][]int) {}",
+  "code": "func test(a int, <caret_1>b string) {\n    fmt.Println(a)\n}\n\nfunc main() {\n    test(1, <caret_2>\"hello\")\n    arr := []int{1, 2, 3}\n    test(int(math.Abs(-1)), <caret_3>strings.ToLower(\"NESTED\"))\n}\n\nfunc complex(a []string, <caret_4>b map[string][]int) {}",
   "inner": {
     "1": "b string",
     "2": "\"hello\"",
-    "3": "2",
-    "4": "strings.ToLower(\"NESTED\")",
-    "5": "b map[string][]int"
+    "3": "strings.ToLower(\"NESTED\")",
+    "4": "b map[string][]int"
   },
   "around": {
     "1": ", b string",
     "2": ", \"hello\"",
-    "3": ", 2",
-    "4": ", strings.ToLower(\"NESTED\")",
-    "5": ", b map[string][]int"
+    "3": ", strings.ToLower(\"NESTED\")",
+    "4": ", b map[string][]int"
   }
 }

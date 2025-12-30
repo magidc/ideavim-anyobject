@@ -47,4 +47,5 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
     final override fun findJumpElementStartOffset(editor: VimEditor, forward: Boolean): Int? {
         return getTSDocument(editor).findJumpElementOffset({ acceptNode(it) }, forward)
     }
+
 }

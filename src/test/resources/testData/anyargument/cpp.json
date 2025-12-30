@@ -1,18 +1,16 @@
 {
   "extension": "cpp",
-  "code": "void test(int a, <caret_1>const char* b) {\n    printf(\"%d\", a);\n}\n\nint main() {\n    test(1, <caret_2>\"hello\");\n    int arr[] = {1, <caret_3>2, 3};\n    test(abs(-1), <caret_4>std::string(\"nested\").c_str());\n}\n\ntemplate<typename T>\nvoid complex(std::vector<T> a, <caret_5>std::map<std::string, std::vector<T>> b) {}",
+  "code": "void test(int a, <caret_1>const char* b) {\n    printf(\"%d\", a);\n}\n\nint main() {\n    test(1, <caret_2>\"hello\");\n    int arr[] = {1, 2, 3};\n    test(abs(-1), <caret_3>std::string(\"nested\").c_str());\n}\n\ntemplate<typename T>\nvoid complex(std::vector<T> a, <caret_4>std::map<std::string, std::vector<T>> b) {}",
   "inner": {
     "1": "const char* b",
     "2": "\"hello\"",
-    "3": "2",
-    "4": "std::string(\"nested\").c_str()",
-    "5": "std::map<std::string, std::vector<T>> b"
+    "3": "std::string(\"nested\").c_str()",
+    "4": "std::map<std::string, std::vector<T>> b"
   },
   "around": {
     "1": ", const char* b",
     "2": ", \"hello\"",
-    "3": ", 2",
-    "4": ", std::string(\"nested\").c_str()",
-    "5": ", std::map<std::string, std::vector<T>> b"
+    "3": ", std::string(\"nested\").c_str()",
+    "4": ", std::map<std::string, std::vector<T>> b"
   }
 }

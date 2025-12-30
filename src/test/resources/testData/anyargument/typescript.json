@@ -1,20 +1,16 @@
 {
   "extension": "ts",
-  "code": "function test(a: number, <caret_1>b: string) {\n    console.log(a);\n}\n\ntest(1, <caret_2>\"hello\");\n\nconst arr = [1, <caret_3>2, 3];\nconst obj = { a: 1, <caret_4>b: 2 };\n\ntest(Math.max(1, 2), <caret_5>\"nested\".toUpperCase());\n\nfunction complex<T>(a: Array<T>, <caret_6>b: Map<string, T[]>) {}",
+  "code": "function test(a: number, <caret_1>b: string) {\n    console.log(a);\n}\n\ntest(1, <caret_2>\"hello\");\n\nconst arr = [1, 2, 3];\nconst obj = { a: 1, b: 2 };\n\ntest(Math.max(1, 2), <caret_3>\"nested\".toUpperCase());\n\nfunction complex<T>(a: Array<T>, <caret_4>b: Map<string, T[]>) {}",
   "inner": {
     "1": "b: string",
     "2": "\"hello\"",
-    "3": "2",
-    "4": "b: 2",
-    "5": "\"nested\".toUpperCase()",
-    "6": "b: Map<string, T[]>"
+    "3": "\"nested\".toUpperCase()",
+    "4": "b: Map<string, T[]>"
   },
   "around": {
     "1": ", b: string",
     "2": ", \"hello\"",
-    "3": ", 2",
-    "4": ", b: 2",
-    "5": ", \"nested\".toUpperCase()",
-    "6": ", b: Map<string, T[]>"
+    "3": ", \"nested\".toUpperCase()",
+    "4": ", b: Map<string, T[]>"
   }
 }

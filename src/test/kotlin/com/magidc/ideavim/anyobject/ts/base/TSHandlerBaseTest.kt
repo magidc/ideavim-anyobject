@@ -27,38 +27,42 @@ abstract class TSHandlerBaseTest(handler: TSBasedHandler) : BasePlatformTestCase
         val caretPositions: Map<String, Int>
     )
 
-    private data class TestFailResult(
+    private data class TestResult(
         val inner: Boolean,
         val caretId: String,
         val caretPosition: Int,
         val actual: String,
         val expected: String
-    )
 
-    private class TestFailResults {
-        private val results = HashMultimap.create<TestData, TestFailResult>()
+    ) {
+        fun failed(): Boolean = actual != expected
+    }
+
+    private class TestResults {
+        private val results = HashMultimap.create<TestData, TestResult>()
 
         fun add(testData: TestData, inner: Boolean, caretId: String, caretPosition: Int, actual: String, expected: String) {
-            results.put(testData, TestFailResult(inner, caretId, caretPosition, actual, expected))
+            results.put(testData, TestResult(inner, caretId, caretPosition, actual, expected))
         }
 
         fun assertResults() {
-            if (!results.isEmpty) {
-                for (entry in results.asMap()) {
-                    val testData = entry.key
-                    println("Failed on test data: ${testData.filePath}")
-                    println("Code:\n${testData.code}")
-                    println("---------------------------------------")
-                    println("Code with carets:\n${testData.codeWithCarets}")
-                    println("---------------------------------------")
-                    entry.value.map {
+            for (entry in results.asMap()) {
+                val testData = entry.key
+                println("On test data: ${testData.filePath}")
+                println("Code:\n${testData.code}")
+                println("---------------------------------------")
+                println("Code with carets:\n${testData.codeWithCarets}")
+                println("---------------------------------------")
+                val failed = entry.value.filter { it.failed() }
+                if (failed.isNotEmpty()) {
+                    failed.map {
                         "${if (it.inner) "Inner" else "Around"} selection at caret ${it.caretId} [${it.caretPosition}].\n" +
                                 "Expected:\n${it.expected}\n" +
                                 "Actual:\n${it.actual}"
                     }.forEach { println(it) }
                     println("---------------------------------------")
+                    Assert.fail()
                 }
-                Assert.fail()
             }
         }
     }
@@ -97,18 +101,18 @@ abstract class TSHandlerBaseTest(handler: TSBasedHandler) : BasePlatformTestCase
             ?.map { it.name }
             ?.sorted() ?: return
 
-        val testFailResults = TestFailResults()
+        val testResults = TestResults()
         testFileNames.forEach {
             val testFileURI = testDataDir.toURI().resolve(it)
             if (!File(testFileURI).exists()) return
             val testData = getTestData(testFileURI)
-            doTestHandler(testData, false, testFailResults)
-            doTestHandler(testData, true, testFailResults)
+            doTestHandler(testData, false, testResults)
+            doTestHandler(testData, true, testResults)
         }
-        testFailResults.assertResults()
+        testResults.assertResults()
     }
 
-    private fun doTestHandler(testData: TestData, inner: Boolean, testFailResults: TestFailResults) {
+    private fun doTestHandler(testData: TestData, inner: Boolean, testResults: TestResults) {
         val assertions = if (inner) testData.inner else testData.around
         val editor = MockVimEditor(testData.code, testData.filePath, 0)
 
@@ -116,8 +120,7 @@ abstract class TSHandlerBaseTest(handler: TSBasedHandler) : BasePlatformTestCase
             editor.currentCaretOffset = caretPositionEntry.value
             val expected = assertions[caretPositionEntry.key]?.trim() ?: continue
             val actual = handlerWrapper.findSelection(editor, inner, 1)?.let { editor.text().substring(it.startOffset, it.endOffset) }?.trim() ?: ""
-            if (actual != expected)
-                testFailResults.add(testData, inner, caretPositionEntry.key, caretPositionEntry.value, actual, expected)
+            testResults.add(testData, inner, caretPositionEntry.key, caretPositionEntry.value, actual, expected)
         }
     }
 

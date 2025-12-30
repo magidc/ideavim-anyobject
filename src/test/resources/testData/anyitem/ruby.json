@@ -1,0 +1,12 @@
+{
+  "extension": "rb",
+  "code": "def test(a, b)\n  puts a\nend\n\ntest(1, 2)\n\narray = [1, <caret_1>2, 3]\nhash = { a: 1, <caret_2>b: 2 }\n\ntest(Math.abs(-1), \"nested\".downcase)\n\ndef complex(a, b = {})\nend",
+  "inner": {
+    "1": "2",
+    "2": "b: 2"
+  },
+  "around": {
+    "1": ", 2",
+    "2": ", b: 2"
+  }
+}
