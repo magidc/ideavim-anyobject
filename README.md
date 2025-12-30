@@ -189,6 +189,9 @@ Conditional statements and expressions like `if-else`, `switch` or `try-catch` s
 Code blocks based on indentation levels. This is particularly useful for indentation-based languages like Python, YAML, or Haskell, but also works with brace-based languages to
 select logical indentation blocks.
 
+- **Inner Selection (`in`)**: Selects from first to last character of the current block
+- **Outer Selection (`an`)**: Selects entire lines of the current block
+
 ## Configuration
 
 Configure which transformation groups to enable in your `.ideavimrc`:

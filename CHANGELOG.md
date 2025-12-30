@@ -1,6 +1,7 @@
 # Changelog
 ## 3.0.9
-Unit tests for AnyLoop, AnyFunction, AnyClass and AnyArgument
+Unit tests for AnyLoop, AnyFunction, AnyClass, AnyArgument, AnyItem and AnyArgOrItem
+AnyIndentBlock includes empty lines as part of the indented block. Also, around selections will use visual line wise mode
 
 ## 3.0.8
 
