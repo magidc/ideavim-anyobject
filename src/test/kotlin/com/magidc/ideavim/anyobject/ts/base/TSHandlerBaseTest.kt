@@ -124,10 +124,10 @@ abstract class TSHandlerBaseTest(handler: TSBasedHandler) : BasePlatformTestCase
         }
     }
 
-    fun testAll() {
-        doTestLanguageHandler()
-        println("Sorted target types: ${handlerWrapper.sortedTargetTypes.joinToString(", ") { "\"$it\"" }}")
-    }
+//    fun testAll() {
+//        doTestLanguageHandler()
+//        println("Sorted target types: ${handlerWrapper.sortedTargetTypes.joinToString(", ") { "\"$it\"" }}")
+//    }
 
     fun testCpp() = doTestLanguageHandler("cpp.json")
     fun testCsharp() = doTestLanguageHandler("csharp.json")

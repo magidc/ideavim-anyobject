@@ -1,0 +1,12 @@
+{
+  "extension": "m",
+  "code": "void test() {\n    [obj methodWithArg1:val1 <caret_1>arg2:val2];\n    void (^block)(int a, <caret_2>int b) = ^(int a, int b) {};\n}",
+  "inner": {
+    "1": "arg2:val2",
+    "2": "int b"
+  },
+  "around": {
+    "1": " arg2:val2",
+    "2": ", int b"
+  }
+}

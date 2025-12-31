@@ -1,0 +1,12 @@
+{
+  "extension": "m",
+  "code": "@interface TestClass : NSObject\n@property (nonatomic, strong) NSString *name;\n- (void)doSomething;\n@end\n\n@implementation TestClass {<caret_1>\n    int _internalVar;\n}\n- (void)doSomething {<caret_2>\n    NSLog(@\"Doing something\");\n}\n@end",
+  "inner": {
+    "1": "int _internalVar;",
+    "2": "NSLog(@\"Doing something\");"
+  },
+  "around": {
+    "1": "@implementation TestClass {\n    int _internalVar;\n}\n- (void)doSomething {\n    NSLog(@\"Doing something\");\n}\n@end",
+    "2": "@implementation TestClass {\n    int _internalVar;\n}\n- (void)doSomething {\n    NSLog(@\"Doing something\");\n}\n@end"
+  }
+}

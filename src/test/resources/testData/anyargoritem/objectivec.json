@@ -1,0 +1,12 @@
+{
+  "extension": "m",
+  "code": "void test() {\n    NSArray *arr = @[@1, <caret_1>@2, @3];\n    NSDictionary *dict = @{@\"key1\": @1, <caret_2>@\"key2\": @2};\n}",
+  "inner": {
+    "1": "@2",
+    "2": "@\"key2\": @2"
+  },
+  "around": {
+    "1": ", @2",
+    "2": ", @\"key2\": @2"
+  }
+}

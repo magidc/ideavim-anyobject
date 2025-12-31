@@ -1,0 +1,12 @@
+{
+  "extension": "r",
+  "code": "test_func <- function(a, <caret_1>b) {\n    sum(1, <caret_2>2, 3)\n}",
+  "inner": {
+    "1": "b",
+    "2": "2"
+  },
+  "around": {
+    "1": ", b",
+    "2": ", 2"
+  }
+}

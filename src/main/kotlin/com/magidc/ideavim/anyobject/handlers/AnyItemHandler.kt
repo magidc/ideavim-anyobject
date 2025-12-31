@@ -26,15 +26,11 @@ open class AnyItemHandler : TSBasedHandler() {
         if (size == 0) return null
         val tsDocument = getTSDocument(editor)
         val firstNode = tsDocument.findSelectionNode { acceptNode(it) } ?: return null
-        val nodes = mutableListOf<TSNode>()
-        nodes.add(firstNode)
-        @Suppress("unused")
-        for (i in 1 until size) {
-            tsDocument.findNextNode(nodes.last(), { acceptNode(it) }, loop = false)
-                ?.takeIf { it.parent.isEqual(firstNode.parent) }
-                ?.let { nodes.add(it) }
-                ?: break
-        }
+        val nodes = generateSequence(firstNode)
+        { tsDocument.findNextNode(it, { n -> acceptNode(n) }, loop = false) }
+            .filter { it.parent.isEqual(firstNode.parent) }
+            .take(size).toMutableList()
+
         if (nodes.isEmpty()) return null
         if (!inner) {
             if (firstNode.isEqual(firstNode.parent.getNamedChild(0)))
