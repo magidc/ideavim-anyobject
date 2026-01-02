@@ -1,0 +1,18 @@
+{
+  "extension": "js",
+  "code": "const a = <caret_1>10;\nlet b = \"<caret_2>hello\";\nvar c = [1, 2, <caret_3>3];\nd = { key: <caret_4>\"value\" };\n\nclass A {\n  x = <caret_5>1;\n}",
+  "inner": {
+    "1": "10",
+    "2": "\"hello\"",
+    "3": "[1, 2, 3]",
+    "4": "{ key: \"value\" }",
+    "5": "1"
+  },
+  "around": {
+    "1": "const a = 10;",
+    "2": "let b = \"hello\";",
+    "3": "var c = [1, 2, 3];",
+    "4": "d = { key: \"value\" };",
+    "5": "x = 1;"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "extension": "swift",
+  "code": "func test(x: Int) {\n    if true {\n        print<caret_1>(\"if\")\n    } else {\n        print<caret_2>(\"else\")\n    }\n\n    switch x {\n    case 1:\n        print<caret_3>(\"1\")\n    default:\n        print<caret_4>(\"default\")\n    }\n\n    do {\n        let a = <caret_5>1 / 0\n    } catch {\n        print<caret_6>(error)\n    }\n}\n",
+  "inner": {
+    "1": "print(\"if\")",
+    "2": "print(\"else\")",
+    "3": "case 1:\n        print(\"1\")",
+    "4": "default:\n        print(\"default\")",
+    "5": "let a = 1 / 0",
+    "6": "print(error)"
+  },
+  "around": {
+    "1": "if true {\n        print(\"if\")\n    } else {\n        print(\"else\")\n    }",
+    "2": "if true {\n        print(\"if\")\n    } else {\n        print(\"else\")\n    }",
+    "3": "switch x {\n    case 1:\n        print(\"1\")\n    default:\n        print(\"default\")\n    }",
+    "4": "switch x {\n    case 1:\n        print(\"1\")\n    default:\n        print(\"default\")\n    }",
+    "5": "do {\n        let a = 1 / 0\n    } catch {\n        print(error)\n    }",
+    "6": "do {\n        let a = 1 / 0\n    } catch {\n        print(error)\n    }"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "extension": "swift",
+  "code": "let a = <caret_1>10\nvar b = \"<caret_2>hello\"\nlet c: Int = <caret_3>20\n\nclass A {\n    let x = <caret_4>1\n}",
+  "inner": {
+    "1": "10",
+    "2": "\"hello\"",
+    "3": "20",
+    "4": "1"
+  },
+  "around": {
+    "1": "let a = 10",
+    "2": "var b = \"hello\"",
+    "3": "let c: Int = 20",
+    "4": "let x = 1"
+  }
+}

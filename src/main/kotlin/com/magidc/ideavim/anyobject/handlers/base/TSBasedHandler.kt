@@ -9,6 +9,7 @@ import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.lastNamedL
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.nextNamedLeaf
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.prevLeaf
 import org.treesitter.TSNode
+import kotlin.reflect.KClass
 
 
 abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
@@ -17,16 +18,23 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
         val documentCache = LRUCache<String, TSDocument>(5) { _, v -> v.editor.document.removeChangeListener(v) }
     }
 
-    protected open val innerBlockTypes: Collection<String> = setOf("block")
+    protected open val innerBlockTypes: Set<String> = setOf("block")
     abstract val targetTypes: Set<String>
+
+    protected open val languageTargetTypes: Map<KClass<*>, Set<String>> = emptyMap()
 
     protected fun getTSDocument(editor: VimEditor): TSDocument = documentCache.getOrPut(editor.getVirtualFile()?.path ?: "") { TSDocument(editor) }
 
-    protected open val acceptNode: (TSNode) -> Boolean = { n -> !n.isNull && n.isNamed && targetTypes.contains(n.grammarType) }
+    protected open fun acceptNode(node: TSNode, document: TSDocument): Boolean {
+        return !node.isNull && node.isNamed && (
+                languageTargetTypes.getOrDefault(document.parser.language::class, emptySet()).contains(node.grammarType)
+                        || targetTypes.contains(node.grammarType)
+                )
+    }
 
     override fun findSelection(editor: VimEditor, inner: Boolean, size: Int): TextRange? {
         val tsDocument = getTSDocument(editor)
-        val objectNode = tsDocument.findSelectionNode { acceptNode(it) } ?: return null
+        val objectNode = tsDocument.findSelectionNode { acceptNode(it, tsDocument) } ?: return null
         if (!inner) return tsDocument.toTextRange(objectNode)
         return findInnerBlockRange(objectNode, editor.getCareOffset(), tsDocument)
     }
@@ -45,7 +53,8 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
     }
 
     final override fun findJumpElementStartOffset(editor: VimEditor, forward: Boolean): Int? {
-        return getTSDocument(editor).findJumpElementOffset({ acceptNode(it) }, forward)
+        val tsDocument = getTSDocument(editor)
+        return tsDocument.findJumpElementOffset({ acceptNode(it, tsDocument) }, forward)
     }
 
 }

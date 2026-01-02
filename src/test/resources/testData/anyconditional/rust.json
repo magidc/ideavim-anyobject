@@ -1,0 +1,16 @@
+{
+  "extension": "rs",
+  "code": "fn test(x: i32) {\n    if true {\n        print<caret_1>ln!(\"if\");\n    } else {\n        print<caret_2>ln!(\"else\");\n    }\n\n    match x {\n        1 => print<caret_3>ln!(\"1\"),\n        _ => print<caret_4>ln!(\"default\"),\n    }\n}\n",
+  "inner": {
+    "1": "println!(\"if\");",
+    "2": "println!(\"else\");",
+    "3": "1 => println!(\"1\"),",
+    "4": "_ => println!(\"default\"),"
+  },
+  "around": {
+    "1": "if true {\n        println!(\"if\");\n    } else {\n        println!(\"else\");\n    }",
+    "2": "if true {\n        println!(\"if\");\n    } else {\n        println!(\"else\");\n    }",
+    "3": "match x {\n        1 => println!(\"1\"),\n        _ => println!(\"default\"),\n    }",
+    "4": "match x {\n        1 => println!(\"1\"),\n        _ => println!(\"default\"),\n    }"
+  }
+}

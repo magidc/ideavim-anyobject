@@ -1,0 +1,20 @@
+{
+  "extension": "cpp",
+  "code": "void test(int x) {\n    if (true) {\n        std::cout << \"<caret_1>if\" << std::endl;\n    } else {\n        std::cout << \"<caret_2>else\" << std::endl;\n    }\n\n    switch (x) {\n        case 1:\n            std::cout << \"<caret_3>1\" << std::endl;\n            break;\n        default:\n            std::cout << \"<caret_4>default\" << std::endl;\n    }\n\n    try {\n        int a = <caret_5>1 / 0;\n    } catch (const std::exception& e) {\n        std::cerr << e.wh<caret_6>at() << std::endl;\n    }\n}",
+  "inner": {
+    "1": "std::cout << \"if\" << std::endl;",
+    "2": "std::cout << \"else\" << std::endl;",
+    "3": "case 1:\n            std::cout << \"1\" << std::endl;\n            break;",
+    "4": "default:\n            std::cout << \"default\" << std::endl;",
+    "5": "int a = 1 / 0;",
+    "6": "std::cerr << e.what() << std::endl;"
+  },
+  "around": {
+    "1": "if (true) {\n        std::cout << \"if\" << std::endl;\n    } else {\n        std::cout << \"else\" << std::endl;\n    }",
+    "2": "if (true) {\n        std::cout << \"if\" << std::endl;\n    } else {\n        std::cout << \"else\" << std::endl;\n    }",
+    "3": "switch (x) {\n        case 1:\n            std::cout << \"1\" << std::endl;\n            break;\n        default:\n            std::cout << \"default\" << std::endl;\n    }",
+    "4": "switch (x) {\n        case 1:\n            std::cout << \"1\" << std::endl;\n            break;\n        default:\n            std::cout << \"default\" << std::endl;\n    }",
+    "5": "try {\n        int a = 1 / 0;\n    } catch (const std::exception& e) {\n        std::cerr << e.what() << std::endl;\n    }",
+    "6": "try {\n        int a = 1 / 0;\n    } catch (const std::exception& e) {\n        std::cerr << e.what() << std::endl;\n    }"
+  }
+}

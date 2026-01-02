@@ -1,0 +1,14 @@
+{
+  "extension": "rs",
+  "code": "let s1 = \"<caret_1>hello\";\nlet s2 = r\"<caret_2>raw string\";\nlet s3 = r#\"<caret_3>raw with hash\"#;",
+  "inner": {
+    "1": "hello",
+    "2": "raw string",
+    "3": "raw with hash"
+  },
+  "around": {
+    "1": "\"hello\"",
+    "2": "r\"raw string\"",
+    "3": "r#\"raw with hash\"#"
+  }
+}

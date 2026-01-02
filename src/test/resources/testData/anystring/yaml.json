@@ -1,0 +1,12 @@
+{
+  "extension": "yaml",
+  "code": "key1: \"<caret_1>double value\"\nkey2: '<caret_2>single value'",
+  "inner": {
+    "1": "double value",
+    "2": "single value"
+  },
+  "around": {
+    "1": "\"double value\"",
+    "2": "'single value'"
+  }
+}

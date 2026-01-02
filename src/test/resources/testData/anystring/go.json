@@ -1,0 +1,12 @@
+{
+  "extension": "go",
+  "code": "s1 := \"<caret_1>hello\"\ns2 := `<caret_2>raw string`",
+  "inner": {
+    "1": "hello",
+    "2": "raw string"
+  },
+  "around": {
+    "1": "\"hello\"",
+    "2": "`raw string`"
+  }
+}

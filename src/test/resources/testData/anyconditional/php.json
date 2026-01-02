@@ -1,0 +1,20 @@
+{
+  "extension": "php",
+  "code": "<?php\nfunction test($x) {\n    if (true) {\n        echo \"<caret_1>if\";\n    } else {\n        echo \"<caret_2>else\";\n    }\n\n    switch ($x) {\n        case 1:\n            echo \"<caret_3>1\";\n            break;\n        default:\n            echo \"<caret_4>default\";\n    }\n\n    try {\n        $a = <caret_5>1 / 0;\n    } catch (Exception $e) {\n        echo $e->getMessa<caret_6>ge();\n    }\n}\n",
+  "inner": {
+    "1": "echo \"if\";",
+    "2": "echo \"else\";",
+    "3": "case 1:\n            echo \"1\";\n            break;",
+    "4": "default:\n            echo \"default\";",
+    "5": "$a = 1 / 0;",
+    "6": "echo $e->getMessage();"
+  },
+  "around": {
+    "1": "if (true) {\n        echo \"if\";\n    } else {\n        echo \"else\";\n    }",
+    "2": "if (true) {\n        echo \"if\";\n    } else {\n        echo \"else\";\n    }",
+    "3": "switch ($x) {\n        case 1:\n            echo \"1\";\n            break;\n        default:\n            echo \"default\";\n    }",
+    "4": "switch ($x) {\n        case 1:\n            echo \"1\";\n            break;\n        default:\n            echo \"default\";\n    }",
+    "5": "try {\n        $a = 1 / 0;\n    } catch (Exception $e) {\n        echo $e->getMessage();\n    }",
+    "6": "try {\n        $a = 1 / 0;\n    } catch (Exception $e) {\n        echo $e->getMessage();\n    }"
+  }
+}

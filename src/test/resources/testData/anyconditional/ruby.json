@@ -1,0 +1,20 @@
+{
+  "extension": "rb",
+  "code": "def test(x)\n    if true\n        pu<caret_1>ts \"if\"\n    else\n        pu<caret_2>ts \"else\"\n    end\n\n    case x\n    when 1\n        pu<caret_3>ts \"1\"\n    else\n        pu<caret_4>ts \"default\"\n    end\n\n    begin\n        a = <caret_5>1 / 0\n    rescue => e\n        pu<caret_6>ts e.message\n    end\nend\n",
+  "inner": {
+    "1": "puts \"if\"",
+    "2": "puts \"else\"",
+    "3": "when 1\n        puts \"1\"",
+    "4": "else\n        puts \"default\"",
+    "5": "a = 1 / 0",
+    "6": "puts e.message"
+  },
+  "around": {
+    "1": "if true\n        puts \"if\"\n    else\n        puts \"else\"\n    end",
+    "2": "if true\n        puts \"if\"\n    else\n        puts \"else\"\n    end",
+    "3": "case x\n    when 1\n        puts \"1\"\n    else\n        puts \"default\"\n    end",
+    "4": "case x\n    when 1\n        puts \"1\"\n    else\n        puts \"default\"\n    end",
+    "5": "begin\n        a = 1 / 0\n    rescue => e\n        puts e.message\n    end",
+    "6": "begin\n        a = 1 / 0\n    rescue => e\n        puts e.message\n    end"
+  }
+}

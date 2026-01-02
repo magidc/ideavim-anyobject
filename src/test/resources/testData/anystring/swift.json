@@ -1,0 +1,12 @@
+{
+  "extension": "swift",
+  "code": "let s1 = \"<caret_1>hello\"\nlet s2 = \"\"\"<caret_2>\nmultiline\n\"\"\"",
+  "inner": {
+    "1": "hello",
+    "2": "\nmultiline\n"
+  },
+  "around": {
+    "1": "\"hello\"",
+    "2": "\"\"\"\nmultiline\n\"\"\""
+  }
+}

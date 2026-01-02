@@ -1,0 +1,10 @@
+{
+  "extension": "json",
+  "code": "{\n  \"key\": \"<caret_1>value\"\n}",
+  "inner": {
+    "1": "value"
+  },
+  "around": {
+    "1": "\"value\""
+  }
+}

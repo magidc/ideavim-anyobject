@@ -50,7 +50,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         }
     }
 
-    private val parser: TSParser = getParser(editor)
+    val parser: TSParser = getParser(editor)
     private lateinit var tsTree: TSTree
     private val disabled: Boolean = parser.language == null
     private var updated: Boolean = false

@@ -1,0 +1,20 @@
+{
+  "extension": "py",
+  "code": "def test(x):\n    if True:\n        print<caret_1>(\"if\")\n        print(\"if2\")\n    else:\n        print<caret_2>(\"else\")\n\n    match x:\n        case 1:\n            print<caret_3>(\"1\")\n        case _:\n            print<caret_4>(\"default\")\n\n    try:\n        a = <caret_5>1 / 0\n    except Exception as e:\n        print<caret_6>(e)\n",
+  "inner": {
+    "1": "print(\"if\")\n        print(\"if2\")",
+    "2": "print(\"else\")",
+    "3": "case 1:\n            print(\"1\")",
+    "4": "case _:\n            print(\"default\")",
+    "5": "a = 1 / 0",
+    "6": "print(e)"
+  },
+  "around": {
+    "1": "if True:\n        print(\"if\")\n        print(\"if2\")\n    else:\n        print(\"else\")",
+    "2": "if True:\n        print(\"if\")\n        print(\"if2\")\n    else:\n        print(\"else\")",
+    "3": "match x:\n        case 1:\n            print(\"1\")\n        case _:\n            print(\"default\")",
+    "4": "match x:\n        case 1:\n            print(\"1\")\n        case _:\n            print(\"default\")",
+    "5": "try:\n        a = 1 / 0\n    except Exception as e:\n        print(e)",
+    "6": "try:\n        a = 1 / 0\n    except Exception as e:\n        print(e)"
+  }
+}

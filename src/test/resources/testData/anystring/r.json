@@ -1,0 +1,12 @@
+{
+  "extension": "r",
+  "code": "s1 <- \"<caret_1>hello\"\ns2 <- '<caret_2>world'",
+  "inner": {
+    "1": "hello",
+    "2": "world"
+  },
+  "around": {
+    "1": "\"hello\"",
+    "2": "'world'"
+  }
+}

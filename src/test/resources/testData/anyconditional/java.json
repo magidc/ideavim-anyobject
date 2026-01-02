@@ -1,0 +1,20 @@
+{
+  "extension": "java",
+  "code": "public class Test {\n    public void test() {\n        if (true) {\n            System.out.<caret_1>println(\"if\");\n        } else {\n            System.out.<caret_2>println(\"else\");\n        }\n\n        switch (x) {\n            case 1:\n                System.out.<caret_3>println(\"1\");\n                break;\n            default:\n                <caret_4>break;\n        }\n\n        try {\n            <caret_5>int a = 1 / 0;\n        } catch (Exception e) {\n            e.printStack<caret_6>Trace();\n        }\n    }\n}",
+  "inner": {
+    "1": "System.out.println(\"if\");",
+    "2": "System.out.println(\"else\");",
+    "3": "case 1:\n                System.out.println(\"1\");\n                break;",
+    "4": "default:\n                break;",
+    "5": "int a = 1 / 0;",
+    "6": "e.printStackTrace();"
+  },
+  "around": {
+    "1": "if (true) {\n            System.out.println(\"if\");\n        } else {\n            System.out.println(\"else\");\n        }",
+    "2": "if (true) {\n            System.out.println(\"if\");\n        } else {\n            System.out.println(\"else\");\n        }",
+    "3": "switch (x) {\n            case 1:\n                System.out.println(\"1\");\n                break;\n            default:\n                break;\n        }",
+    "4": "switch (x) {\n            case 1:\n                System.out.println(\"1\");\n                break;\n            default:\n                break;\n        }",
+    "5": "try {\n            int a = 1 / 0;\n        } catch (Exception e) {\n            e.printStackTrace();\n        }",
+    "6": "try {\n            int a = 1 / 0;\n        } catch (Exception e) {\n            e.printStackTrace();\n        }"
+  }
+}

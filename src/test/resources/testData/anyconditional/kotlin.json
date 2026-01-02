@@ -1,0 +1,20 @@
+{
+  "extension": "kt",
+  "code": "fun test() {\n    if (true) {\n        print<caret_1>ln(\"if\")\n    } else {\n        print<caret_2>ln(\"else\")\n    }\n\n    when (x) {\n        1 -> print<caret_3>ln(\"1\")\n        else -> print<caret_4>ln(\"else\")\n    }\n\n    try {\n        val a = <caret_5>1 / 0\n    } catch (e: Exception) {\n        e.printStack<caret_6>Trace()\n    }\n}",
+  "inner": {
+    "1": "println(\"if\")",
+    "2": "println(\"else\")",
+    "3": "1 -> println(\"1\")",
+    "4": "else -> println(\"else\")",
+    "5": "val a = 1 / 0",
+    "6": "e.printStackTrace()"
+  },
+  "around": {
+    "1": "if (true) {\n        println(\"if\")\n    } else {\n        println(\"else\")\n    }",
+    "2": "if (true) {\n        println(\"if\")\n    } else {\n        println(\"else\")\n    }",
+    "3": "when (x) {\n        1 -> println(\"1\")\n        else -> println(\"else\")\n    }",
+    "4": "when (x) {\n        1 -> println(\"1\")\n        else -> println(\"else\")\n    }",
+    "5": "try {\n        val a = 1 / 0\n    } catch (e: Exception) {\n        e.printStackTrace()\n    }",
+    "6": "try {\n        val a = 1 / 0\n    } catch (e: Exception) {\n        e.printStackTrace()\n    }"
+  }
+}

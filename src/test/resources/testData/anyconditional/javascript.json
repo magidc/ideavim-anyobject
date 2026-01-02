@@ -1,0 +1,20 @@
+{
+  "extension": "js",
+  "code": "function test() {\n    if (true) {\n        console.l<caret_1>og(\"if\");\n    } else {\n        console.l<caret_2>og(\"else\");\n    }\n\n    switch (x) {\n        case 1:\n            console.l<caret_3>og(\"1\");\n            break;\n        default:\n            console.l<caret_4>og(\"default\");\n    }\n\n    try {\n        let a = <caret_5>1 / 0;\n    } catch (e) {\n        console.e<caret_6>rror(e);\n    }\n}",
+  "inner": {
+    "1": "console.log(\"if\");",
+    "2": "console.log(\"else\");",
+    "3": "case 1:\n            console.log(\"1\");\n            break;",
+    "4": "default:\n            console.log(\"default\");",
+    "5": "let a = 1 / 0;",
+    "6": "console.error(e);"
+  },
+  "around": {
+    "1": "if (true) {\n        console.log(\"if\");\n    } else {\n        console.log(\"else\");\n    }",
+    "2": "if (true) {\n        console.log(\"if\");\n    } else {\n        console.log(\"else\");\n    }",
+    "3": "switch (x) {\n        case 1:\n            console.log(\"1\");\n            break;\n        default:\n            console.log(\"default\");\n    }",
+    "4": "switch (x) {\n        case 1:\n            console.log(\"1\");\n            break;\n        default:\n            console.log(\"default\");\n    }",
+    "5": "try {\n        let a = 1 / 0;\n    } catch (e) {\n        console.error(e);\n    }",
+    "6": "try {\n        let a = 1 / 0;\n    } catch (e) {\n        console.error(e);\n    }"
+  }
+}

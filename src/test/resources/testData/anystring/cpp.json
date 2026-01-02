@@ -1,0 +1,14 @@
+{
+  "extension": "cpp",
+  "code": "const char* s1 = \"<caret_1>hello\";\nconst char* s2 = R\"(<caret_2>raw string)\";\nconst char* s3 = R\"delimiter(<caret_3>raw with delimiter)delimiter\";",
+  "inner": {
+    "1": "hello",
+    "2": "(raw string)",
+    "3": "delimiter(raw with delimiter)delimiter"
+  },
+  "around": {
+    "1": "\"hello\"",
+    "2": "R\"(raw string)\"",
+    "3": "R\"delimiter(raw with delimiter)delimiter\""
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "extension": "go",
+  "code": "package main\n\nfunc main() {\n    var a = <caret_1>10\n    b := \"<caret_2>hello\"\n    var c int = <caret_3>20\n}",
+  "inner": {
+    "1": "10",
+    "2": "\"hello\"",
+    "3": "20"
+  },
+  "around": {
+    "1": "var a = 10",
+    "2": "b := \"hello\"",
+    "3": "var c int = 20"
+  }
+}

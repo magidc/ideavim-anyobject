@@ -1,0 +1,20 @@
+{
+  "extension": "r",
+  "code": "test <- function(x) {\n    if (TRUE) {\n        print<caret_1>(\"if\")\n    } else {\n        print<caret_2>(\"else\")\n    }\n\n    switch(x,\n        \"1\" = print<caret_3>(\"1\"),\n        print<caret_4>(\"default\")\n    )\n\n    tryCatch({\n        a <- <caret_5>1 / 0\n    }, error = function(e) {\n        print<caret_6>(e)\n    })\n}\n",
+  "inner": {
+    "1": "print(\"if\")",
+    "2": "print(\"else\")",
+    "3": "\"1\" = print(\"1\")",
+    "4": "print(\"default\")",
+    "5": "a <- 1 / 0",
+    "6": "print(e)"
+  },
+  "around": {
+    "1": "if (TRUE) {\n        print(\"if\")\n    } else {\n        print(\"else\")\n    }",
+    "2": "if (TRUE) {\n        print(\"if\")\n    } else {\n        print(\"else\")\n    }",
+    "3": "switch(x,\n        \"1\" = print(\"1\"),\n        print(\"default\")\n    )",
+    "4": "switch(x,\n        \"1\" = print(\"1\"),\n        print(\"default\")\n    )",
+    "5": "tryCatch({\n        a <- 1 / 0\n    }, error = function(e) {\n        print(e)\n    })",
+    "6": "tryCatch({\n        a <- 1 / 0\n    }, error = function(e) {\n        print(e)\n    })"
+  }
+}

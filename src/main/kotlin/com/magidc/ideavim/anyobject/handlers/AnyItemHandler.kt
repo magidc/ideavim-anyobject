@@ -14,9 +14,12 @@ open class AnyItemHandler : TSBasedHandler() {
         "literal_value", "dictionary", "set", "element_list", "sequence", "collection", "object", "array_literal",
         "tuple_expression", "token_tree", "array_creation_expression", "initializer_list", "dictionary_literal"
     )
-    override val targetTypes: Set<String> = setOf("pair")
+    override val targetTypes: Set<String> = setOf("pair", "flow_node")
 
-    override val acceptNode: (TSNode) -> Boolean = { n -> super.acceptNode(n) || !n.parent.isNull && n.isNamed && parentTargetTypes.contains(n.parent.grammarType) }
+    override fun acceptNode(node: TSNode, document: TSDocument): Boolean {
+        return super.acceptNode(node, document)
+                || !node.parent.isNull && node.isNamed && parentTargetTypes.contains(node.parent.grammarType)
+    }
 
     override fun allowsCountSelection(): Boolean = true
 
@@ -25,9 +28,8 @@ open class AnyItemHandler : TSBasedHandler() {
     override fun findSelection(editor: VimEditor, inner: Boolean, size: Int): TextRange? {
         if (size == 0) return null
         val tsDocument = getTSDocument(editor)
-        val firstNode = tsDocument.findSelectionNode { acceptNode(it) } ?: return null
-        val nodes = generateSequence(firstNode)
-        { tsDocument.findNextNode(it, { n -> acceptNode(n) }, loop = false) }
+        val firstNode = tsDocument.findSelectionNode { acceptNode(it, tsDocument) } ?: return null
+        val nodes = generateSequence(firstNode) { tsDocument.findNextNode(it, { n -> acceptNode(n, tsDocument) }, loop = false) }
             .filter { it.parent.isEqual(firstNode.parent) }
             .take(size).toMutableList()
 

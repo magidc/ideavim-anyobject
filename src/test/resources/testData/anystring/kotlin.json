@@ -1,0 +1,14 @@
+{
+  "extension": "kt",
+  "code": "val s1 = \"<caret_1>hello\"\nval s2 = \"\"\"<caret_2>triple\nquotes\"\"\"\nval s3 = \"<caret_3>hello $s1\"",
+  "inner": {
+    "1": "hello",
+    "2": "triple\nquotes",
+    "3": "hello $s1"
+  },
+  "around": {
+    "1": "\"hello\"",
+    "2": "\"\"\"triple\nquotes\"\"\"",
+    "3": "\"hello $s1\""
+  }
+}

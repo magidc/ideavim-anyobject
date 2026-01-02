@@ -3,9 +3,8 @@ package com.magidc.ideavim.anyobject.handlers
 import com.magidc.ideavim.anyobject.handlers.base.TSBasedHandler
 
 class AnyFunctionHandler : TSBasedHandler() {
-    // Keep it as a list to set an order of evaluation
     override val innerBlockTypes =
-        listOf(
+        setOf(
             "block", "function_body", "compound_statement", "body_statement", "method_invocation", "statements", "binary_operator", "binary_expression", "arrow_expression_clause",
             "statement_block", "infix_expression", "expression_statement", "brace_list", "binary"
         )

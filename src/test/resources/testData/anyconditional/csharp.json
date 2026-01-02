@@ -1,0 +1,20 @@
+{
+  "extension": "cs",
+  "code": "public class Test {\n    public void test(int x) {\n        if (true) {\n            Console.Write<caret_1>Line(\"if\");\n        } else {\n            Console.Write<caret_2>Line(\"else\");\n        }\n\n        switch (x) {\n            case 1:\n                Console.Write<caret_3>Line(\"1\");\n                break;\n            default:\n                Console.Write<caret_4>Line(\"default\");\n                break;\n        }\n\n        try {\n            int a = <caret_5>1 / 0;\n        } catch (Exception e) {\n            Console.Write<caret_6>Line(e.Message);\n        }\n    }\n}",
+  "inner": {
+    "1": "Console.WriteLine(\"if\");",
+    "2": "Console.WriteLine(\"else\");",
+    "3": "case 1:\n                Console.WriteLine(\"1\");\n                break;",
+    "4": "default:\n                Console.WriteLine(\"default\");\n                break;",
+    "5": "int a = 1 / 0;",
+    "6": "Console.WriteLine(e.Message);"
+  },
+  "around": {
+    "1": "if (true) {\n            Console.WriteLine(\"if\");\n        } else {\n            Console.WriteLine(\"else\");\n        }",
+    "2": "if (true) {\n            Console.WriteLine(\"if\");\n        } else {\n            Console.WriteLine(\"else\");\n        }",
+    "3": "switch (x) {\n            case 1:\n                Console.WriteLine(\"1\");\n                break;\n            default:\n                Console.WriteLine(\"default\");\n                break;\n        }",
+    "4": "switch (x) {\n            case 1:\n                Console.WriteLine(\"1\");\n                break;\n            default:\n                Console.WriteLine(\"default\");\n                break;\n        }",
+    "5": "try {\n            int a = 1 / 0;\n        } catch (Exception e) {\n            Console.WriteLine(e.Message);\n        }",
+    "6": "try {\n            int a = 1 / 0;\n        } catch (Exception e) {\n            Console.WriteLine(e.Message);\n        }"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "extension": "go",
+  "code": "func test(x int) {\n\tif true {\n\t\tfmt.Pr<caret_1>intln(\"if\")\n\t} else {\n\t\tfmt.Pr<caret_2>intln(\"else\")\n\t}\n\n\tswitch x {\n\tcase 1:\n\t\tfmt.Pr<caret_3>intln(\"1\")\n\tdefault:\n\t\tfmt.Pr<caret_4>intln(\"default\")\n\t}\n}\n",
+  "inner": {
+    "1": "fmt.Println(\"if\")",
+    "2": "fmt.Println(\"else\")",
+    "3": "case 1:\n\t\tfmt.Println(\"1\")",
+    "4": "default:\n\t\tfmt.Println(\"default\")"
+  },
+  "around": {
+    "1": "if true {\n\t\tfmt.Println(\"if\")\n\t} else {\n\t\tfmt.Println(\"else\")\n\t}",
+    "2": "if true {\n\t\tfmt.Println(\"if\")\n\t} else {\n\t\tfmt.Println(\"else\")\n\t}",
+    "3": "switch x {\n\tcase 1:\n\t\tfmt.Println(\"1\")\n\tdefault:\n\t\tfmt.Println(\"default\")\n\t}",
+    "4": "switch x {\n\tcase 1:\n\t\tfmt.Println(\"1\")\n\tdefault:\n\t\tfmt.Println(\"default\")\n\t}"
+  }
+}

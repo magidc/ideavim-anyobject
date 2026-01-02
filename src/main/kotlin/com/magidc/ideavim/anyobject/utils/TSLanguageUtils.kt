@@ -35,35 +35,35 @@ class TSLanguageUtils {
         class TSLanguageInfo(
             val name: String,
             val appName: String,
-            val fileExtension: String,
             val tsLanguage: (() -> TSLanguage)?,
+            val fileExtensions: Set<String>
         ) {
             override fun toString(): String = name
         }
 
-        private val UNKNOWN_LANGUAGE = TSLanguageInfo("UNKNOWN", "", "", null)
+        private val UNKNOWN_LANGUAGE = TSLanguageInfo("UNKNOWN", "", null, emptySet())
         private val languageMap: Map<String, TSLanguageInfo> = mapOf(
-            "JAVA" to TSLanguageInfo("JAVA", "intellij", "java", { TreeSitterJava() }),
-            "KOTLIN" to TSLanguageInfo("KOTLIN", "intellij", "kt", { TreeSitterKotlin() }),
-            "CLOJURE" to TSLanguageInfo("CLOJURE", "intellij", "clj", { TreeSitterClojure() }),
-            "SCALA" to TSLanguageInfo("SCALA", "intellij", "scala", { TreeSitterScala() }),
-            "C#" to TSLanguageInfo("C#", "rider", "cs", { TreeSitterCSharp() }),
-            "RUST" to TSLanguageInfo("RUST", "rustrover", "rs", { TreeSitterRust() }),
-            "RUBY" to TSLanguageInfo("RUBY", "rubymine", "rb", { TreeSitterRuby() }),
-            "GO" to TSLanguageInfo("GO", "goland", "go", { TreeSitterGo() }),
-            "PYTHON" to TSLanguageInfo("PYTHON", "pycharm", "py", { TreeSitterPython() }),
-            "PHP" to TSLanguageInfo("PHP", "phpstorm", "php", { TreeSitterPhp() }),
-            "HTML" to TSLanguageInfo("HTML", "webstorm", "html", { TreeSitterHtml() }),
-            "CSS" to TSLanguageInfo("CSS", "webstorm", "css", { TreeSitterCss() }),
-            "ECMAScript 6" to TSLanguageInfo("ECMAScript 6", "webstorm", "js", { TreeSitterJavascript() }),
-            "TYPESCRIPT" to TSLanguageInfo("TYPESCRIPT", "webstorm", "ts", { TreeSitterTypescript() }),
-            "OBJECTIVE-C" to TSLanguageInfo("OBJECTIVE-C", "appcode", "m", { TreeSitterObjc() }),
-            "SWIFT" to TSLanguageInfo("SWIFT", "appcode", "swift", { TreeSitterSwift() }),
-            "C/C++" to TSLanguageInfo("C/C++", "clion", "cpp", { TreeSitterCpp() }),
-            "R" to TSLanguageInfo("R", "", "r", { TreeSitterR() }),
-            "SQL" to TSLanguageInfo("SQL", "", "sql", { TreeSitterSql() }),
-            "JSON" to TSLanguageInfo("JSON", "", "json", { TreeSitterJson() }),
-            "YAML" to TSLanguageInfo("YAML", "", "yaml", { TreeSitterYaml() })
+            "JAVA" to TSLanguageInfo("JAVA", "intellij", { TreeSitterJava() }, setOf("java")),
+            "KOTLIN" to TSLanguageInfo("KOTLIN", "intellij", { TreeSitterKotlin() }, setOf("kt")),
+            "CLOJURE" to TSLanguageInfo("CLOJURE", "intellij", { TreeSitterClojure() }, setOf("clj")),
+            "SCALA" to TSLanguageInfo("SCALA", "intellij", { TreeSitterScala() }, setOf("scala")),
+            "C#" to TSLanguageInfo("C#", "rider", { TreeSitterCSharp() }, setOf("cs")),
+            "RUST" to TSLanguageInfo("RUST", "rustrover", { TreeSitterRust() }, setOf("rs")),
+            "RUBY" to TSLanguageInfo("RUBY", "rubymine", { TreeSitterRuby() }, setOf("rb")),
+            "GO" to TSLanguageInfo("GO", "goland", { TreeSitterGo() }, setOf("go")),
+            "PYTHON" to TSLanguageInfo("PYTHON", "pycharm", { TreeSitterPython() }, setOf("py")),
+            "PHP" to TSLanguageInfo("PHP", "phpstorm", { TreeSitterPhp() }, setOf("php")),
+            "HTML" to TSLanguageInfo("HTML", "webstorm", { TreeSitterHtml() }, setOf("html", "htm")),
+            "CSS" to TSLanguageInfo("CSS", "webstorm", { TreeSitterCss() }, setOf("css")),
+            "ECMAScript 6" to TSLanguageInfo("ECMAScript 6", "webstorm", { TreeSitterJavascript() }, setOf("js")),
+            "TYPESCRIPT" to TSLanguageInfo("TYPESCRIPT", "webstorm", { TreeSitterTypescript() }, setOf("ts")),
+            "OBJECTIVE-C" to TSLanguageInfo("OBJECTIVE-C", "appcode", { TreeSitterObjc() }, setOf("m")),
+            "SWIFT" to TSLanguageInfo("SWIFT", "appcode", { TreeSitterSwift() }, setOf("swift")),
+            "C/C++" to TSLanguageInfo("C/C++", "clion", { TreeSitterCpp() }, setOf("cpp")),
+            "R" to TSLanguageInfo("R", "", { TreeSitterR() }, setOf("r")),
+            "SQL" to TSLanguageInfo("SQL", "", { TreeSitterSql() }, setOf("sql")),
+            "JSON" to TSLanguageInfo("JSON", "", { TreeSitterJson() }, setOf("json")),
+            "YAML" to TSLanguageInfo("YAML", "", { TreeSitterYaml() }, setOf("yaml", "yml"))
         )
 
         private fun getPSILanguage(editor: VimEditor): String? {
@@ -78,7 +78,7 @@ class TSLanguageUtils {
         private fun getLanguageByFileExtension(editor: VimEditor): TSLanguageInfo? {
             val filePath = editor.getVirtualFile()?.path ?: return null
             val extension = filePath.substringAfterLast('.', "")
-            return languageMap.values.firstOrNull { it.fileExtension == extension }
+            return languageMap.values.firstOrNull { it.fileExtensions.contains(extension) }
         }
 
         private fun getDefaultAppLanguage(): TSLanguageInfo? {

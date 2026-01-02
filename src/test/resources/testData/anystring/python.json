@@ -1,0 +1,22 @@
+{
+  "extension": "py",
+  "code": "s1 = '<caret_1>hello'\ns2 = \"<caret_2>world\"\ns3 = '''<caret_3>triple\nquotes'''\ns4 = \"\"\"<caret_4>triple\ndouble\"\"\"\ns5 = f\"<caret_5>hello {s1}\"\ns6 = r\"<caret_6>raw string\"\ns7 = fr\"<caret_7>formatted raw\"",
+  "inner": {
+    "1": "hello",
+    "2": "world",
+    "3": "triple\nquotes",
+    "4": "triple\ndouble",
+    "5": "hello {s1}",
+    "6": "raw string",
+    "7": "formatted raw"
+  },
+  "around": {
+    "1": "'hello'",
+    "2": "\"world\"",
+    "3": "'''triple\nquotes'''",
+    "4": "\"\"\"triple\ndouble\"\"\"",
+    "5": "f\"hello {s1}\"",
+    "6": "r\"raw string\"",
+    "7": "fr\"formatted raw\""
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "extension": "cs",
+  "code": "public class Test {\n    private int x = <caret_1>10;\n    public void Main() {\n        string s = \"<caret_2>hello\";\n        var d = <caret_3>3.14;\n    }\n}",
+  "inner": {
+    "1": "10",
+    "2": "\"hello\"",
+    "3": "3.14"
+  },
+  "around": {
+    "1": "private int x = 10;",
+    "2": "string s = \"hello\";",
+    "3": "var d = 3.14;"
+  }
+}

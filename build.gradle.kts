@@ -71,7 +71,8 @@ dependencies {
     implementation("io.github.bonede:tree-sitter-comment:0.1.0")
     implementation("io.github.bonede:tree-sitter-cpp:0.23.4")
     implementation("io.github.bonede:tree-sitter-json:0.24.8")
-    implementation("io.github.bonede:tree-sitter-yaml:0.5.0")
+//    implementation("io.github.bonede:tree-sitter-yaml:0.5.0")
+    implementation(files("lib/tree-sitter-yaml-0.5.0a.jar"))
 }
 
 intellijPlatform {

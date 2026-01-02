@@ -1,0 +1,12 @@
+{
+  "extension": "php",
+  "code": "<?php\n$s1 = '<caret_1>hello';\n$s2 = \"<caret_2>world\";",
+  "inner": {
+    "1": "hello",
+    "2": "world"
+  },
+  "around": {
+    "1": "'hello'",
+    "2": "\"world\""
+  }
+}

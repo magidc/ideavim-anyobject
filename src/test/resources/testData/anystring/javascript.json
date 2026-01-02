@@ -1,0 +1,14 @@
+{
+  "extension": "js",
+  "code": "const s1 = '<caret_1>hello';\nconst s2 = \"<caret_2>world\";\nconst s3 = `<caret_3>template ${s1}`;",
+  "inner": {
+    "1": "hello",
+    "2": "world",
+    "3": "template ${s1}"
+  },
+  "around": {
+    "1": "'hello'",
+    "2": "\"world\"",
+    "3": "`template ${s1}`"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "extension": "scala",
+  "code": "val s1 = \"<caret_1>hello\"\nval s2 = \"\"\"<caret_2>triple\nquotes\"\"\"",
+  "inner": {
+    "1": "hello",
+    "2": "triple\nquotes"
+  },
+  "around": {
+    "1": "\"hello\"",
+    "2": "\"\"\"triple\nquotes\"\"\""
+  }
+}

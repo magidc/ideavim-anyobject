@@ -1,0 +1,12 @@
+{
+  "extension": "java",
+  "code": "class Test {\n    String s1 = \"<caret_1>hello\";\n    String s2 = \"\"\"<caret_2>\n        text\n        block\n        \"\"\";\n}",
+  "inner": {
+    "1": "hello",
+    "2": "\n        text\n        block\n        "
+  },
+  "around": {
+    "1": "\"hello\"",
+    "2": "\"\"\"\n        text\n        block\n        \"\"\""
+  }
+}

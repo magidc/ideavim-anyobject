@@ -1,0 +1,14 @@
+{
+  "extension": "m",
+  "code": "int a = <caret_1>10;\nNSString *b = @\"<caret_2>hello\";\n\n@interface A : NSObject {\n    int x;\n}\n@end\n\n@implementation A\n- (void)test {\n    x = <caret_3>1;\n}\n@end",
+  "inner": {
+    "1": "10",
+    "2": "@\"hello\"",
+    "3": "1"
+  },
+  "around": {
+    "1": "int a = 10;",
+    "2": "NSString *b = @\"hello\";",
+    "3": "x = 1;"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "extension": "py",
+  "code": "a = <caret_1>10\nb = \"<caret_2>hello\"\nc = [1, 2, <caret_3>3]\nd = {\"key\": <caret_4>\"value\"}\ne = f(1, <caret_5>2)",
+  "inner": {
+    "1": "10",
+    "2": "\"hello\"",
+    "3": "[1, 2, 3]",
+    "4": "{\"key\": \"value\"}",
+    "5": "f(1, 2)"
+  },
+  "around": {
+    "1": "a = 10",
+    "2": "b = \"hello\"",
+    "3": "c = [1, 2, 3]",
+    "4": "d = {\"key\": \"value\"}",
+    "5": "e = f(1, 2)"
+  }
+}
