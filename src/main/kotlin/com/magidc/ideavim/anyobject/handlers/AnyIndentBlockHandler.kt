@@ -17,12 +17,12 @@ class AnyIndentBlockHandler : TextBasedHandler() {
     override fun findSelection(editor: VimEditor, inner: Boolean, size: Int): TextRange {
         var lineNumber = editor.currentCaret().getLine()
         while (lineNumber > 0 && editor.getLineText(lineNumber).isBlank()) lineNumber--
-        val lineIndentation = editor.getLineText(lineNumber).takeWhile { it.isWhitespace() }
+        val lineIndentation = editor.getLineText(lineNumber).takeWhile { it.isWhitespace() }.length
         var fromLine = lineNumber
         while (fromLine > 0) {
             fromLine--
             val lineText = editor.getLineText(fromLine)
-            if (lineText.isNotBlank() && lineText.takeWhile { it.isWhitespace() } != lineIndentation) {
+            if (lineText.isNotBlank() && lineText.takeWhile { it.isWhitespace() }.length < lineIndentation) {
                 fromLine++
                 break
             }
@@ -31,7 +31,7 @@ class AnyIndentBlockHandler : TextBasedHandler() {
         while (toLine < editor.lineCount() - 1) {
             toLine++
             val lineText = editor.getLineText(toLine)
-            if (lineText.isNotBlank() && lineText.takeWhile { it.isWhitespace() } != lineIndentation) {
+            if (lineText.isNotBlank() && lineText.takeWhile { it.isWhitespace() }.length < lineIndentation) {
                 toLine--
                 break
             }
@@ -39,7 +39,7 @@ class AnyIndentBlockHandler : TextBasedHandler() {
         while (toLine < editor.lineCount() && editor.getLineText(toLine).isBlank()) toLine--
         while (fromLine > 0 && editor.getLineText(fromLine).isBlank()) fromLine++
         return TextRange(
-            editor.getLineStartOffset(fromLine) + lineIndentation.length,
+            editor.getLineStartOffset(fromLine) + lineIndentation,
             editor.getLineEndOffset(toLine)
         )
     }

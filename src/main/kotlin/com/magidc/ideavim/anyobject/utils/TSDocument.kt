@@ -40,17 +40,17 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
 
         private val parserCache = LRUCache<String, TSParser>(3)
 
-        private fun getParser(editor: VimEditor): TSParser {
-            val tsLanguageInfo = TSLanguageUtils.getLanguage(editor)
-            return parserCache.getOrPut(tsLanguageInfo.name) {
+        private fun getParser(languageInfo: TSLanguageUtils.Companion.TSLanguageInfo): TSParser {
+            return parserCache.getOrPut(languageInfo.name) {
                 val parser = TSParser()
-                tsLanguageInfo.tsLanguage?.let { parser.setLanguage(it.invoke()) }
+                languageInfo.tsLanguage?.let { parser.setLanguage(it.invoke()) }
                 parser
             }
         }
     }
 
-    val parser: TSParser = getParser(editor)
+    val languageInfo: TSLanguageUtils.Companion.TSLanguageInfo = TSLanguageUtils.getLanguage(editor)
+    val parser: TSParser = getParser(languageInfo)
     private lateinit var tsTree: TSTree
     private val disabled: Boolean = parser.language == null
     private var updated: Boolean = false
@@ -147,7 +147,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         return TextRange(toCharOffset(fromNode.startByte), toCharOffset(toNode.endByte))
     }
 
-    private fun findCurrentNode(): TSNode? {
+    fun findCurrentNode(): TSNode? {
         if (!updated) loadTSTree()
         val byteOffset = toByteOffset(editor.getCareOffset())
         var node = tsTree.rootNode
@@ -163,9 +163,8 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         return generateSequence(currentNode) { it.parent.takeIf { n -> !n.isNull } }.firstOrNull { acceptNode(it) }
     }
 
-    fun findSelectionNode(acceptNode: (TSNode) -> Boolean): TSNode? {
-        if (disabled) return null
-        val currentNode = findCurrentNode() ?: return null
+    fun findSelectionNode(acceptNode: (TSNode) -> Boolean, currentNode: TSNode? = findCurrentNode()): TSNode? {
+        if (disabled || null == currentNode) return null
         return findObjectNode(currentNode, acceptNode) ?: findNextNode(currentNode, acceptNode, loop = false)
     }
 

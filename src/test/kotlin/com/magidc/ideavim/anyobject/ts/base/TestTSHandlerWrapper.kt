@@ -15,5 +15,6 @@ class TestTSHandlerWrapper(val handler: TSBasedHandler) : TSBasedHandler() {
 
     override fun allowsCountSelection(): Boolean = handler.allowsCountSelection()
 
-    override fun findInnerBlockRange(node: TSNode, offset: Int, tsDocument: TSDocument): TextRange? = handler.findInnerBlockRange(node, offset, tsDocument)
+    override fun findInnerBlockRange(currentNode: TSNode, objectNode: TSNode, offset: Int, tsDocument: TSDocument): TextRange? =
+        handler.findInnerBlockRange(currentNode, objectNode, offset, tsDocument)
 }

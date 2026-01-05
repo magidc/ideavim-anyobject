@@ -4,8 +4,8 @@
   "inner": {
     "1": "Console.WriteLine(\"if\");",
     "2": "Console.WriteLine(\"else\");",
-    "3": "case 1:\n                Console.WriteLine(\"1\");\n                break;",
-    "4": "default:\n                Console.WriteLine(\"default\");\n                break;",
+    "3": "Console.WriteLine(\"1\");\n                break;",
+    "4": "Console.WriteLine(\"default\");\n                break;",
     "5": "int a = 1 / 0;",
     "6": "Console.WriteLine(e.Message);"
   },

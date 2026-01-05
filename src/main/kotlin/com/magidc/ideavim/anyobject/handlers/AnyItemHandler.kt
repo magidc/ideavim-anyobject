@@ -23,12 +23,12 @@ open class AnyItemHandler : TSBasedHandler() {
 
     override fun allowsCountSelection(): Boolean = true
 
-    override fun findInnerBlockRange(node: TSNode, offset: Int, tsDocument: TSDocument): TextRange = tsDocument.toTextRange(node)
+    override fun findInnerBlockRange(currentNode: TSNode, objectNode: TSNode, offset: Int, tsDocument: TSDocument): TextRange = tsDocument.toTextRange(objectNode)
 
     override fun findSelection(editor: VimEditor, inner: Boolean, size: Int): TextRange? {
         if (size == 0) return null
         val tsDocument = getTSDocument(editor)
-        val firstNode = tsDocument.findSelectionNode { acceptNode(it, tsDocument) } ?: return null
+        val firstNode = tsDocument.findSelectionNode({ acceptNode(it, tsDocument) }) ?: return null
         val nodes = generateSequence(firstNode) { tsDocument.findNextNode(it, { n -> acceptNode(n, tsDocument) }, loop = false) }
             .filter { it.parent.isEqual(firstNode.parent) }
             .take(size).toMutableList()

@@ -17,18 +17,18 @@ class AnyStringHandler : TSBasedHandler() {
         "interpreted_string_literal", "template_string"
     )
 
-    override fun findInnerBlockRange(node: TSNode, offset: Int, tsDocument: TSDocument): TextRange? {
-        val string = node.toText(tsDocument.editor, maxSize = Int.MAX_VALUE)
+    override fun findInnerBlockRange(currentNode: TSNode, objectNode: TSNode, offset: Int, tsDocument: TSDocument): TextRange? {
+        val string = objectNode.toText(tsDocument.editor, maxSize = Int.MAX_VALUE)
         if (string.isEmpty()) return null
         val prefix = string.takeWhile { it !in quotes }
         val startQuotes = string.substring(prefix.length).takeWhile { it in quotes }
-        if (startQuotes.isEmpty()) return tsDocument.toTextRange(node)
+        if (startQuotes.isEmpty()) return tsDocument.toTextRange(objectNode)
         val innerQuoteChar = startQuotes.last()
         val endQuotes = string.substring(prefix.length + startQuotes.length).substringAfter(innerQuoteChar) + "x"
 
         return TextRange(
-            tsDocument.toCharOffset(node.startByte) + prefix.length + startQuotes.length,
-            tsDocument.toCharOffset(node.endByte) - endQuotes.length
+            tsDocument.toCharOffset(objectNode.startByte) + prefix.length + startQuotes.length,
+            tsDocument.toCharOffset(objectNode.endByte) - endQuotes.length
         )
     }
 }

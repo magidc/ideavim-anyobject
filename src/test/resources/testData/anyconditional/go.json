@@ -4,8 +4,8 @@
   "inner": {
     "1": "fmt.Println(\"if\")",
     "2": "fmt.Println(\"else\")",
-    "3": "case 1:\n\t\tfmt.Println(\"1\")",
-    "4": "default:\n\t\tfmt.Println(\"default\")"
+    "3": "fmt.Println(\"1\")",
+    "4": "fmt.Println(\"default\")"
   },
   "around": {
     "1": "if true {\n\t\tfmt.Println(\"if\")\n\t} else {\n\t\tfmt.Println(\"else\")\n\t}",

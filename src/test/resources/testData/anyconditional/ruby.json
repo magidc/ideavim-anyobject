@@ -4,8 +4,8 @@
   "inner": {
     "1": "puts \"if\"",
     "2": "puts \"else\"",
-    "3": "when 1\n        puts \"1\"",
-    "4": "else\n        puts \"default\"",
+    "3": "puts \"1\"",
+    "4": "puts \"default\"",
     "5": "a = 1 / 0",
     "6": "puts e.message"
   },

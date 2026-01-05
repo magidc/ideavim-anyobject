@@ -25,7 +25,7 @@ class AnyVariableHandler : TSBasedHandler() {
 
     override fun findSelection(editor: VimEditor, inner: Boolean, size: Int): TextRange? {
         val tsDocument = getTSDocument(editor)
-        val objectNode = tsDocument.findSelectionNode { acceptNode(it, tsDocument) } ?: return null
+        val objectNode = tsDocument.findSelectionNode({ acceptNode(it, tsDocument) }) ?: return null
         val objectNodes = sequenceOf(objectNode, objectNode.nextSibling.takeIf { !it.isNull && it.grammarType == ";" })
             .filterNotNull().toList()
         if (!inner) return tsDocument.toTextRange(objectNodes.first(), objectNodes.last())

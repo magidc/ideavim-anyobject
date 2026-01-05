@@ -4,8 +4,8 @@
   "inner": {
     "1": "std::cout << \"if\" << std::endl;",
     "2": "std::cout << \"else\" << std::endl;",
-    "3": "case 1:\n            std::cout << \"1\" << std::endl;\n            break;",
-    "4": "default:\n            std::cout << \"default\" << std::endl;",
+    "3": "std::cout << \"1\" << std::endl;\n            break;",
+    "4": "std::cout << \"default\" << std::endl;",
     "5": "int a = 1 / 0;",
     "6": "std::cerr << e.what() << std::endl;"
   },

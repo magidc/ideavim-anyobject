@@ -4,8 +4,8 @@
   "inner": {
     "1": "console.log(\"if\");",
     "2": "console.log(\"else\");",
-    "3": "case 1:\n            console.log(\"1\");\n            break;",
-    "4": "default:\n            console.log(\"default\");",
+    "3": "console.log(\"1\");\n            break;",
+    "4": "console.log(\"default\");",
     "5": "let a: number = 1 / 0;",
     "6": "console.error(e);"
   },

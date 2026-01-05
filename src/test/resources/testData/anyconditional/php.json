@@ -4,8 +4,8 @@
   "inner": {
     "1": "echo \"if\";",
     "2": "echo \"else\";",
-    "3": "case 1:\n            echo \"1\";\n            break;",
-    "4": "default:\n            echo \"default\";",
+    "3": "echo \"1\";\n            break;",
+    "4": "echo \"default\";",
     "5": "$a = 1 / 0;",
     "6": "echo $e->getMessage();"
   },
