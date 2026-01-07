@@ -6,9 +6,8 @@ import com.magidc.ideavim.anyobject.utils.LRUCache
 import com.magidc.ideavim.anyobject.utils.TSDocument
 import com.magidc.ideavim.anyobject.utils.TSLanguageUtils
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.getFirstNamedChildWithGrammar
-import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.lastNamedLeafOrSelf
-import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.nextNamedLeaf
-import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.prevLeaf
+import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.lastLeafOrSelf
+import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.toText
 import org.treesitter.TSNode
 import kotlin.reflect.KClass
 
@@ -17,7 +16,7 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
     companion object {
         val documentCache = LRUCache<String, TSDocument>(5) { _, v -> v.editor.document.removeChangeListener(v) }
-        private val braceHandler = DelimiterHandler(false, listOf("{" to "}"))
+        private val assigmentSymbols = setOf("=", "=>")
     }
 
     protected open val innerBlockTypes: Set<String> = setOf("block")
@@ -44,41 +43,52 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
     override fun allowsCountSelection(): Boolean = false
 
-
     open fun findInnerBlockRange(currentNode: TSNode, objectNode: TSNode, offset: Int, tsDocument: TSDocument): TextRange? {
-//        return objectNode.getFirstNamedChildWithGrammar(innerBlockTypes, offset)
-//            ?.takeIf { it.namedChildCount > 0 }
-//            ?.let { getCodeBlock(it, tsDocument) }
         return objectNode.getFirstNamedChildWithGrammar(innerBlockTypes, offset)
             ?.takeIf { it.namedChildCount > 0 }
-            ?.let {
-                val fromNode = it.nextNamedLeaf() ?: it
-                val toNode = (it.getChild(it.childCount - 1).let { x -> if (x.grammarType == "}" || x.grammarType == "end") x.prevLeaf() else x })?.takeIf { x -> !x.isNull }
-                    ?: it.lastNamedLeafOrSelf()
-                tsDocument.toTextRange(fromNode, toNode)
-            }
+            ?.let { getCodeBlock(it, tsDocument) }
     }
 
     protected fun getCodeBlock(node: TSNode, tsDocument: TSDocument): TextRange? {
-        return when (tsDocument.languageInfo.blockType) {
-            TSLanguageUtils.TSBlockType.BRACES -> getBracesCodeBlock(node, tsDocument)
-//            TSLanguageUtils.TSBlockType.INDENTED -> getIndentBlock(node, tsDocument)
-//            TSLanguageUtils.TSBlockType.END -> getEndCodeBlock(node, tsDocument)
-            else -> null
-        }
+        if (node.childCount == 0) return null
+        if (node.childCount >= 2 && assigmentSymbols.contains(node.getChild(0).grammarType))
+            return tsDocument.toTextRange(node.getChild(1), node)
+        if (tsDocument.languageInfo.blockType == TSLanguageUtils.TSBlockType.BRACES)
+            return getBracesCodeBlock(node, tsDocument) ?: tsDocument.toTextRange(node)
+        if (tsDocument.languageInfo.blockType == TSLanguageUtils.TSBlockType.END)
+            return getBracesCodeBlock(node, tsDocument) ?: getEndCodeBlock(node, tsDocument) ?: tsDocument.toTextRange(node)
+        return tsDocument.toTextRange(node)
+    }
+
+    private fun getIndentBlock(node: TSNode, tsDocument: TSDocument): TextRange? {
+        val nodeText = node.toText(tsDocument.editor, Int.MAX_VALUE)
+        val firstLineEnd = nodeText.indexOf('\n').takeIf { it > -1 } ?: return null
+        return TextRange(
+            tsDocument.toCharOffset(node.startByte) + firstLineEnd,
+            tsDocument.toCharOffset(node.endByte)
+        )
     }
 
     private fun getBracesCodeBlock(node: TSNode, tsDocument: TSDocument): TextRange? {
-        val nodeStartOffset = tsDocument.toCharOffset(node.startByte)
-        val text = tsDocument.editor.text().substring(nodeStartOffset, tsDocument.toCharOffset(node.endByte))
-        val openBraceOffset = text.indexOf('{')
-        if (openBraceOffset == -1) return tsDocument.toTextRange(node)
-        return braceHandler.findTextSelection(text, nodeStartOffset, openBraceOffset, true, 1)
+        val nodeText = node.toText(tsDocument.editor, Int.MAX_VALUE)
+        val openBraceOffset = nodeText.indexOf('{').takeIf { it > -1 } ?: return null
+        val closeBraceOffset = nodeText.lastIndexOf('}').takeIf { it > -1 } ?: return null
+        val textOffset = tsDocument.toCharOffset(node.startByte)
+        return TextRange(textOffset + openBraceOffset + 1, textOffset + closeBraceOffset)
+    }
+
+    private fun getEndCodeBlock(node: TSNode, tsDocument: TSDocument): TextRange? {
+        if (node.lastLeafOrSelf().grammarType != "end") return null
+        val nodeText = node.toText(tsDocument.editor, Int.MAX_VALUE)
+        val firstLineEnd = nodeText.indexOf('\n').takeIf { it > -1 } ?: return null
+        return TextRange(
+            tsDocument.toCharOffset(node.startByte) + firstLineEnd,
+            tsDocument.toCharOffset(node.endByte) - 3
+        )
     }
 
     final override fun findJumpElementStartOffset(editor: VimEditor, forward: Boolean): Int? {
         val tsDocument = getTSDocument(editor)
         return tsDocument.findJumpElementOffset({ acceptNode(it, tsDocument) }, forward)
     }
-
 }

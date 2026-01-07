@@ -8,7 +8,7 @@ import org.treesitter.TSNode
 class AnyConditionalHandler : TSBasedHandler() {
 
     override val innerBlockTypes = setOf(
-        "switch_block_statement_group", "switch_section", "case_statement", "expression_statement", "block",
+        "switch_block_statement_group", "switch_section", "case_statement", "block",
         "return_statement", "control_structure_body", "when_entry", "match_arm", "default_statement", "else_clause", "case_clause",
         "compound_statement", "statement_block", "switch_case", "then"
     )
