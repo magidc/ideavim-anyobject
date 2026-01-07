@@ -1,5 +1,12 @@
 # Changelog
+## 3.0.10
+
+Bug fix for AnyIndentBlock
+Unit tests for AnyString and AnyVariable
+AnyConditional inner selection is still unstable
+
 ## 3.0.9
+
 Unit tests for AnyLoop, AnyFunction, AnyClass, AnyArgument, AnyItem and AnyArgOrItem
 AnyIndentBlock includes empty lines as part of the indented block. Also, around selections will use visual line wise mode
 
