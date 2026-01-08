@@ -4,8 +4,8 @@
   "inner": {
     "1": "println!(\"if\");",
     "2": "println!(\"else\");",
-    "3": "println!(\"1\"),",
-    "4": "println!(\"default\"),"
+    "3": "1 => println!(\"1\"),",
+    "4": "_ => println!(\"default\"),"
   },
   "around": {
     "1": "if true {\n        println!(\"if\");\n    } else {\n        println!(\"else\");\n    }",

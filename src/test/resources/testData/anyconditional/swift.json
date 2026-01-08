@@ -4,8 +4,8 @@
   "inner": {
     "1": "print(\"if\")",
     "2": "print(\"else\")",
-    "3": "print(\"1\")",
-    "4": "print(\"default\")",
+    "3": "case 1:\n        print(\"1\")",
+    "4": "default:\n        print(\"default\")",
     "5": "let a = 1 / 0",
     "6": "print(error)"
   },

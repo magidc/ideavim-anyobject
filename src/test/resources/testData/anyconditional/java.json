@@ -4,8 +4,8 @@
   "inner": {
     "1": "System.out.println(\"if\");",
     "2": "System.out.println(\"else\");",
-    "3": "System.out.println(\"1\");\n                break;",
-    "4": "break;",
+    "3": "case 1:\n                System.out.println(\"1\");\n                break;",
+    "4": "default:\n                break;",
     "5": "int a = 1 / 0;",
     "6": "e.printStackTrace();",
     "7": "System.out.println(\"no braces if\");",

@@ -4,8 +4,8 @@
   "inner": {
     "1": "println(\"if\")",
     "2": "println(\"else\")",
-    "3": "println(\"1\")",
-    "4": "println(\"else\")",
+    "3": "1 -> println(\"1\")",
+    "4": "else -> println(\"else\")",
     "5": "val a = 1 / 0",
     "6": "e.printStackTrace()"
   },
