@@ -1,4 +1,8 @@
 # Changelog
+## 3.0.11
+
+Unit tests for AnyConditional. There are still some small selection issues in Ruby on Rails but rare. 
+
 ## 3.0.10
 
 Bug fix for AnyIndentBlock

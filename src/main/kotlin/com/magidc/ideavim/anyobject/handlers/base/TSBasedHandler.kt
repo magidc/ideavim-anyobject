@@ -60,16 +60,7 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
         return tsDocument.toTextRange(node)
     }
 
-    private fun getIndentBlock(node: TSNode, tsDocument: TSDocument): TextRange? {
-        val nodeText = node.toText(tsDocument.editor, Int.MAX_VALUE)
-        val firstLineEnd = nodeText.indexOf('\n').takeIf { it > -1 } ?: return null
-        return TextRange(
-            tsDocument.toCharOffset(node.startByte) + firstLineEnd,
-            tsDocument.toCharOffset(node.endByte)
-        )
-    }
-
-    private fun getBracesCodeBlock(node: TSNode, tsDocument: TSDocument): TextRange? {
+    protected fun getBracesCodeBlock(node: TSNode, tsDocument: TSDocument): TextRange? {
         val nodeText = node.toText(tsDocument.editor, Int.MAX_VALUE)
         val openBraceOffset = nodeText.indexOf('{').takeIf { it > -1 } ?: return null
         val closeBraceOffset = nodeText.lastIndexOf('}').takeIf { it > -1 } ?: return null
