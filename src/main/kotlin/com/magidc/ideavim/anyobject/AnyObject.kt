@@ -48,7 +48,7 @@ val handlerSupplierMap = mapOf(
     "anycomment" to Pair("k", ::AnyCommentHandler),
     "anyargument" to Pair("a", ::AnyArgumentHandler),
     "anyfunction" to Pair("f", ::AnyFunctionHandler),
-    "anyfunctionorlambda" to Pair("F", ::AnyFunctionOrLambdaHandler),
+    "anyfunctionorlambda" to Pair("m", ::AnyFunctionOrLambdaHandler),
     "anyclass" to Pair("c", ::AnyClassHandler),
     "anydocument" to Pair("d", ::AnyDocumentHandler),
     "anyloop" to Pair("l", ::AnyLoopHandler),

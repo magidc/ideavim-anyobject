@@ -15,7 +15,7 @@ concepts programmers use to think about code: classes, functions, arguments, loo
 |-----------------------------------------------|-----------------------------------------------------------------------------------------|-----------------|---------------|
 | [AnyArgument](#anyargument-a)                 | Function arguments, method parameters, and callable expressions                         | `a`             | ✓             |
 | [AnyFunction](#anyfunction-f)                 | Functions, methods, and procedures                                                      | `f`             | x             |
-| [AnyFunctionOrLambda](#anyfunctionorlambda-F) | Functions, methods, procedures, lambdas and arrow functions                             | `F`             | x             |
+| [AnyFunctionOrLambda](#anyfunctionorlambda-m) | Functions, methods, procedures, lambdas and arrow functions                             | `m`             | x             |
 | [AnyClass](#anyclass-c)                       | Class, interface, struct, and similar type definitions                                  | `c`             | x             |
 | [AnyVariable](#anyvariable-v)                 | Field/variable declarations and assignments                                             | `v`             | x             |
 | [AnyLoop](#anyloop-l)                         | Loop statements (`for`, `while`, `do`, `repeat`, `until`, `loop`, etc.)                 | `l`             | x             |
@@ -163,7 +163,7 @@ Functions, methods, and procedures.
 - **Inner selection (`if`)**: Selects only the function body
 - **Outer selection (`af`)**: Selects the entire function including the function name, decorators, and the body
 
-### AnyFunctionOrLambda (`F`)
+### AnyFunctionOrLambda (`m`)
 
 Extends AnyFunction to include lambda or arrow functions.
 
