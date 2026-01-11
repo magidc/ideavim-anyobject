@@ -1,0 +1,18 @@
+{
+  "extension": "r",
+  "code": "test_func <- function(x) {<caret_1>\n  print(x)<caret_2>\n}<caret_3>\n\n<caret_4>add_func <- function(a, b) <caret_5>a + b",
+  "inner": {
+    "1": "print(x)",
+    "2": "print(x)",
+    "3": "a + b",
+    "4": "a + b",
+    "5": "a + b"
+  },
+  "around": {
+    "1": "function(x) {\n  print(x)\n}",
+    "2": "function(x) {\n  print(x)\n}",
+    "3": "function(a, b) a + b",
+    "4": "function(a, b) a + b",
+    "5": "function(a, b) a + b"
+  }
+}

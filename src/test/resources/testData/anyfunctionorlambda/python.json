@@ -10,8 +10,8 @@
     "6": "await asyncio.sleep(1)",
     "7": "await asyncio.sleep(1)",
     "8": "await asyncio.sleep(1)",
-    "9": "",
-    "10": "",
+    "9": "x * x",
+    "10": "x * x",
     "11": ""
   },
   "around": {
@@ -23,8 +23,8 @@
     "6": "async def async_test():\n    await asyncio.sleep(1)",
     "7": "async def async_test():\n    await asyncio.sleep(1)",
     "8": "async def async_test():\n    await asyncio.sleep(1)",
-    "9": "",
-    "10": "",
+    "9": "lambda x: x * x",
+    "10": "lambda x: x * x",
     "11": ""
   }
 }

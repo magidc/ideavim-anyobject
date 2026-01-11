@@ -11,7 +11,7 @@ class AnyClassHandler : TSBasedHandler() {
     override val targetTypes: Set<String> = setOf(
         "class", "class_declaration", "class_definition", "class_implementation", "class_specifier", "enum_declaration", "enum_item", "impl_item",
         "interface_declaration", "mixin_declaration", "module", "object_declaration", "object_definition", "protocol_declaration",
-        "record_declaration", "struct_declaration", "struct_item", "struct_specifier", "superclass", "trait_declaration", "trait_definition",
+        "record_declaration", "struct_declaration", "struct_item", "struct_specifier", "trait_declaration", "trait_definition",
         "trait_item", "type_alias_declaration", "type_declaration"
     )
 }

@@ -1,0 +1,40 @@
+{
+  "extension": "java",
+  "code": "public class Test {\n    public void test() {<caret_1>\n        System.out.println(\"test\");<caret_2>\n    }<caret_3>\n\n    private int add(int a, int b) {<caret_4>\n        return a + b;<caret_5>\n    }<caret_6>\n\n    <caret_7>public void next() {\n        System.out.println(\"next\");<caret_8>\n    }\n\n    private Runnable fieldLambda = () -> {<caret_9>\n        System.out.println(\"field\");<caret_10>\n    };\n\n    <caret_11>private Consumer<String> fieldLambda2 = s -> System.out.println(s);\n\n    public void lambda() {\n        Runnable r = () -> {<caret_12>\n            System.out.println(\"lambda\");<caret_13>\n        <caret_14>};\n        List<Integer> list = List.of(1, 2, 3);\n        list.forEach(i -> System.out.println(<caret_15>i));<caret_16>\n    }\n}",
+  "inner": {
+    "1": "System.out.println(\"test\");",
+    "2": "System.out.println(\"test\");",
+    "3": "return a + b;",
+    "4": "return a + b;",
+    "5": "return a + b;",
+    "6": "System.out.println(\"next\");",
+    "7": "System.out.println(\"next\");",
+    "8": "System.out.println(\"next\");",
+    "9": "System.out.println(\"field\");",
+    "10": "System.out.println(\"field\");",
+    "11": "System.out.println(s)",
+    "12": "System.out.println(\"lambda\");",
+    "13": "System.out.println(\"lambda\");",
+    "14": "System.out.println(\"lambda\");",
+    "15": "System.out.println(i)",
+    "16": "Runnable r = () -> {\n            System.out.println(\"lambda\");\n        };\n        List<Integer> list = List.of(1, 2, 3);\n        list.forEach(i -> System.out.println(i));"
+  },
+  "around": {
+    "1": "public void test() {\n        System.out.println(\"test\");\n    }",
+    "2": "public void test() {\n        System.out.println(\"test\");\n    }",
+    "3": "private int add(int a, int b) {\n        return a + b;\n    }",
+    "4": "private int add(int a, int b) {\n        return a + b;\n    }",
+    "5": "private int add(int a, int b) {\n        return a + b;\n    }",
+    "6": "public void next() {\n        System.out.println(\"next\");\n    }",
+    "7": "public void next() {\n        System.out.println(\"next\");\n    }",
+    "8": "public void next() {\n        System.out.println(\"next\");\n    }",
+    "9": "() -> {\n        System.out.println(\"field\");\n    }",
+    "10": "() -> {\n        System.out.println(\"field\");\n    }",
+    "11": "s -> System.out.println(s)",
+    "12": "() -> {\n            System.out.println(\"lambda\");\n        }",
+    "13": "() -> {\n            System.out.println(\"lambda\");\n        }",
+    "14": "() -> {\n            System.out.println(\"lambda\");\n        }",
+    "15": "i -> System.out.println(i)",
+    "16": "public void lambda() {\n        Runnable r = () -> {\n            System.out.println(\"lambda\");\n        };\n        List<Integer> list = List.of(1, 2, 3);\n        list.forEach(i -> System.out.println(i));\n    }"
+  }
+}

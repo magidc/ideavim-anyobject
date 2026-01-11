@@ -10,8 +10,8 @@
     "6": "tokio::time::sleep(Duration::from_millis(100)).await;",
     "7": "tokio::time::sleep(Duration::from_millis(100)).await;",
     "8": "tokio::time::sleep(Duration::from_millis(100)).await;",
-    "9": "let closure = |x: i32| {\n        println!(\"{}\", x);\n    };",
-    "10": "let closure = |x: i32| {\n        println!(\"{}\", x);\n    };",
+    "9": "println!(\"{}\", x);",
+    "10": "println!(\"{}\", x);",
     "11": "let closure = |x: i32| {\n        println!(\"{}\", x);\n    };"
   },
   "around": {
@@ -23,8 +23,8 @@
     "6": "async fn async_test() {\n    tokio::time::sleep(Duration::from_millis(100)).await;\n}",
     "7": "async fn async_test() {\n    tokio::time::sleep(Duration::from_millis(100)).await;\n}",
     "8": "async fn async_test() {\n    tokio::time::sleep(Duration::from_millis(100)).await;\n}",
-    "9": "fn closure() {\n    let closure = |x: i32| {\n        println!(\"{}\", x);\n    };\n}",
-    "10": "fn closure() {\n    let closure = |x: i32| {\n        println!(\"{}\", x);\n    };\n}",
+    "9": "|x: i32| {\n        println!(\"{}\", x);\n    }",
+    "10": "|x: i32| {\n        println!(\"{}\", x);\n    }",
     "11": "fn closure() {\n    let closure = |x: i32| {\n        println!(\"{}\", x);\n    };\n}"
   }
 }

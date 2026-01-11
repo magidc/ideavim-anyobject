@@ -1,0 +1,20 @@
+{
+  "extension": "m",
+  "code": "@implementation Test\n- (void)testMethod:(int)x {<caret_1>\n    NSLog(@\"%d\", x);<caret_2>\n}<caret_3>\n\n<caret_4>void (^simpleBlock)(void) = ^{<caret_5>\n    NSLog(@\"block\");<caret_6>\n};\n@end",
+  "inner": {
+    "1": "NSLog(@\"%d\", x);",
+    "2": "NSLog(@\"%d\", x);",
+    "3": "NSLog(@\"block\");",
+    "4": "NSLog(@\"block\");",
+    "5": "NSLog(@\"block\");",
+    "6": "NSLog(@\"block\");"
+  },
+  "around": {
+    "1": "- (void)testMethod:(int)x {\n    NSLog(@\"%d\", x);\n}",
+    "2": "- (void)testMethod:(int)x {\n    NSLog(@\"%d\", x);\n}",
+    "3": "^{\n    NSLog(@\"block\");\n}",
+    "4": "^{\n    NSLog(@\"block\");\n}",
+    "5": "^{\n    NSLog(@\"block\");\n}",
+    "6": "^{\n    NSLog(@\"block\");\n}"
+  }
+}

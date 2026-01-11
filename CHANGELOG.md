@@ -1,4 +1,7 @@
 # Changelog
+## 3.0.12
+Added AnyFunctionOrLambda handler. AnyFunction handler now is limited to functions and methods but not lambdas or arrow functions.
+
 ## 3.0.11
 
 Unit tests for AnyConditional. There are still some small selection issues in Ruby on Rails but rare. 
