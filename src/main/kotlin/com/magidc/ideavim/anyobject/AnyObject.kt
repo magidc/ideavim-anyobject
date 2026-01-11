@@ -29,7 +29,7 @@ import com.magidc.ideavim.anyobject.handlers.AnyCommentHandler
 import com.magidc.ideavim.anyobject.handlers.AnyConditionalHandler
 import com.magidc.ideavim.anyobject.handlers.AnyDocumentHandler
 import com.magidc.ideavim.anyobject.handlers.AnyFunctionHandler
-import com.magidc.ideavim.anyobject.handlers.AnyFunctionOrLambdaHandler
+import com.magidc.ideavim.anyobject.handlers.AnyLambdaOrFunctionHandler
 import com.magidc.ideavim.anyobject.handlers.AnyIndentBlockHandler
 import com.magidc.ideavim.anyobject.handlers.AnyItemHandler
 import com.magidc.ideavim.anyobject.handlers.AnyLoopHandler
@@ -48,7 +48,7 @@ val handlerSupplierMap = mapOf(
     "anycomment" to Pair("k", ::AnyCommentHandler),
     "anyargument" to Pair("a", ::AnyArgumentHandler),
     "anyfunction" to Pair("f", ::AnyFunctionHandler),
-    "anyfunctionorlambda" to Pair("m", ::AnyFunctionOrLambdaHandler),
+    "anyLambdaOrFunction" to Pair("m", ::AnyLambdaOrFunctionHandler),
     "anyclass" to Pair("c", ::AnyClassHandler),
     "anydocument" to Pair("d", ::AnyDocumentHandler),
     "anyloop" to Pair("l", ::AnyLoopHandler),

@@ -1,6 +1,6 @@
 package com.magidc.ideavim.anyobject.handlers
 
-class AnyFunctionOrLambdaHandler : AnyFunctionHandler() {
+class AnyLambdaOrFunctionHandler : AnyFunctionHandler() {
     override val innerBlockTypes = super.innerBlockTypes + setOf("method_invocation", "arrow_expression_clause")
     override val targetTypes = super.targetTypes + setOf(
         "anonymous_function", "anonymous_function_expression", "arrow_function", "closure_expression",

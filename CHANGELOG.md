@@ -1,6 +1,6 @@
 # Changelog
 ## 3.0.12
-Added AnyFunctionOrLambda handler. AnyFunction handler now is limited to functions and methods but not lambdas or arrow functions.
+Added AnyLambdaOrFunction handler. AnyFunction handler now is limited to functions and methods but not lambdas or arrow functions.
 
 ## 3.0.11
 
