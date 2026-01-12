@@ -6,7 +6,7 @@ import com.maddyhome.idea.vim.common.TextRange
 import com.maddyhome.idea.vim.state.mode.inBlockSelection
 import com.maddyhome.idea.vim.state.mode.inSelectMode
 import com.maddyhome.idea.vim.state.mode.inVisualMode
-import com.magidc.ideavim.anyobject.handlers.base.getCareOffset
+import com.magidc.ideavim.anyobject.handlers.base.getCaretOffset
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.lastNamedLeafOrSelf
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.nextNamedLeaf
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.parentPrevNamedSibling
@@ -150,11 +150,11 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
 
     fun findCurrentNode(): TSNode? {
         if (!updated) loadTSTree()
-        val byteOffset = toByteOffset(editor.getCareOffset())
+        val caretByteOffset = toByteOffset(editor.getCaretOffset())
         var node = tsTree.rootNode
-        while (node.startByte <= byteOffset) {
-            val nextNode = node.getFirstChildForByte(byteOffset)
-            if (nextNode.isNull || node.startByte > byteOffset) break
+        while (node.startByte <= caretByteOffset) {
+            val nextNode = node.getFirstChildForByte(caretByteOffset)
+            if (nextNode.isNull || node.startByte > caretByteOffset) break
             node = nextNode
         }
         return node
@@ -169,12 +169,17 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         return findObjectNode(currentNode, acceptNode) ?: findNextNode(currentNode, acceptNode, loop = false)
     }
 
-    fun findNextNode(currentNode: TSNode, acceptNode: (TSNode) -> Boolean, forward: Boolean = true, includeSelf: Boolean = false, loop: Boolean = true): TSNode? {
+    fun findNextNode(
+        currentNode: TSNode, acceptNode: (TSNode) -> Boolean, forward: Boolean = true,
+        startSelectionByteOffset: Int = -1, loop: Boolean = true
+    ): TSNode? {
         val objectNode = findObjectNode(currentNode, acceptNode)
         val startNode =
             if (objectNode != null) {
-                if (forward && objectNode.startByte > currentNode.startByte) return objectNode
-                if (includeSelf && !forward && objectNode.startByte < currentNode.startByte) return objectNode
+                if (startSelectionByteOffset == -1) {
+                    if (forward && objectNode.startByte > currentNode.startByte) return objectNode
+                    if (!forward && objectNode.startByte < currentNode.startByte) return objectNode
+                } else if (startSelectionByteOffset in objectNode.startByte + 1..<objectNode.endByte) return objectNode
                 objectNode
             } else currentNode
 
@@ -185,7 +190,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
                 else it.prevNamedSibling
             }
         }
-        var caretOffset = editor.getCareOffset()
+        var caretOffset = editor.getCaretOffset()
         val nextNodeFunction = if (forward) { n: TSNode -> n.nextNamedLeaf() } else { n: TSNode -> n.prevNamedLeaf() }
         val acceptNodeFunction = if (forward) { n: TSNode -> n.startByte >= caretOffset && acceptNode(n) } else { n: TSNode -> n.startByte <= caretOffset && acceptNode(n) }
         @Suppress("unused")
@@ -202,7 +207,8 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         if (disabled) return null
         val currentNode = findCurrentNode() ?: return null
         val selection = editor.inSelectMode || editor.inBlockSelection || editor.inVisualMode
-        return findNextNode(currentNode, acceptNode, forward, includeSelf = !selection || forward, loop = !selection)
-            ?.let { toCharOffset(if (selection) it.endByte - 1 else it.startByte) }
+        val startSelectionByteOffset = if (selection) toByteOffset(editor.getSelectionModel().selectionStart) else -1
+        return findNextNode(currentNode, acceptNode, forward, startSelectionByteOffset = startSelectionByteOffset, loop = !selection)
+            ?.let { toCharOffset(if (selection && startSelectionByteOffset < it.endByte - 1) it.endByte - 1 else it.startByte) }
     }
 }

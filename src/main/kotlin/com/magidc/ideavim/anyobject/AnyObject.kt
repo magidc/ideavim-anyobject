@@ -29,9 +29,9 @@ import com.magidc.ideavim.anyobject.handlers.AnyCommentHandler
 import com.magidc.ideavim.anyobject.handlers.AnyConditionalHandler
 import com.magidc.ideavim.anyobject.handlers.AnyDocumentHandler
 import com.magidc.ideavim.anyobject.handlers.AnyFunctionHandler
-import com.magidc.ideavim.anyobject.handlers.AnyLambdaOrFunctionHandler
 import com.magidc.ideavim.anyobject.handlers.AnyIndentBlockHandler
 import com.magidc.ideavim.anyobject.handlers.AnyItemHandler
+import com.magidc.ideavim.anyobject.handlers.AnyLambdaOrFunctionHandler
 import com.magidc.ideavim.anyobject.handlers.AnyLoopHandler
 import com.magidc.ideavim.anyobject.handlers.AnyQuoteHandler
 import com.magidc.ideavim.anyobject.handlers.AnyStringHandler
@@ -39,6 +39,7 @@ import com.magidc.ideavim.anyobject.handlers.AnySubwordHandler
 import com.magidc.ideavim.anyobject.handlers.AnyVariableHandler
 import com.magidc.ideavim.anyobject.handlers.base.BaseJumpHandler
 import com.magidc.ideavim.anyobject.handlers.base.BaseSelectionHandler
+import com.magidc.ideavim.anyobject.handlers.base.getCaretOffset
 
 
 val handlerSupplierMap = mapOf(
@@ -191,7 +192,11 @@ class AnyObject : VimExtension {
                     // Avoiding change caret position in yank actions
                     val isYankOperation = KeyHandler.getInstance().keyHandlerState.digraphSequence.toString().endsWith("char = y")
                     if (isYankOperation) {
-                        injector.yank.yankRange(editor, context, range, SelectionType.CHARACTER_WISE, false)
+                        injector.yank.yankRange(
+                            editor, context, range,
+                            type = if (visualType == TextObjectVisualType.CHARACTER_WISE) SelectionType.CHARACTER_WISE else SelectionType.LINE_WISE,
+                            moveCursor = false
+                        )
                         return null
                     }
                     return range
@@ -208,7 +213,12 @@ class AnyObject : VimExtension {
             val action = object : MotionActionHandler.SingleExecution() {
                 override val motionType: MotionType = MotionType.INCLUSIVE
                 override fun getOffset(editor: VimEditor, context: ExecutionContext, argument: Argument?, operatorArguments: OperatorArguments): Motion {
-                    return handler.findJumpElementStartOffset(editor, forward)?.toMotion() ?: Motion.Error
+                    val motion = handler.findJumpElementStartOffset(editor, forward)?.toMotion() ?: return Motion.Error
+//                    if (motion.offset < editor.getCaretOffset()) {
+//                        editor.currentCaret().setSelection(motion.offset, motion.offset)
+//                        return editor.getCaretOffset().toMotion()
+//                    }
+                    return motion
                 }
             }
             KeyHandler.getInstance().keyHandlerState.commandBuilder.addAction(action)

@@ -5,7 +5,7 @@ import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import com.maddyhome.idea.vim.api.VimEditor
-import com.magidc.ideavim.anyobject.handlers.base.getCareOffset
+import com.magidc.ideavim.anyobject.handlers.base.getCaretOffset
 import org.treesitter.TSLanguage
 import org.treesitter.TreeSitterCSharp
 import org.treesitter.TreeSitterClojure
@@ -85,7 +85,7 @@ class TSLanguageUtils {
             if (null == projectManager || projectManager.openProjects.isEmpty()) return null
             val project = projectManager.openProjects[0]
             val virtualFile = VirtualFileManager.getInstance().findFileByNioPath(Path.of(vimVirtualFile.path)) ?: return null
-            return PsiManager.getInstance(project).findFile(virtualFile)?.findElementAt(editor.getCareOffset())?.language?.displayName
+            return PsiManager.getInstance(project).findFile(virtualFile)?.findElementAt(editor.getCaretOffset())?.language?.displayName
         }
 
         private fun getLanguageByFileExtension(editor: VimEditor): TSLanguageInfo? {

@@ -4,7 +4,7 @@ import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.command.TextObjectVisualType
 import com.maddyhome.idea.vim.common.TextRange
 
-fun VimEditor.getCareOffset(): Int = currentCaret().offset
+fun VimEditor.getCaretOffset(): Int = currentCaret().offset
 
 interface BaseHandler
 
