@@ -5,6 +5,7 @@ import com.maddyhome.idea.vim.common.ChangesListener
 import com.maddyhome.idea.vim.common.TextRange
 import com.maddyhome.idea.vim.state.mode.inBlockSelection
 import com.maddyhome.idea.vim.state.mode.inSelectMode
+import com.maddyhome.idea.vim.state.mode.inVisualMode
 import com.magidc.ideavim.anyobject.handlers.base.getCareOffset
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.lastNamedLeafOrSelf
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.nextNamedLeaf
@@ -168,14 +169,12 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         return findObjectNode(currentNode, acceptNode) ?: findNextNode(currentNode, acceptNode, loop = false)
     }
 
-    fun findNextNode(currentNode: TSNode, acceptNode: (TSNode) -> Boolean, forward: Boolean = true, includeSelf: Boolean = true, loop: Boolean = true): TSNode? {
+    fun findNextNode(currentNode: TSNode, acceptNode: (TSNode) -> Boolean, forward: Boolean = true, includeSelf: Boolean = false, loop: Boolean = true): TSNode? {
         val objectNode = findObjectNode(currentNode, acceptNode)
         val startNode =
             if (objectNode != null) {
-                if (includeSelf) {
-                    if (forward && objectNode.startByte > currentNode.startByte) return objectNode
-                    if (!forward && objectNode.startByte < currentNode.startByte) return objectNode
-                }
+                if (forward && objectNode.startByte > currentNode.startByte) return objectNode
+                if (includeSelf && !forward && objectNode.startByte < currentNode.startByte) return objectNode
                 objectNode
             } else currentNode
 
@@ -191,7 +190,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         val acceptNodeFunction = if (forward) { n: TSNode -> n.startByte >= caretOffset && acceptNode(n) } else { n: TSNode -> n.startByte <= caretOffset && acceptNode(n) }
         @Suppress("unused")
         for (i in 1..2) {
-            generateSequence(node) { nextNodeFunction(it) }.filter { acceptNodeFunction(it) }.firstOrNull()?.let { return it }
+            generateSequence(node) { nextNodeFunction(it) }.firstOrNull { acceptNodeFunction(it) }?.let { return it }
             if (!loop) break
             node = if (forward) tsTree.rootNode else tsTree.rootNode.lastNamedLeafOrSelf()
             caretOffset = if (forward) 0 else tsTree.rootNode.endByte
@@ -202,8 +201,8 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
     fun findJumpElementOffset(acceptNode: (TSNode) -> Boolean, forward: Boolean): Int? {
         if (disabled) return null
         val currentNode = findCurrentNode() ?: return null
-        val selection = editor.inSelectMode || editor.inBlockSelection
-        return findNextNode(currentNode, acceptNode, forward, !selection || forward)
+        val selection = editor.inSelectMode || editor.inBlockSelection || editor.inVisualMode
+        return findNextNode(currentNode, acceptNode, forward, includeSelf = !selection || forward, loop = !selection)
             ?.let { toCharOffset(if (selection) it.endByte - 1 else it.startByte) }
     }
 }

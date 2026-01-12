@@ -206,7 +206,7 @@ class AnyObject : VimExtension {
 
         override fun execute(editor: VimEditor, context: ExecutionContext, operatorArguments: OperatorArguments) {
             val action = object : MotionActionHandler.SingleExecution() {
-                override val motionType: MotionType = MotionType.EXCLUSIVE
+                override val motionType: MotionType = MotionType.INCLUSIVE
                 override fun getOffset(editor: VimEditor, context: ExecutionContext, argument: Argument?, operatorArguments: OperatorArguments): Motion {
                     return handler.findJumpElementStartOffset(editor, forward)?.toMotion() ?: Motion.Error
                 }
