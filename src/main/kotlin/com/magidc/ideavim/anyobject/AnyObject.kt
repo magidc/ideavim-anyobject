@@ -39,7 +39,6 @@ import com.magidc.ideavim.anyobject.handlers.AnySubwordHandler
 import com.magidc.ideavim.anyobject.handlers.AnyVariableHandler
 import com.magidc.ideavim.anyobject.handlers.base.BaseJumpHandler
 import com.magidc.ideavim.anyobject.handlers.base.BaseSelectionHandler
-import com.magidc.ideavim.anyobject.handlers.base.getCaretOffset
 
 
 val handlerSupplierMap = mapOf(
