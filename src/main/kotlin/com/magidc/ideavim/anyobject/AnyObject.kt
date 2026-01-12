@@ -16,11 +16,15 @@ import com.maddyhome.idea.vim.common.TextRange
 import com.maddyhome.idea.vim.extension.ExtensionHandler
 import com.maddyhome.idea.vim.extension.VimExtension
 import com.maddyhome.idea.vim.extension.VimExtensionFacade
+import com.maddyhome.idea.vim.group.visual.vimSetSelection
 import com.maddyhome.idea.vim.handler.Motion
 import com.maddyhome.idea.vim.handler.MotionActionHandler
 import com.maddyhome.idea.vim.handler.TextObjectActionHandler
 import com.maddyhome.idea.vim.handler.toMotion
 import com.maddyhome.idea.vim.state.mode.SelectionType
+import com.maddyhome.idea.vim.state.mode.inBlockSelection
+import com.maddyhome.idea.vim.state.mode.inSelectMode
+import com.maddyhome.idea.vim.state.mode.inVisualMode
 import com.magidc.ideavim.anyobject.handlers.AnyArgOrItemHandler
 import com.magidc.ideavim.anyobject.handlers.AnyArgumentHandler
 import com.magidc.ideavim.anyobject.handlers.AnyBracketHandler
@@ -213,10 +217,13 @@ class AnyObject : VimExtension {
                 override val motionType: MotionType = MotionType.INCLUSIVE
                 override fun getOffset(editor: VimEditor, context: ExecutionContext, argument: Argument?, operatorArguments: OperatorArguments): Motion {
                     val motion = handler.findJumpElementStartOffset(editor, forward)?.toMotion() ?: return Motion.Error
-//                    if (motion.offset < editor.getCaretOffset()) {
-//                        editor.currentCaret().setSelection(motion.offset, motion.offset)
-//                        return editor.getCaretOffset().toMotion()
-//                    }
+                    val selection = editor.inSelectMode || editor.inBlockSelection || editor.inVisualMode
+                    val selectionEnd = editor.getSelectionModel().selectionEnd
+                    if (selection && motion.offset < editor.getSelectionModel().selectionStart) {
+                        val caret = editor.currentCaret()
+                        caret.vimSetSelection(motion.offset, selectionEnd, forward)
+                        return selectionEnd.toMotion()
+                    }
                     return motion
                 }
             }
