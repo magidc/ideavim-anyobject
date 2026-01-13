@@ -1,4 +1,12 @@
 # Changelog
+## 3.1.0
+
+Stable release
+Smart selection on jumping to the next/previous text object. The selection adapts to text objects when the jump makes it to overlap the initial selection.
+Improved support for Kotlin, Ruby, Rust, JavaScript, TypeScript, Go and Swift.
+Added unit tests for all languages supported
+Updated to support IdeaVim 2.28.0
+
 ## 3.0.13
 
 Smart selection on jumping to the next/previous text object.
