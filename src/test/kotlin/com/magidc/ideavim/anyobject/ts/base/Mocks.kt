@@ -14,7 +14,6 @@ import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.api.VimFoldRegion
 import com.maddyhome.idea.vim.api.VimIndentConfig
 import com.maddyhome.idea.vim.api.VimScrollingModel
-import com.maddyhome.idea.vim.api.VimSelectionModel
 import com.maddyhome.idea.vim.api.VimVirtualFile
 import com.maddyhome.idea.vim.api.VimVisualPosition
 import com.maddyhome.idea.vim.common.ChangesListener
@@ -30,7 +29,7 @@ class MockVimEditor(val text: String, val filePath: String, var currentCaretOffs
     override val document: VimDocument get() = MockVimDocument()
     override fun text(): CharSequence = text
     override fun getVirtualFile(): VimVirtualFile = MockVirtualFile(filePath, "", null)
-    override fun currentCaret(): VimCaret = MockCaret(currentCaretOffset)
+    override fun currentCaret(): VimCaret = MockCaret(currentCaretOffset, "")
     override fun toString(): String = getVirtualFile().path
 
     override var mode: Mode get() = TODO("Mock"); set(value) {}
@@ -61,9 +60,9 @@ class MockVimEditor(val text: String, val filePath: String, var currentCaretOffs
     override fun visualPositionToBufferPosition(position: VimVisualPosition): BufferPosition = TODO("Mock")
     override fun bufferPositionToVisualPosition(position: BufferPosition): VimVisualPosition = TODO("Mock")
     override fun deleteString(range: TextRange) = TODO("Mock")
-    override fun getSelectionModel(): VimSelectionModel = TODO("Mock")
     override fun getScrollingModel(): VimScrollingModel = TODO("Mock")
     override fun removeCaret(caret: VimCaret) = TODO("Mock")
+    override fun addCaret(offset: Int): VimCaret = TODO("Mock")
     override fun removeSecondaryCarets() = TODO("Mock")
     override fun vimSetSystemBlockSelectionSilently(start: BufferPosition, end: BufferPosition) = TODO("Mock")
     override fun getLineStartOffset(line: Int): Int = TODO("Mock")
@@ -96,7 +95,7 @@ class MockVimDocument : VimDocument {
 class MockVirtualFile(override val path: String, override val protocol: String, override val extension: String?) : VimVirtualFile
 
 @Suppress("unused")
-class MockCaret(override val offset: Int) : VimCaret {
+class MockCaret(override val offset: Int, override val id: String) : VimCaret {
     override fun moveToBufferPosition(position: BufferPosition) = TODO("Mock")
     override fun moveToInlayAwareOffset(newOffset: Int): VimCaret = TODO("Mock")
     override fun moveToOffsetNative(offset: Int) = TODO("Mock")

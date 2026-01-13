@@ -224,8 +224,8 @@ class AnyObject : VimExtension {
                     val rangeStart = range.startOffset
                     if (editor.isSelection()) {
                         val caretOffset = editor.getCaretOffset()
-                        val selectionStart = editor.getSelectionModel().selectionStart
-                        val selectionEnd = editor.getSelectionModel().selectionEnd - 1
+                        val selectionStart = editor.currentCaret().selectionStart
+                        val selectionEnd = editor.currentCaret().selectionEnd - 1
                         val caretInEndSelection = caretOffset == selectionEnd
                         val rangeEnd = range.endOffset - 1
 

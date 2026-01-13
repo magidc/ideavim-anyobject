@@ -134,12 +134,12 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
 
     private fun toByteOffset(charIndex: Int): Int {
         if (charIndex == 0 || charToByteOffsetTree.isEmpty()) return charIndex
-        return charToByteOffsetTree.headSet(OffsetDelta(charIndex)).asSequence().map { it.delta }.sum() + charIndex
+        return charToByteOffsetTree.headSet(OffsetDelta(charIndex)).sumOf { it.delta } + charIndex
     }
 
     fun toCharOffset(byteIndex: Int): Int {
         if (byteIndex == 0 || byteToCharOffsetTree.isEmpty()) return byteIndex
-        return byteToCharOffsetTree.headSet(OffsetDelta(byteIndex)).asSequence().map { it.delta }.sum() + byteIndex
+        return byteToCharOffsetTree.headSet(OffsetDelta(byteIndex)).sumOf { it.delta } + byteIndex
     }
 
     fun toTextRange(fromNode: TSNode, toNode: TSNode = fromNode): TextRange {
@@ -205,7 +205,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         if (disabled) return null
         val currentNode = findCurrentNode() ?: return null
         val selection = editor.isSelection()
-        val startSelectionByteOffset = if (selection) toByteOffset(editor.getSelectionModel().let { if (forward) it.selectionEnd else it.selectionStart }) else -1
+        val startSelectionByteOffset = if (selection) toByteOffset(editor.currentCaret().let { if (forward) it.selectionEnd else it.selectionStart }) else -1
         return findNextNode(currentNode, acceptNode, forward, startSelectionByteOffset = startSelectionByteOffset, loop = !selection)?.let { toTextRange(it) }
     }
 }
