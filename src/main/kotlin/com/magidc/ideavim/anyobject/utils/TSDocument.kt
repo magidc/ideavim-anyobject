@@ -3,10 +3,8 @@ package com.magidc.ideavim.anyobject.utils
 import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.common.ChangesListener
 import com.maddyhome.idea.vim.common.TextRange
-import com.maddyhome.idea.vim.state.mode.inBlockSelection
-import com.maddyhome.idea.vim.state.mode.inSelectMode
-import com.maddyhome.idea.vim.state.mode.inVisualMode
 import com.magidc.ideavim.anyobject.handlers.base.getCaretOffset
+import com.magidc.ideavim.anyobject.isSelection
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.lastNamedLeafOrSelf
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.nextNamedLeaf
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.parentPrevNamedSibling
@@ -203,12 +201,11 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         return null
     }
 
-    fun findJumpElementOffset(acceptNode: (TSNode) -> Boolean, forward: Boolean): Int? {
+    fun findJumpElement(acceptNode: (TSNode) -> Boolean, forward: Boolean): TextRange? {
         if (disabled) return null
         val currentNode = findCurrentNode() ?: return null
-        val selection = editor.inSelectMode || editor.inBlockSelection || editor.inVisualMode
-        val startSelectionByteOffset = if (selection) toByteOffset(editor.getSelectionModel().selectionStart) else -1
-        return findNextNode(currentNode, acceptNode, forward, startSelectionByteOffset = startSelectionByteOffset, loop = !selection)
-            ?.let { toCharOffset(if (selection && startSelectionByteOffset < it.endByte - 1) it.endByte - 1 else it.startByte) }
+        val selection = editor.isSelection()
+        val startSelectionByteOffset = if (selection) toByteOffset(editor.getSelectionModel().let { if (forward) it.selectionEnd else it.selectionStart }) else -1
+        return findNextNode(currentNode, acceptNode, forward, startSelectionByteOffset = startSelectionByteOffset, loop = !selection)?.let { toTextRange(it) }
     }
 }

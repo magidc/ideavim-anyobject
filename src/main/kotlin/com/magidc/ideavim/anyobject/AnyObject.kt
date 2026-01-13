@@ -43,6 +43,7 @@ import com.magidc.ideavim.anyobject.handlers.AnySubwordHandler
 import com.magidc.ideavim.anyobject.handlers.AnyVariableHandler
 import com.magidc.ideavim.anyobject.handlers.base.BaseJumpHandler
 import com.magidc.ideavim.anyobject.handlers.base.BaseSelectionHandler
+import com.magidc.ideavim.anyobject.handlers.base.getCaretOffset
 
 
 val handlerSupplierMap = mapOf(
@@ -66,10 +67,13 @@ val handlerSupplierMap = mapOf(
 
 val builtInVimTextObjectsMappings = setOf("w", "p", "t", "b", "s")
 
+fun VimEditor.isSelection(): Boolean = inSelectMode || inBlockSelection || inVisualMode
+
 class AnyObject : VimExtension {
     companion object {
         private val LOG = Logger.getInstance(AnyObject::class.java)
     }
+
 
     fun getGlobalVariableSet(variableName: String): Set<String>? {
         return VimPlugin.getVariableService().getGlobalVariableValue(variableName)?.toVimString()?.value
@@ -216,15 +220,36 @@ class AnyObject : VimExtension {
             val action = object : MotionActionHandler.SingleExecution() {
                 override val motionType: MotionType = MotionType.INCLUSIVE
                 override fun getOffset(editor: VimEditor, context: ExecutionContext, argument: Argument?, operatorArguments: OperatorArguments): Motion {
-                    val motion = handler.findJumpElementStartOffset(editor, forward)?.toMotion() ?: return Motion.Error
-                    val selection = editor.inSelectMode || editor.inBlockSelection || editor.inVisualMode
-                    val selectionEnd = editor.getSelectionModel().selectionEnd
-                    if (selection && motion.offset < editor.getSelectionModel().selectionStart) {
-                        val caret = editor.currentCaret()
-                        caret.vimSetSelection(motion.offset, selectionEnd, forward)
-                        return selectionEnd.toMotion()
+                    val range = handler.findJumpElement(editor, forward) ?: return Motion.Error
+                    val rangeStart = range.startOffset
+                    if (editor.isSelection()) {
+                        val caretOffset = editor.getCaretOffset()
+                        val selectionStart = editor.getSelectionModel().selectionStart
+                        val selectionEnd = editor.getSelectionModel().selectionEnd - 1
+                        val caretInEndSelection = caretOffset == selectionEnd
+                        val rangeEnd = range.endOffset - 1
+
+                        if (forward) {
+                            if (caretInEndSelection) return rangeEnd.toMotion()
+                            else {
+                                if (rangeStart > selectionEnd || rangeEnd > selectionEnd) {
+                                    editor.currentCaret().vimSetSelection(selectionStart, selectionStart, false)
+                                    return rangeEnd.toMotion()
+                                }
+                                return rangeStart.toMotion()
+                            }
+                        } else {
+                            if (!caretInEndSelection) return rangeStart.toMotion()
+                            else {
+                                if (rangeEnd < selectionStart || rangeStart < selectionStart) {
+                                    editor.currentCaret().vimSetSelection(selectionEnd, selectionEnd, false)
+                                    return rangeStart.toMotion()
+                                }
+                                return rangeEnd.toMotion()
+                            }
+                        }
                     }
-                    return motion
+                    return rangeStart.toMotion()
                 }
             }
             KeyHandler.getInstance().keyHandlerState.commandBuilder.addAction(action)

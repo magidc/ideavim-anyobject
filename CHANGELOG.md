@@ -1,4 +1,8 @@
 # Changelog
+## 3.0.13
+
+Smart selection on jumping to the next/previous text object.
+
 ## 3.0.12
 Added AnyLambdaOrFunction handler. AnyFunction handler now is limited to functions and methods but not lambdas or arrow functions.
 

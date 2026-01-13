@@ -42,13 +42,13 @@ class AnySubwordHandler : TextBasedHandler(), BaseJumpHandler {
         return TextRange(firstRange.first, lastRange.last + 1)
     }
 
-    override fun findJumpElementStartOffset(editor: VimEditor, forward: Boolean): Int? {
+    override fun findJumpElement(editor: VimEditor, forward: Boolean): TextRange? {
         val caretOffset = editor.getCaretOffset()
         var found = false
         val sequence = outerSelectionRegex.findAll(editor.text())
         val matches = if (forward) sequence.toList() else sequence.toReversedList()
         for (m in matches) {
-            if (found) return m.range.first
+            if (found) return TextRange(m.range.first, m.range.first)
             if (caretOffset in m.range)
                 found = true
         }

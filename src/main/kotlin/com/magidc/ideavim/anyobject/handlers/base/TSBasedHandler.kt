@@ -78,8 +78,8 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
         )
     }
 
-    final override fun findJumpElementStartOffset(editor: VimEditor, forward: Boolean): Int? {
+    final override fun findJumpElement(editor: VimEditor, forward: Boolean): TextRange? {
         val tsDocument = getTSDocument(editor)
-        return tsDocument.findJumpElementOffset({ acceptNode(it, tsDocument) }, forward)
+        return tsDocument.findJumpElement({ acceptNode(it, tsDocument) }, forward)
     }
 }
