@@ -2,6 +2,9 @@ package com.magidc.ideavim.anyobject.handlers
 
 import com.magidc.ideavim.anyobject.handlers.base.TSBasedHandler
 
+/**
+ * Handler for targeting any function or method definition.
+ */
 open class AnyFunctionHandler : TSBasedHandler() {
     override val innerBlockTypes =
         setOf(

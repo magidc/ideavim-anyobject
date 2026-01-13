@@ -118,7 +118,6 @@ class AnyObject : VimExtension {
     /**
      * Registers the mapping for the text objects defined by the given delimiter pairs.
      */
-
     private fun registerTextObjects(command: String, mapping: String, handler: BaseSelectionHandler, jumpNextMapping: String, jumpPrevMapping: String) {
         VimExtensionFacade.putExtensionHandlerMapping(
             MappingMode.XO, injector.parser.parseKeys("<Plug>Inner$command"),
@@ -223,6 +222,9 @@ class AnyObject : VimExtension {
                     val range = handler.findJumpElement(editor, forward) ?: return Motion.Error
                     val rangeStart = range.startOffset
                     if (editor.isSelection()) {
+                        // If there is a text selection while jumping, adjust caret and selection accordingly,
+                        // Cursor will be moved to the edge of the selection according to the direction of the jump
+
                         val caretOffset = editor.getCaretOffset()
                         val selectionStart = editor.currentCaret().selectionStart
                         val selectionEnd = editor.currentCaret().selectionEnd - 1
@@ -232,6 +234,8 @@ class AnyObject : VimExtension {
                         if (forward) {
                             if (caretInEndSelection) return rangeEnd.toMotion()
                             else {
+                                // If the jump is forwards and falls out of the current selection, a new selection is created in order not to lose the current selection.
+                                // Cursor is moved to the bottom of the selection.
                                 if (rangeStart > selectionEnd || rangeEnd > selectionEnd) {
                                     editor.currentCaret().vimSetSelection(selectionStart, selectionStart, false)
                                     return rangeEnd.toMotion()
@@ -241,6 +245,8 @@ class AnyObject : VimExtension {
                         } else {
                             if (!caretInEndSelection) return rangeStart.toMotion()
                             else {
+                                // If the jump is backwards and falls out of the current selection, a new selection is created in order not to lose the current selection.
+                                // Cursor is moved to the top of the selection.
                                 if (rangeEnd < selectionStart || rangeStart < selectionStart) {
                                     editor.currentCaret().vimSetSelection(selectionEnd, selectionEnd, false)
                                     return rangeStart.toMotion()

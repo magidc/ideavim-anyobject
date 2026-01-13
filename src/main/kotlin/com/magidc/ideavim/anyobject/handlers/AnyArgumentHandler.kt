@@ -1,5 +1,8 @@
 package com.magidc.ideavim.anyobject.handlers
 
+/**
+ * Handler for targeting any argument or parameter in a function or method.
+ */
 class AnyArgumentHandler : AnyItemHandler() {
     override val parentTargetTypes = setOf(
         "arguments", "argument_list", "value_arguments", "formal_parameters", "formal_parameters_list",

@@ -11,6 +11,9 @@ import org.treesitter.TreeSitterJavascript
 import org.treesitter.TreeSitterTypescript
 import kotlin.reflect.KClass
 
+/**
+ * Handler for targeting variable and property declarations or assignments.
+ */
 class AnyVariableHandler : TSBasedHandler() {
     override val targetTypes = setOf(
         "assignment", "assignment_expression", "property_declaration", "field_declaration", "field_definition", "local_declaration_statement",

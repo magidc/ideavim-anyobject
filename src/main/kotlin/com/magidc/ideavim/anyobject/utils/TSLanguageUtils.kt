@@ -30,6 +30,9 @@ import org.treesitter.TreeSitterTypescript
 import org.treesitter.TreeSitterYaml
 import java.nio.file.Path
 
+/**
+ * Utility class for getting the Tree-sitter language for a given file.
+ */
 class TSLanguageUtils {
     enum class TSBlockType {
         BRACES,

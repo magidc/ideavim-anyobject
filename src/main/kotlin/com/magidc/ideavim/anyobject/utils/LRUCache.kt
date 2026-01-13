@@ -1,5 +1,9 @@
 package com.magidc.ideavim.anyobject.utils
 
+/**
+ * Least Recently Used (LRU) cache implementation with a maximum size limit.
+ * When the cache reaches its maximum size, the least recently used entry is evicted.
+ */
 class LRUCache<K, V>(var maxSize: Int, private val onEvict: ((K, V) -> Unit)? = null) :
     LinkedHashMap<K, V>(maxSize, 0.75f, true) {
 

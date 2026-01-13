@@ -3,6 +3,9 @@ package com.magidc.ideavim.anyobject.handlers
 import com.magidc.ideavim.anyobject.handlers.base.TSBasedHandler
 
 
+/**
+ * Handler for targeting any loop statement (for, while, do-while, repeat, until).
+ */
 class AnyLoopHandler : TSBasedHandler() {
     // Keep it as a list to set an order of evaluation
     override val innerBlockTypes = setOf("block", "compound_statement", "expression_statement", "statements", "control_structure_body", "brace_list", "do", "statement_block")

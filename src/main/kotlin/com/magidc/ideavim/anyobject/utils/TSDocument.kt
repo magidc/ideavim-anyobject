@@ -17,6 +17,10 @@ import org.treesitter.TSTree
 import java.nio.charset.StandardCharsets
 import java.util.TreeSet
 
+/**
+ * It represents a document (file) parsed with Tree-sitter.
+ * It provides convenience methods for interacting with the Tree-sitter parse tree, transforming between char and byte offsets and handling file changes.
+ */
 class TSDocument(val editor: VimEditor) : ChangesListener {
     companion object {
         private fun String.byteLength(): Int = toByteArray(StandardCharsets.UTF_8).size

@@ -7,6 +7,9 @@ import com.magidc.ideavim.anyobject.utils.TSDocument
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.isEqual
 import org.treesitter.TSNode
 
+/**
+ * Handler for targeting any item within a collection (array, list, tuple, dictionary, etc.).
+ */
 open class AnyItemHandler : TSBasedHandler() {
 
     open val parentTargetTypes: Set<String> = setOf(

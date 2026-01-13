@@ -11,6 +11,9 @@ import com.magidc.ideavim.anyobject.utils.TSLanguageUtils.Companion.RUBY
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.getFirstNamedChildWithGrammar
 import org.treesitter.TSNode
 
+/**
+ * Handler for targeting any conditional statement like if, switch, match, or try-catch blocks.
+ */
 class AnyConditionalHandler : TSBasedHandler() {
 
     override val innerBlockTypes = setOf(

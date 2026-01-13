@@ -6,6 +6,9 @@ import com.magidc.ideavim.anyobject.utils.TSDocument
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.toText
 import org.treesitter.TSNode
 
+/**
+ * Handler for targeting any string literal.
+ */
 class AnyStringHandler : TSBasedHandler() {
     companion object {
         private val quotes = setOf('"', '\'', '`')

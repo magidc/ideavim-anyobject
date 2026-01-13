@@ -5,6 +5,9 @@ import com.maddyhome.idea.vim.command.TextObjectVisualType
 import com.maddyhome.idea.vim.common.TextRange
 import com.magidc.ideavim.anyobject.handlers.base.TextBasedHandler
 
+/**
+ * Handler for targeting an indented block of code.
+ */
 class AnyIndentBlockHandler : TextBasedHandler() {
     override fun findTextSelection(text: CharSequence, textOffset: Int, caretOffset: Int, isInner: Boolean, size: Int): TextRange {
         TODO("Not yet implemented")

@@ -8,6 +8,9 @@ import com.magidc.ideavim.anyobject.handlers.base.TextBasedHandler
 import com.magidc.ideavim.anyobject.handlers.base.getCaretOffset
 
 
+/**
+ * Handler for targeting subwords within camelCase or snake_case identifiers.
+ */
 class AnySubwordHandler : TextBasedHandler(), BaseJumpHandler {
     private companion object {
         // It naturally ignores - and _ since those characters are not part of the token patterns, so dash-case and snake_case are split into tokens on those separators.
@@ -45,12 +48,11 @@ class AnySubwordHandler : TextBasedHandler(), BaseJumpHandler {
     override fun findJumpElement(editor: VimEditor, forward: Boolean): TextRange? {
         val caretOffset = editor.getCaretOffset()
         val sequence = outerSelectionRegex.findAll(editor.text())
-        return (if (forward) sequence.firstOrNull { it.range.first > caretOffset } else sequence.toReversedList().firstOrNull { it.range.first < caretOffset })
-            ?.let { TextRange(it.range.first, it.range.first) }
+        return (if (forward) sequence.firstOrNull { it.range.first > caretOffset } else sequence.toReversedList().firstOrNull { it.range.last < caretOffset })
+            ?.let { TextRange(it.range.first, it.range.last + 1) }
     }
 
-    private fun findWordRange(text: CharSequence, caretOffset: Int): IntRange? =
-        wordSelectionRegex.findAll(text).find { caretOffset in it.range }?.range
+    private fun findWordRange(text: CharSequence, caretOffset: Int): IntRange? = wordSelectionRegex.findAll(text).find { caretOffset in it.range }?.range
 
     private fun findSelectionRanges(text: CharSequence, caretOffset: Int, size: Int, regex: Regex): Pair<IntRange, IntRange>? {
         var firstRange: IntRange? = null

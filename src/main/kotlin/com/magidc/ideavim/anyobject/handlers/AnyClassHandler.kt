@@ -3,6 +3,9 @@ package com.magidc.ideavim.anyobject.handlers
 import com.magidc.ideavim.anyobject.handlers.base.TSBasedHandler
 
 
+/**
+ * Handler for targeting any class, interface, struct, or module definition.
+ */
 class AnyClassHandler : TSBasedHandler() {
     override val innerBlockTypes = setOf(
         "class_body", "interface_body", "field_declaration_list", "declaration_list", "enum_body", "class", "module",
