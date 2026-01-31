@@ -1,0 +1,16 @@
+{
+  "extension": "dart",
+  "code": "void main() {\n  var <caret_1>x = 10;\n  final <caret_2>y = 'hello';\n  String <caret_3>z = 'world';\n  x <caret_4>= 20;\n}",
+  "inner": {
+    "1": "10",
+    "2": "'hello'",
+    "3": "'world'",
+    "4": "20"
+  },
+  "around": {
+    "1": "var x = 10;",
+    "2": "final y = 'hello';",
+    "3": "String z = 'world';",
+    "4": "x = 20;"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "extension": "dart",
+  "code": "void main() {\n  var list = [1, 2, 3];\n  list.forEach((<caret_1>item) {\n    print(item);\n  });\n\n  var lambda = (<caret_2>int x, int y) => x + y;\n\n  void <caret_3>namedFunction() {\n    print('hi');\n  }\n}",
+  "inner": {
+    "1": "{\n    print(item);\n  }",
+    "2": "=> x + y",
+    "3": "{\n    print('hi');\n  }"
+  },
+  "around": {
+    "1": "(item) {\n    print(item);\n  }",
+    "2": "(int x, int y) => x + y",
+    "3": "void namedFunction() {\n    print('hi');\n  }"
+  }
+}

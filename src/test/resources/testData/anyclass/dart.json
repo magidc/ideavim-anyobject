@@ -1,0 +1,14 @@
+{
+  "extension": "dart",
+  "code": "class <caret_1>MyClass {\n  void myMethod() {}\n}\n\nenum <caret_2>MyEnum {\n  one, two\n}\n\nmixin <caret_3>MyMixin {\n  void mixinMethod() {}\n}",
+  "inner": {
+    "1": "void myMethod() {}",
+    "2": "one, two",
+    "3": "void mixinMethod() {}"
+  },
+  "around": {
+    "1": "class MyClass {\n  void myMethod() {}\n}",
+    "2": "enum MyEnum {\n  one, two\n}",
+    "3": "mixin MyMixin {\n  void mixinMethod() {}\n}"
+  }
+}

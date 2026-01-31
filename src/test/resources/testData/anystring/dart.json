@@ -1,0 +1,14 @@
+{
+  "extension": "dart",
+  "code": "void main() {\n  var s1 = <caret_1>'hello';\n  var s2 = <caret_2>\"world\";\n  var s3 = <caret_3>'''multi\n  line''';\n}",
+  "inner": {
+    "1": "hello",
+    "2": "world",
+    "3": "multi\n  line"
+  },
+  "around": {
+    "1": "'hello'",
+    "2": "\"world\"",
+    "3": "'''multi\n  line'''"
+  }
+}

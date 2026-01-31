@@ -1,0 +1,10 @@
+{
+  "extension": "dart",
+  "code": "void main() {\n  printArgs('hello', <caret_1>'world');\n}",
+  "inner": {
+    "1": "'world'"
+  },
+  "around": {
+    "1": ", 'world'"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "extension": "dart",
+  "code": "void main() {\n  for (var i = 0; i < 10; i++) <caret_1>{\n    print(i);\n  }\n\n  while (true) <caret_2>{\n    print('loop');\n  }\n\n  do <caret_3>{\n    print('do');\n  } while (false);\n}",
+  "inner": {
+    "1": "print(i);",
+    "2": "print('loop');",
+    "3": "print('do');"
+  },
+  "around": {
+    "1": "for (var i = 0; i < 10; i++) {\n    print(i);\n  }",
+    "2": "while (true) {\n    print('loop');\n  }",
+    "3": "do {\n    print('do');\n  } while (false);"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "extension": "dart",
+  "code": "void <caret_1>myFunction(int x) {\n  print(x);\n}\n\nclass A {\n  void <caret_2>myMethod() {\n    print('method');\n  }\n}",
+  "inner": {
+    "1": "print(x);",
+    "2": "print('method');"
+  },
+  "around": {
+    "1": "void myFunction(int x) {\n  print(x);\n}",
+    "2": "void myMethod() {\n    print('method');\n  }"
+  }
+}

@@ -60,7 +60,8 @@ dependencies {
     implementation("io.github.bonede:tree-sitter-typescript:0.23.2")
     implementation("io.github.bonede:tree-sitter-rust:0.23.1")
     implementation("io.github.bonede:tree-sitter-python:0.23.4")
-    implementation("io.github.bonede:tree-sitter-r:main")
+//    implementation("io.github.bonede:tree-sitter-r:main")
+    implementation(files("lib/tree-sitter-r-main-a.jar"))
 //    implementation("io.github.bonede:tree-sitter-sql:gh-pages")
     implementation(files("lib/tree-sitter-sql-gh-pages-a.jar"))
     implementation("io.github.bonede:tree-sitter-go:0.23.3")
@@ -73,6 +74,8 @@ dependencies {
     implementation("io.github.bonede:tree-sitter-json:0.24.8")
 //    implementation("io.github.bonede:tree-sitter-yaml:0.5.0")
     implementation(files("lib/tree-sitter-yaml-0.5.0a.jar"))
+//    implementation("io.github.bonede:tree-sitter-dart:master")
+    implementation(files("lib/tree-sitter-dart-master-a.jar"))
 }
 
 intellijPlatform {

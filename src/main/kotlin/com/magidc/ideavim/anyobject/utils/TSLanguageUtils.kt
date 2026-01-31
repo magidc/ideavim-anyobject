@@ -11,6 +11,7 @@ import org.treesitter.TreeSitterCSharp
 import org.treesitter.TreeSitterClojure
 import org.treesitter.TreeSitterCpp
 import org.treesitter.TreeSitterCss
+import org.treesitter.TreeSitterDart
 import org.treesitter.TreeSitterGo
 import org.treesitter.TreeSitterHtml
 import org.treesitter.TreeSitterJava
@@ -61,6 +62,7 @@ class TSLanguageUtils {
         private val languageMap: Map<String, TSLanguageInfo> = mapOf(
             "JAVA" to JAVA,
             "KOTLIN" to TSLanguageInfo("KOTLIN", "intellij", { TreeSitterKotlin() }, setOf("kt"), TSBlockType.BRACES),
+            "DART" to TSLanguageInfo("DART", "", { TreeSitterDart() }, setOf("dart"), TSBlockType.BRACES),
             "CLOJURE" to TSLanguageInfo("CLOJURE", "intellij", { TreeSitterClojure() }, setOf("clj"), TSBlockType.UNKNOWN),
             "SCALA" to TSLanguageInfo("SCALA", "intellij", { TreeSitterScala() }, setOf("scala"), TSBlockType.BRACES),
             "C#" to TSLanguageInfo("C#", "rider", { TreeSitterCSharp() }, setOf("cs"), TSBlockType.BRACES),

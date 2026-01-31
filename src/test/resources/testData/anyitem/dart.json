@@ -1,0 +1,12 @@
+{
+  "extension": "dart",
+  "code": "void main() {\n  var list = [1, <caret_1>2, 3];\n  var map = {'a': 1, <caret_2>'b': 2};\n}",
+  "inner": {
+    "1": "2",
+    "2": "'b': 2"
+  },
+  "around": {
+    "1": ", 2",
+    "2": ", 'b': 2"
+  }
+}

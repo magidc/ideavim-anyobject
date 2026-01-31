@@ -1,0 +1,14 @@
+{
+  "extension": "dart",
+  "code": "void main() {\n  printArgs('hello', <caret_1>'world');\n  var list = [1, <caret_2>2, 3];\n  var map = {'a': 1, <caret_3>'b': 2};\n}",
+  "inner": {
+    "1": "'world'",
+    "2": "2",
+    "3": "'b': 2"
+  },
+  "around": {
+    "1": ", 'world'",
+    "2": ", 2",
+    "3": ", 'b': 2"
+  }
+}
