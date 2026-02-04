@@ -1,4 +1,7 @@
 # Changelog
+## 3.1.1
+Dart/Flutter support
+
 ## 3.1.0
 
 Stable release
