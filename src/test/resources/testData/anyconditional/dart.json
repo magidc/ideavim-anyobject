@@ -1,14 +1,14 @@
 {
   "extension": "dart",
-  "code": "void main() {\n  if (true) <caret_1>{\n    print('hi');\n  } else {\n    print('bye');\n  }\n\n  switch (x) <caret_2>{\n    case 1:\n      print(1);\n      break;\n  }\n\n  try <caret_3>{\n    doSomething();\n  } catch (e) {\n    print(e);\n  }\n}",
+  "code": "void main() {\n  if (true) <caret_1>{\n    print('hi');\n  } else {\n    print('bye');\n  }\n\n  switch (x) {\n    case 1:\n      <caret_2>print(1);\n      break;\n  }\n\n  try <caret_3>{\n    doSomething();\n  } catch (e) {\n    print(e);\n  }\n}",
   "inner": {
     "1": "print('hi');",
-    "2": "{\n    case 1:\n      print(1);\n      break;\n  }",
+    "2": "case 1:\n      print(1);\n      break;",
     "3": "doSomething();"
   },
   "around": {
-    "1": "if (true) {\n    print('hi');\n  }",
+    "1": "if (true) {\n    print('hi');\n  } else {\n    print('bye');\n  }",
     "2": "switch (x) {\n    case 1:\n      print(1);\n      break;\n  }",
-    "3": "try {\n    doSomething();\n  }"
+    "3": "try {\n    doSomething();\n  } catch (e) {\n    print(e);\n  }"
   }
 }

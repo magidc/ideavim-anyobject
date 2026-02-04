@@ -59,10 +59,11 @@ class TSLanguageUtils {
         val CPP = TSLanguageInfo("C/C++", "clion", { TreeSitterCpp() }, setOf("cpp"), TSBlockType.BRACES)
         val PHP = TSLanguageInfo("PHP", "phpstorm", { TreeSitterPhp() }, setOf("php"), TSBlockType.BRACES)
         val RUBY = TSLanguageInfo("RUBY", "rubymine", { TreeSitterRuby() }, setOf("rb"), TSBlockType.END)
+        val DART = TSLanguageInfo("DART", "", { TreeSitterDart() }, setOf("dart"), TSBlockType.BRACES)
         private val languageMap: Map<String, TSLanguageInfo> = mapOf(
             "JAVA" to JAVA,
             "KOTLIN" to TSLanguageInfo("KOTLIN", "intellij", { TreeSitterKotlin() }, setOf("kt"), TSBlockType.BRACES),
-            "DART" to TSLanguageInfo("DART", "", { TreeSitterDart() }, setOf("dart"), TSBlockType.BRACES),
+            "DART" to DART,
             "CLOJURE" to TSLanguageInfo("CLOJURE", "intellij", { TreeSitterClojure() }, setOf("clj"), TSBlockType.UNKNOWN),
             "SCALA" to TSLanguageInfo("SCALA", "intellij", { TreeSitterScala() }, setOf("scala"), TSBlockType.BRACES),
             "C#" to TSLanguageInfo("C#", "rider", { TreeSitterCSharp() }, setOf("cs"), TSBlockType.BRACES),
@@ -90,7 +91,8 @@ class TSLanguageUtils {
             if (null == projectManager || projectManager.openProjects.isEmpty()) return null
             val project = projectManager.openProjects[0]
             val virtualFile = VirtualFileManager.getInstance().findFileByNioPath(Path.of(vimVirtualFile.path)) ?: return null
-            return PsiManager.getInstance(project).findFile(virtualFile)?.findElementAt(editor.getCaretOffset())?.language?.displayName
+            val file = PsiManager.getInstance(project).findFile(virtualFile) ?: return null
+            return (file.findElementAt(editor.getCaretOffset())?.language ?: file.language).displayName
         }
 
         private fun getLanguageByFileExtension(editor: VimEditor): TSLanguageInfo? {

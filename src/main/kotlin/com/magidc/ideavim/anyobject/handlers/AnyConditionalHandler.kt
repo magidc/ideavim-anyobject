@@ -19,7 +19,8 @@ class AnyConditionalHandler : TSBasedHandler() {
     override val innerBlockTypes = setOf(
         "switch_block_statement_group", "switch_section", "case_statement", "block", "else", "except_clause", "when",
         "return_statement", "when_entry", "match_arm", "default_statement", "case_clause", "else_clause", "braced_expression",
-        "statement_block", "switch_case", "then", "switch_default", "statements", "switch_entry", "default_case", "expression_case"
+        "statement_block", "switch_case", "then", "switch_default", "statements", "switch_entry", "default_case", "expression_case",
+        "switch_statement_case"
     )
 
     override val targetTypes = setOf(

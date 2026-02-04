@@ -13,7 +13,7 @@ import org.treesitter.TSNode
 open class AnyItemHandler : TSBasedHandler() {
 
     open val parentTargetTypes: Set<String> = setOf(
-        "array", "array_initializer", "list", "tuple", "initializer_expression", "composite_literal",
+        "array", "array_initializer", "list", "tuple", "initializer_expression", "composite_literal", "list_literal",
         "literal_value", "dictionary", "set", "element_list", "sequence", "collection", "object", "array_literal",
         "tuple_expression", "token_tree", "array_creation_expression", "initializer_list", "dictionary_literal"
     )
