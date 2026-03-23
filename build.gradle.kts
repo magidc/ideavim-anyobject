@@ -48,8 +48,6 @@ dependencies {
     implementation("io.github.bonede:tree-sitter-java:0.23.4")
 //    implementation("io.github.bonede:tree-sitter-clojure:0.0.12")
     implementation(files("lib/tree-sitter-clojure-0.0.12a.jar"))
-//    implementation("io.github.bonede:tree-sitter-r:main")
-    implementation(files("lib/tree-sitter-r-main-a.jar"))
     implementation("io.github.bonede:tree-sitter-kotlin:0.3.8.1")
     implementation("io.github.bonede:tree-sitter-scala:0.23.3")
     implementation("io.github.bonede:tree-sitter-ruby:0.23.1")
