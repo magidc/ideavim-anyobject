@@ -81,11 +81,13 @@ class AnyConditionalHandler : TSBasedHandler() {
     }
 
     override fun findInnerBlockRange(currentNode: TSNode, objectNode: TSNode, offset: Int, tsDocument: TSDocument): TextRange? {
-        if (tsDocument.languageInfo == PYTHON) return findPythonInnerConditionalBlockRange(objectNode, offset, tsDocument)
-        if (tsDocument.languageInfo == JAVA) return findJavaInnerConditionalBlockRange(currentNode, objectNode, offset, tsDocument)
-        if (tsDocument.languageInfo == CPP) return findCppPhpInnerConditionalBlockRange(objectNode, offset, tsDocument)
-        if (tsDocument.languageInfo == PHP) return findCppPhpInnerConditionalBlockRange(objectNode, offset, tsDocument)
-        if (tsDocument.languageInfo == RUBY) return findRubyInnerConditionalBlockRange(objectNode, offset, tsDocument)
-        return super.findInnerBlockRange(currentNode, objectNode, offset, tsDocument) ?: tsDocument.toTextRange(objectNode)
+        return when (tsDocument.languageInfo.name) {
+            PYTHON.name -> findPythonInnerConditionalBlockRange(objectNode, offset, tsDocument)
+            JAVA.name -> findJavaInnerConditionalBlockRange(currentNode, objectNode, offset, tsDocument)
+            CPP.name -> findCppPhpInnerConditionalBlockRange(objectNode, offset, tsDocument)
+            PHP.name -> findCppPhpInnerConditionalBlockRange(objectNode, offset, tsDocument)
+            RUBY.name -> findRubyInnerConditionalBlockRange(objectNode, offset, tsDocument)
+            else -> super.findInnerBlockRange(currentNode, objectNode, offset, tsDocument) ?: tsDocument.toTextRange(objectNode)
+        }
     }
 }

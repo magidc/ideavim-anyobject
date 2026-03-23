@@ -15,7 +15,7 @@ import kotlin.reflect.KClass
 abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
     companion object {
-        val documentCache = LRUCache<String, TSDocument>(5) { _, v -> v.editor.document.removeChangeListener(v) }
+        val documentCache = LRUCache<String, TSDocument>(5)
         private val assigmentSymbols = setOf("=", "=>")
     }
 

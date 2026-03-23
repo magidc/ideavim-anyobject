@@ -8,6 +8,7 @@ import com.maddyhome.idea.vim.api.ImmutableVimCaret
 import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.command.Argument
+import com.maddyhome.idea.vim.command.Command
 import com.maddyhome.idea.vim.command.MappingMode
 import com.maddyhome.idea.vim.command.MotionType
 import com.maddyhome.idea.vim.command.OperatorArguments
@@ -196,8 +197,7 @@ class AnyObject : VimExtension {
                 override fun getRange(editor: VimEditor, caret: ImmutableVimCaret, context: ExecutionContext, count: Int, rawCount: Int): TextRange? {
                     val range = handler.findSelection(editor, inner, count) ?: return null
                     // Avoiding change caret position in yank actions
-                    val isYankOperation = KeyHandler.getInstance().keyHandlerState.digraphSequence.toString().endsWith("char = y")
-                    if (isYankOperation) {
+                    if (injector.vimState.executingCommand?.type == Command.Type.COPY) {
                         injector.yank.yankRange(
                             editor, context, range,
                             type = if (visualType == TextObjectVisualType.CHARACTER_WISE) SelectionType.CHARACTER_WISE else SelectionType.LINE_WISE,

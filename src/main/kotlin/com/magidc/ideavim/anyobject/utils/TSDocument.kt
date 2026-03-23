@@ -21,7 +21,7 @@ import java.util.TreeSet
  * It represents a document (file) parsed with Tree-sitter.
  * It provides convenience methods for interacting with the Tree-sitter parse tree, transforming between char and byte offsets and handling file changes.
  */
-class TSDocument(val editor: VimEditor) : ChangesListener {
+class TSDocument(val editor: VimEditor) {
     companion object {
         private fun String.byteLength(): Int = toByteArray(StandardCharsets.UTF_8).size
 
@@ -56,16 +56,13 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
     val parser: TSParser = getParser(languageInfo)
     private lateinit var tsTree: TSTree
     private val disabled: Boolean = parser.language == null
-    private var updated: Boolean = false
+    private var lastContentHash: Int = editor.text().hashCode()
     private val charToByteOffsetTree = TreeSet<OffsetDelta>()
     private val byteToCharOffsetTree = TreeSet<OffsetDelta>()
     private val lineStartOffsetTree = TreeSet<LineOffset>()
 
     init {
-        if (!disabled) {
-            loadTSTree()
-            editor.document.addChangeListener(this)
-        }
+        if (!disabled) loadTSTree()
     }
 
     @Suppress("unused")
@@ -81,21 +78,16 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
         return parser.parseString(tsTree, text)?.let { tsTree = it }?.let { true } ?: false
     }
 
-    override fun documentChanged(change: ChangesListener.Change) {
-        if (!updated) return
-//        updated = editDocument(change, editor.text().toString())
-        updated = false
-    }
-
     private fun findTSPoint(byteOffSet: Int): TSPoint? {
         return lineStartOffsetTree.floor(LineOffset(byteOffSet))?.let { TSPoint(it.line, byteOffSet - it.startOffset) }
     }
 
     private fun loadTSTree() {
-        val text = editor.text().toString()
-        tsTree = parser.parseString(null, text)
-        reloadCacheTrees(text)
-        updated = true
+        val text = editor.text()
+        val textString = text.toString()
+        tsTree = parser.parseString(null, textString)
+        reloadCacheTrees(textString)
+        lastContentHash = text.hashCode()
     }
 
 
@@ -124,7 +116,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
                 val deltaBytes = byteLength - 1
                 charToByteOffsetTree.add(OffsetDelta(charIndex, deltaBytes - charCount + 1))
                 // Char Idx = Byte Idx - (Extra bytes of this character) + (Extra UTF8 characters in this character)
-                // For example: 😄 = 2 utf chars, 4 bytes
+                // For example, 😄 = 2 utf chars, 4 bytes
                 byteToCharOffsetTree.add(OffsetDelta(byteIndex, (charCount - 1 - deltaBytes)))
             }
             charIndex += charCount
@@ -151,7 +143,7 @@ class TSDocument(val editor: VimEditor) : ChangesListener {
     }
 
     fun findCurrentNode(): TSNode? {
-        if (!updated) loadTSTree()
+        if (editor.text().hashCode() != lastContentHash) loadTSTree()
         val caretByteOffset = toByteOffset(editor.getCaretOffset())
         var node = tsTree.rootNode
         while (node.startByte <= caretByteOffset) {

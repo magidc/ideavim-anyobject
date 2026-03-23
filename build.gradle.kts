@@ -5,7 +5,9 @@ import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 plugins {
     id("java")
     kotlin("jvm") version "2.2.21"
-    id("org.jetbrains.intellij.platform") version "2.10.5"
+
+    id("org.jetbrains.intellij.platform") version "2.13.1"
+
     id("org.jetbrains.changelog") version "2.5.0"
     id("com.diffplug.spotless") version "6.25.0"
     id("pmd")
@@ -33,7 +35,7 @@ repositories {
 
 dependencies {
     implementation("org.reflections:reflections:0.10.2")
-    testImplementation("org.assertj:assertj-core:3.25.3")
+    testImplementation("org.assertj:assertj-core:3.27.7")
     testImplementation("junit:junit:4.13.2")
     intellijPlatform {
         create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
