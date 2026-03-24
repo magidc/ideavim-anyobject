@@ -27,14 +27,20 @@ open class AnyFunctionHandler : TSBasedHandler() {
         if (tsDocument.languageInfo != DART)
             return super.findSelection(editor, inner, size)
         // Dart needs special handling for functions due to the weird way Tree-sitter parses them.
+        var body = tsDocument.findSelectionNode({ n -> n.grammarType == "function_body" })
+        if (body != null) {
+            if (inner) return getCodeBlock(body, tsDocument)
+            val signature =body.prevSibling.takeIf { n -> n.grammarType == "function_signature" || n.grammarType == "method_signature" } ?: return tsDocument.toTextRange(body)
+            return tsDocument.toTextRange(signature, body)
+        }
+
         val signature = tsDocument.findSelectionNode({ acceptNode(it, tsDocument) }) ?: return null
         if (signature.grammarType == "function_expression") {
             val body = signature.getFirstNamedChildWithGrammar(setOf("function_expression_body")) ?: return tsDocument.toTextRange(signature)
             if (inner) return getCodeBlock(body, tsDocument)
             return tsDocument.toTextRange(signature)
         }
-        val body = tsDocument.findNextNode(signature, { n -> n.grammarType == "function_body" }, loop = false)
-            .takeIf { it?.startByte == signature.endByte + 1 } ?: return tsDocument.toTextRange(signature)
+        body = signature.nextSibling.takeIf { n -> n.grammarType == "function_body" } ?: return tsDocument.toTextRange(signature)
         if (inner) return getCodeBlock(body, tsDocument)
         return tsDocument.toTextRange(signature, body)
     }

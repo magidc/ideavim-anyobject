@@ -1,4 +1,9 @@
 # Changelog
+## 3.1.2
+Dart/Flutter support fixes
+Updated to IntelliJ Platform 2.13.1
+Better detection of document changes for Tree-sitter based text objects.
+
 ## 3.1.1
 Dart/Flutter support
 

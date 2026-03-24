@@ -83,10 +83,9 @@ class TSDocument(val editor: VimEditor) {
     }
 
     private fun loadTSTree() {
-        val text = editor.text()
-        val textString = text.toString()
-        tsTree = parser.parseString(null, textString)
-        reloadCacheTrees(textString)
+        val text = editor.text().toString()
+        tsTree = parser.parseString(null, text)
+        reloadCacheTrees(text)
         lastContentHash = text.hashCode()
     }
 
@@ -143,7 +142,7 @@ class TSDocument(val editor: VimEditor) {
     }
 
     fun findCurrentNode(): TSNode? {
-        if (editor.text().hashCode() != lastContentHash) loadTSTree()
+        if (editor.text().toString().hashCode() != lastContentHash) loadTSTree()
         val caretByteOffset = toByteOffset(editor.getCaretOffset())
         var node = tsTree.rootNode
         while (node.startByte <= caretByteOffset) {

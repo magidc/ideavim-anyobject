@@ -205,6 +205,10 @@ class AnyObject : VimExtension {
                         )
                         return null
                     }
+                    if (editor.inVisualMode) {
+                        editor.currentCaret().vimSetSelection(range.startOffset, range.endOffset, true)
+                        return null
+                    }
                     return range
                 }
             }
