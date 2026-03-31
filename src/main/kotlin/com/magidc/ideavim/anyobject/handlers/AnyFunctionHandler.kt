@@ -5,6 +5,7 @@ import com.maddyhome.idea.vim.common.TextRange
 import com.magidc.ideavim.anyobject.handlers.base.TSBasedHandler
 import com.magidc.ideavim.anyobject.utils.TSLanguageUtils.Companion.DART
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.getFirstNamedChildWithGrammar
+import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.nextNamed
 
 /**
  * Handler for targeting any function or method definition.
@@ -27,20 +28,20 @@ open class AnyFunctionHandler : TSBasedHandler() {
         if (tsDocument.languageInfo != DART)
             return super.findSelection(editor, inner, size)
         // Dart needs special handling for functions due to the weird way Tree-sitter parses them.
-        var body = tsDocument.findSelectionNode({ n -> n.grammarType == "function_body" })
-        if (body != null) {
+        var body = tsDocument.findSelectionNode({ n -> n.grammarType == "function_body" })?.takeIf { !it.isNull }
+        val signature = tsDocument.findSelectionNode({ acceptNode(it, tsDocument) })?.takeIf { !it.isNull }
+        if (body != null && (signature == null || signature.startByte > tsDocument.getCaretByteOffset())) {
             if (inner) return getCodeBlock(body, tsDocument)
             val signature = body.prevSibling.takeIf { n -> n.grammarType == "function_signature" || n.grammarType == "method_signature" } ?: return tsDocument.toTextRange(body)
             return tsDocument.toTextRange(signature, body)
         }
-
-        val signature = tsDocument.findSelectionNode({ acceptNode(it, tsDocument) }) ?: return null
+        if (signature == null) return null
         if (signature.grammarType == "function_expression") {
-            val body = signature.getFirstNamedChildWithGrammar(setOf("function_expression_body")) ?: return tsDocument.toTextRange(signature)
+            body = signature.getFirstNamedChildWithGrammar(setOf("function_expression_body")) ?: return tsDocument.toTextRange(signature)
             if (inner) return getCodeBlock(body, tsDocument)
             return tsDocument.toTextRange(signature)
         }
-        body = signature.nextSibling.takeIf { n -> n.grammarType == "function_body" } ?: return tsDocument.toTextRange(signature)
+        body = signature.nextNamed()?.takeIf { n -> n.grammarType == "function_body" } ?: return tsDocument.toTextRange(signature)
         if (inner) return getCodeBlock(body, tsDocument)
         return tsDocument.toTextRange(signature, body)
     }

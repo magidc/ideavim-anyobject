@@ -135,6 +135,7 @@ abstract class TSHandlerBaseTest(handler: TSBasedHandler) : BasePlatformTestCase
     open fun testJava() = doTestLanguageHandler("java.json")
     open fun testJavascript() = doTestLanguageHandler("javascript.json")
     open fun testKotlin() = doTestLanguageHandler("kotlin.json")
+
     //    open fun testObjectivec() = doTestLanguageHandler("objectivec.json")
     open fun testPhp() = doTestLanguageHandler("php.json")
     open fun testPython() = doTestLanguageHandler("python.json")

@@ -206,7 +206,7 @@ class AnyObject : VimExtension {
                         return null
                     }
                     if (editor.inVisualMode) {
-                        editor.currentCaret().vimSetSelection(range.startOffset, range.endOffset, true)
+                        editor.currentCaret().vimSetSelection(range.startOffset, range.endOffset - 1, true)
                         return null
                     }
                     return range
