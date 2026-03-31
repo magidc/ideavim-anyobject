@@ -32,6 +32,7 @@ class TSModelExtensions {
             return if (prevNamedSibling.isNull) parent.takeIf { !it.isNull } else prevNamedSibling?.lastNamedLeafOrSelf()
         }
 
+        @Suppress("unused")
         fun TSNode.prevLeaf(): TSNode? {
             return if (prevSibling.isNull) parent.takeIf { !it.isNull } else prevSibling?.lastLeafOrSelf()
         }
@@ -58,23 +59,23 @@ class TSModelExtensions {
             return if (nextSibling.isNull) parent.next() else nextSibling
         }
 
-        fun TSNode.getFirstNamedChildWithGrammar(grammars: Collection<String>, offset: Int = this.startByte): TSNode? {
+        fun TSNode.getFirstNamedChildWithGrammar(grammars: Collection<String>, byteOffset: Int = this.startByte): TSNode? {
             val nodeDeque = ArrayDeque<TSNode>()
             nodeDeque.add(this)
             while (nodeDeque.isNotEmpty()) {
                 val node = nodeDeque.removeFirst()
-                if (node.endByte >= offset && grammars.contains(node.grammarType)) return node
+                if (node.endByte >= byteOffset && grammars.contains(node.grammarType)) return node
                 IntStream.range(0, node.namedChildCount).mapToObj { node.getNamedChild(it) }.forEach(nodeDeque::add)
             }
             return null
         }
 
-        fun TSNode.getFirstChildWithGrammar(grammars: Set<String>, offset: Int = this.startByte): TSNode? {
+        fun TSNode.getFirstChildWithGrammar(grammars: Set<String>, byteOffset: Int = this.startByte): TSNode? {
             val nodeDeque = ArrayDeque<TSNode>()
             nodeDeque.add(this)
             while (nodeDeque.isNotEmpty()) {
                 val node = nodeDeque.removeFirst()
-                if (node.endByte >= offset && grammars.contains(node.grammarType)) return node
+                if (node.endByte >= byteOffset && grammars.contains(node.grammarType)) return node
                 IntStream.range(0, node.childCount).mapToObj { node.getChild(it) }.forEach(nodeDeque::add)
             }
             return null

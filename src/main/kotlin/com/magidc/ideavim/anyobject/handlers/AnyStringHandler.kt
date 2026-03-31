@@ -20,7 +20,7 @@ class AnyStringHandler : TSBasedHandler() {
         "interpreted_string_literal", "template_string"
     )
 
-    override fun findInnerBlockRange(currentNode: TSNode, objectNode: TSNode, offset: Int, tsDocument: TSDocument): TextRange? {
+    override fun findInnerBlockRange(currentNode: TSNode, objectNode: TSNode, byteOffset: Int, tsDocument: TSDocument): TextRange? {
         val string = objectNode.toText(tsDocument.editor, maxSize = Int.MAX_VALUE)
         if (string.isEmpty()) return null
         val prefix = string.takeWhile { it !in quotes }

@@ -38,13 +38,13 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
         val currentNode = tsDocument.findCurrentNode() ?: return null
         val objectNode = tsDocument.findSelectionNode({ acceptNode(it, tsDocument) }, currentNode) ?: return null
         if (!inner) return tsDocument.toTextRange(objectNode)
-        return findInnerBlockRange(currentNode, objectNode, editor.getCaretOffset(), tsDocument)
+        return findInnerBlockRange(currentNode, objectNode, tsDocument.getCaretByteOffset(), tsDocument)
     }
 
     override fun allowsCountSelection(): Boolean = false
 
-    open fun findInnerBlockRange(currentNode: TSNode, objectNode: TSNode, offset: Int, tsDocument: TSDocument): TextRange? {
-        return objectNode.getFirstNamedChildWithGrammar(innerBlockTypes, offset)
+    open fun findInnerBlockRange(currentNode: TSNode, objectNode: TSNode, byteOffset: Int, tsDocument: TSDocument): TextRange? {
+        return objectNode.getFirstNamedChildWithGrammar(innerBlockTypes, byteOffset)
             ?.takeIf { it.namedChildCount > 0 }
             ?.let { getCodeBlock(it, tsDocument) }
     }

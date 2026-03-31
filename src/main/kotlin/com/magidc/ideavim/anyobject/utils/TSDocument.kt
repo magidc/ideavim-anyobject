@@ -137,13 +137,15 @@ class TSDocument(val editor: VimEditor) {
         return byteToCharOffsetTree.headSet(OffsetDelta(byteIndex)).sumOf { it.delta } + byteIndex
     }
 
+    fun getCaretByteOffset(): Int = toByteOffset(editor.getCaretOffset())
+
     fun toTextRange(fromNode: TSNode, toNode: TSNode = fromNode): TextRange {
         return TextRange(toCharOffset(fromNode.startByte), toCharOffset(toNode.endByte))
     }
 
     fun findCurrentNode(): TSNode? {
         if (editor.text().toString().hashCode() != lastContentHash) loadTSTree()
-        val caretByteOffset = toByteOffset(editor.getCaretOffset())
+        val caretByteOffset = getCaretByteOffset()
         var node = tsTree.rootNode
         while (node.startByte <= caretByteOffset) {
             val nextNode = node.getFirstChildForByte(caretByteOffset)
@@ -166,13 +168,15 @@ class TSDocument(val editor: VimEditor) {
         currentNode: TSNode, acceptNode: (TSNode) -> Boolean, forward: Boolean = true,
         startSelectionByteOffset: Int = -1, loop: Boolean = true
     ): TSNode? {
+        var caretByteOffset = getCaretByteOffset()
         val objectNode = findObjectNode(currentNode, acceptNode)
         val startNode =
             if (objectNode != null) {
                 if (startSelectionByteOffset == -1) {
-                    if (forward && objectNode.startByte > currentNode.startByte) return objectNode
-                    if (!forward && objectNode.startByte < currentNode.startByte) return objectNode
-                } else if (startSelectionByteOffset in objectNode.startByte + 1..<objectNode.endByte) return objectNode
+                    if (forward && objectNode.startByte > caretByteOffset) return objectNode
+                    if (!forward && objectNode.startByte < caretByteOffset) return objectNode
+                } else if (!forward && startSelectionByteOffset > objectNode.startByte) return objectNode
+                else if (forward && startSelectionByteOffset < objectNode.startByte) return objectNode
                 objectNode
             } else currentNode
 
@@ -183,15 +187,14 @@ class TSDocument(val editor: VimEditor) {
                 else it.prevNamedSibling
             }
         }
-        var caretOffset = editor.getCaretOffset()
         val nextNodeFunction = if (forward) { n: TSNode -> n.nextNamedLeaf() } else { n: TSNode -> n.prevNamedLeaf() }
-        val acceptNodeFunction = if (forward) { n: TSNode -> n.startByte >= caretOffset && acceptNode(n) } else { n: TSNode -> n.startByte <= caretOffset && acceptNode(n) }
+        val acceptNodeFunction = if (forward) { n: TSNode -> n.startByte >= caretByteOffset && acceptNode(n) } else { n: TSNode -> n.startByte <= caretByteOffset && acceptNode(n) }
         @Suppress("unused")
         for (i in 1..2) {
             generateSequence(node) { nextNodeFunction(it) }.firstOrNull { acceptNodeFunction(it) }?.let { return it }
             if (!loop) break
             node = if (forward) tsTree.rootNode else tsTree.rootNode.lastNamedLeafOrSelf()
-            caretOffset = if (forward) 0 else tsTree.rootNode.endByte
+            caretByteOffset = if (forward) 0 else tsTree.rootNode.endByte
         }
         return null
     }

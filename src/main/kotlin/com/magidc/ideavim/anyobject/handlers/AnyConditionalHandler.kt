@@ -34,60 +34,60 @@ class AnyConditionalHandler : TSBasedHandler() {
     private val callType = setOf("call")
     private val pythonInnerBlockTypes = innerBlockTypes - blockType
 
-    private fun findRubyInnerConditionalBlockRange(objectNode: TSNode, offset: Int, tsDocument: TSDocument): TextRange? {
+    private fun findRubyInnerConditionalBlockRange(objectNode: TSNode, byteOffset: Int, tsDocument: TSDocument): TextRange? {
         val types = when (objectNode.grammarType) {
             "if" -> callType
             else -> innerBlockTypes
         }
-        return objectNode.getFirstNamedChildWithGrammar(types, offset)
+        return objectNode.getFirstNamedChildWithGrammar(types, byteOffset)
             ?.takeIf { it.namedChildCount > 0 }
             ?.let { tsDocument.toTextRange(it) }
     }
 
-    private fun findCppPhpInnerConditionalBlockRange(objectNode: TSNode, offset: Int, tsDocument: TSDocument): TextRange? {
+    private fun findCppPhpInnerConditionalBlockRange(objectNode: TSNode, byteOffset: Int, tsDocument: TSDocument): TextRange? {
         val types = when (objectNode.grammarType) {
             "if_statement" -> compoundStatementType
             "try_statement" -> compoundStatementType
             else -> innerBlockTypes
         }
-        return objectNode.getFirstNamedChildWithGrammar(types, offset)
+        return objectNode.getFirstNamedChildWithGrammar(types, byteOffset)
             ?.takeIf { it.namedChildCount > 0 }
             ?.let { getCodeBlock(it, tsDocument) }
     }
 
-    private fun findJavaInnerConditionalBlockRange(currentNode: TSNode, objectNode: TSNode, offset: Int, tsDocument: TSDocument): TextRange? {
+    private fun findJavaInnerConditionalBlockRange(currentNode: TSNode, objectNode: TSNode, byteOffset: Int, tsDocument: TSDocument): TextRange? {
         if (objectNode.grammarType == "if_statement") {
-            objectNode.getFirstNamedChildWithGrammar(innerBlockTypes, offset)
+            objectNode.getFirstNamedChildWithGrammar(innerBlockTypes, byteOffset)
                 ?.takeIf { it.namedChildCount > 0 }
                 ?.let { getBracesCodeBlock(it, tsDocument) }
                 ?.let { return it }
-            return objectNode.getFirstNamedChildWithGrammar(expressionStatementType, offset)
+            return objectNode.getFirstNamedChildWithGrammar(expressionStatementType, byteOffset)
                 ?.takeIf { it.namedChildCount > 0 }
                 ?.let { tsDocument.toTextRange(it) }
                 ?.let { return it }
         }
-        return super.findInnerBlockRange(currentNode, objectNode, offset, tsDocument)
+        return super.findInnerBlockRange(currentNode, objectNode, byteOffset, tsDocument)
     }
 
-    private fun findPythonInnerConditionalBlockRange(objectNode: TSNode, offset: Int, tsDocument: TSDocument): TextRange? {
+    private fun findPythonInnerConditionalBlockRange(objectNode: TSNode, byteOffset: Int, tsDocument: TSDocument): TextRange? {
         val types = when (objectNode.grammarType) {
             "if_statement" -> blockType
             "try_statement" -> blockType
             else -> pythonInnerBlockTypes
         }
-        return objectNode.getFirstNamedChildWithGrammar(types, offset)
+        return objectNode.getFirstNamedChildWithGrammar(types, byteOffset)
             ?.takeIf { it.namedChildCount > 0 }
             ?.let { tsDocument.toTextRange(it) }
     }
 
-    override fun findInnerBlockRange(currentNode: TSNode, objectNode: TSNode, offset: Int, tsDocument: TSDocument): TextRange? {
+    override fun findInnerBlockRange(currentNode: TSNode, objectNode: TSNode, byteOffset: Int, tsDocument: TSDocument): TextRange? {
         return when (tsDocument.languageInfo.name) {
-            PYTHON.name -> findPythonInnerConditionalBlockRange(objectNode, offset, tsDocument)
-            JAVA.name -> findJavaInnerConditionalBlockRange(currentNode, objectNode, offset, tsDocument)
-            CPP.name -> findCppPhpInnerConditionalBlockRange(objectNode, offset, tsDocument)
-            PHP.name -> findCppPhpInnerConditionalBlockRange(objectNode, offset, tsDocument)
-            RUBY.name -> findRubyInnerConditionalBlockRange(objectNode, offset, tsDocument)
-            else -> super.findInnerBlockRange(currentNode, objectNode, offset, tsDocument) ?: tsDocument.toTextRange(objectNode)
+            PYTHON.name -> findPythonInnerConditionalBlockRange(objectNode, byteOffset, tsDocument)
+            JAVA.name -> findJavaInnerConditionalBlockRange(currentNode, objectNode, byteOffset, tsDocument)
+            CPP.name -> findCppPhpInnerConditionalBlockRange(objectNode, byteOffset, tsDocument)
+            PHP.name -> findCppPhpInnerConditionalBlockRange(objectNode, byteOffset, tsDocument)
+            RUBY.name -> findRubyInnerConditionalBlockRange(objectNode, byteOffset, tsDocument)
+            else -> super.findInnerBlockRange(currentNode, objectNode, byteOffset, tsDocument) ?: tsDocument.toTextRange(objectNode)
         }
     }
 }

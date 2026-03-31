@@ -1,4 +1,8 @@
 # Changelog
+## 3.1.3
+Fixed bug when jumping to next/previous text object while having a selection
+Fixed bug targeting text objects in documents with contain non-ASCII characters
+
 ## 3.1.2
 Dart/Flutter support fixes
 Updated to IntelliJ Platform 2.13.1

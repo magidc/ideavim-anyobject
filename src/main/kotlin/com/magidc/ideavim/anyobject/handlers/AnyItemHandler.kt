@@ -26,7 +26,7 @@ open class AnyItemHandler : TSBasedHandler() {
 
     override fun allowsCountSelection(): Boolean = true
 
-    override fun findInnerBlockRange(currentNode: TSNode, objectNode: TSNode, offset: Int, tsDocument: TSDocument): TextRange = tsDocument.toTextRange(objectNode)
+    override fun findInnerBlockRange(currentNode: TSNode, objectNode: TSNode, byteOffset: Int, tsDocument: TSDocument): TextRange = tsDocument.toTextRange(objectNode)
 
     override fun findSelection(editor: VimEditor, inner: Boolean, size: Int): TextRange? {
         if (size == 0) return null

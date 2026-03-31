@@ -30,7 +30,7 @@ open class AnyFunctionHandler : TSBasedHandler() {
         var body = tsDocument.findSelectionNode({ n -> n.grammarType == "function_body" })
         if (body != null) {
             if (inner) return getCodeBlock(body, tsDocument)
-            val signature =body.prevSibling.takeIf { n -> n.grammarType == "function_signature" || n.grammarType == "method_signature" } ?: return tsDocument.toTextRange(body)
+            val signature = body.prevSibling.takeIf { n -> n.grammarType == "function_signature" || n.grammarType == "method_signature" } ?: return tsDocument.toTextRange(body)
             return tsDocument.toTextRange(signature, body)
         }
 

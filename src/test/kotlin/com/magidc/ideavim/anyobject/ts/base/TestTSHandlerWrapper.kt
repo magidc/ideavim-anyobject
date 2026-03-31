@@ -9,12 +9,10 @@ import org.treesitter.TSNode
 class TestTSHandlerWrapper(val handler: TSBasedHandler) : TSBasedHandler() {
     override val targetTypes: Set<String> get() = TODO("Unused")
 
-    val sortedTargetTypes = handler.targetTypes.toMutableSet().toList().sortedBy { it }
-
     override fun findSelection(editor: VimEditor, inner: Boolean, size: Int): TextRange? = handler.findSelection(editor, inner, size)
 
     override fun allowsCountSelection(): Boolean = handler.allowsCountSelection()
 
-    override fun findInnerBlockRange(currentNode: TSNode, objectNode: TSNode, offset: Int, tsDocument: TSDocument): TextRange? =
-        handler.findInnerBlockRange(currentNode, objectNode, offset, tsDocument)
+    override fun findInnerBlockRange(currentNode: TSNode, objectNode: TSNode, byteOffset: Int, tsDocument: TSDocument): TextRange? =
+        handler.findInnerBlockRange(currentNode, objectNode, byteOffset, tsDocument)
 }
