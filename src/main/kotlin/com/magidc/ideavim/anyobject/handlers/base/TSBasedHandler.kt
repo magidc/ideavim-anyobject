@@ -24,7 +24,12 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
     protected open val languageTargetTypes: Map<KClass<*>, Set<String>> = emptyMap()
 
-    protected fun getTSDocument(editor: VimEditor): TSDocument = documentCache.getOrPut(editor.getVirtualFile()?.path ?: "") { TSDocument(editor) }
+    protected fun getTSDocument(editor: VimEditor): TSDocument {
+        return documentCache.getOrPut(editor.getVirtualFile()?.path ?: "") { TSDocument(editor) }.let {
+            if (it.editor == editor) it
+            else TSDocument(editor).also { tsDocument -> documentCache[editor.getVirtualFile()?.path ?: ""] = tsDocument }
+        }
+    }
 
     protected open fun acceptNode(node: TSNode, document: TSDocument): Boolean {
         return !node.isNull && node.isNamed && (

@@ -24,6 +24,7 @@ import java.util.TreeSet
 class TSDocument(val editor: VimEditor) {
     companion object {
         private fun String.byteLength(): Int = toByteArray(StandardCharsets.UTF_8).size
+        private fun VimEditor.hash() = this.text().hashCode()
 
         private fun getUTF8ByteLength(codePoint: Int): Int =
             when {
@@ -56,7 +57,7 @@ class TSDocument(val editor: VimEditor) {
     val parser: TSParser = getParser(languageInfo)
     private lateinit var tsTree: TSTree
     private val disabled: Boolean = parser.language == null
-    private var lastContentHash: Int = editor.text().hashCode()
+    private var lastContentHash: Int = editor.hash()
     private val charToByteOffsetTree = TreeSet<OffsetDelta>()
     private val byteToCharOffsetTree = TreeSet<OffsetDelta>()
     private val lineStartOffsetTree = TreeSet<LineOffset>()
@@ -86,7 +87,7 @@ class TSDocument(val editor: VimEditor) {
         val text = editor.text().toString()
         tsTree = parser.parseString(null, text)
         reloadCacheTrees(text)
-        lastContentHash = text.hashCode()
+        lastContentHash = editor.hash()
     }
 
 
@@ -144,7 +145,7 @@ class TSDocument(val editor: VimEditor) {
     }
 
     fun findCurrentNode(): TSNode? {
-        if (editor.text().toString().hashCode() != lastContentHash) loadTSTree()
+        if (editor.hash() != lastContentHash) loadTSTree()
         val caretByteOffset = getCaretByteOffset()
         var node = tsTree.rootNode
         while (node.startByte <= caretByteOffset) {
