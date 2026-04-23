@@ -26,7 +26,7 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
     protected fun getTSDocument(editor: VimEditor): TSDocument {
         return documentCache.getOrPut(editor.getVirtualFile()?.path ?: "") { TSDocument(editor) }.let {
-            if (it.editor == editor) it
+            if (it.editor === editor) it
             else TSDocument(editor).also { tsDocument -> documentCache[editor.getVirtualFile()?.path ?: ""] = tsDocument }
         }
     }
