@@ -1,48 +1,52 @@
 # Changelog
+
+## 3.1.5
+
+- Added support for comments in SQL and XML. [#33](https://github.com/magidc/ideavim-anyobject/issues/33), [#34](https://github.com/magidc/ideavim-anyobject/issues/34)
+- Bug fixes of issues related with comments in different languages. [#35](https://github.com/magidc/ideavim-anyobject/issues/35)
+- Considered Java annotation attributes as arguments. [#36](https://github.com/magidc/ideavim-anyobject/issues/36)
+
 ## 3.1.4
+
 Fixed the bug when Intellij switches the VimEditor object attached to a file and lets the corresponding TSDocument staled.
 
 ## 3.1.3
-Fixed the bug when jumping to the next / previous text object while having a selection
-Fixed bug targeting text objects in documents with contain non-ASCII characters
+
+Fixed the bug when jumping to the next / previous text object while having a selection Fixed bug targeting text objects in documents with contain non-ASCII characters
 
 ## 3.1.2
-Dart/Flutter support fixes
-Updated to IntelliJ Platform 2.13.1
-Better detection of document changes for Tree-sitter based text objects.
+
+Dart/Flutter support fixes Updated to IntelliJ Platform 2.13.1 Better detection of document changes for Tree-sitter based text objects.
 
 ## 3.1.1
+
 Dart/Flutter support
 
 ## 3.1.0
 
-Stable release
-Smart selection on jumping to the next/previous text object. The selection adapts to text objects when the jump makes it to overlap the initial selection.
-Improved support for Kotlin, Ruby, Rust, JavaScript, TypeScript, Go and Swift.
-Added unit tests for all languages supported
-Updated to support IdeaVim 2.28.0
+Stable release Smart selection on jumping to the next/previous text object. The selection adapts to text objects when the jump makes it to overlap the initial selection. Improved
+support for Kotlin, Ruby, Rust, JavaScript, TypeScript, Go and Swift. Added unit tests for all languages supported Updated to support IdeaVim 2.28.0
 
 ## 3.0.13
 
 Smart selection on jumping to the next/previous text object.
 
 ## 3.0.12
+
 Added AnyLambdaOrFunction handler. AnyFunction handler now is limited to functions and methods but not lambdas or arrow functions.
 
 ## 3.0.11
 
-Unit tests for AnyConditional. There are still some small selection issues in Ruby on Rails but rare. 
+Unit tests for AnyConditional. There are still some small selection issues in Ruby on Rails but rare.
 
 ## 3.0.10
 
-Bug fix for AnyIndentBlock
-Unit tests for AnyString and AnyVariable
-AnyConditional inner selection is still unstable
+Bug fix for AnyIndentBlock Unit tests for AnyString and AnyVariable AnyConditional inner selection is still unstable
 
 ## 3.0.9
 
-Unit tests for AnyLoop, AnyFunction, AnyClass, AnyArgument, AnyItem and AnyArgOrItem
-AnyIndentBlock includes empty lines as part of the indented block. Also, around selections will use visual line wise mode
+Unit tests for AnyLoop, AnyFunction, AnyClass, AnyArgument, AnyItem and AnyArgOrItem AnyIndentBlock includes empty lines as part of the indented block. Also, around selections will
+use visual line wise mode
 
 ## 3.0.8
 
@@ -66,13 +70,11 @@ Field/variable declarations and assignments.
 
 ### AnyArgOrItem (`x`)
 
-Combines objects targeted by AnyArgument and AnyItem.
-Selects any function argument, method parameter, callable expression, or collection items.
+Combines objects targeted by AnyArgument and AnyItem. Selects any function argument, method parameter, callable expression, or collection items.
 
 ## 3.0.6
 
-Improved Ruby on Rails support
-Extended AnyItem scope to include hash collection items. Kudos to **@ZimCodes** for the suggestion.
+Improved Ruby on Rails support Extended AnyItem scope to include hash collection items. Kudos to **@ZimCodes** for the suggestion.
 
 ### AnyField (`v`)
 
@@ -84,19 +86,15 @@ implicit field declarations.
 
 ## 3.0.5
 
-Bug fixes for Kotlin support
-Visual text objects jumps seems to be ready
+Bug fixes for Kotlin support Visual text objects jumps seems to be ready
 
 ## 3.0.4
 
-Byte offsets bug fixes
-Disabling continuous Treesitter parsing until it is stable enough
-Visual text objects jumps
+Byte offsets bug fixes Disabling continuous Treesitter parsing until it is stable enough Visual text objects jumps
 
 ## 3.0.3
 
-Better Kotlin support
-Fixed document offset caches; it was wrongly set as a global variable shared across all documents
+Better Kotlin support Fixed document offset caches; it was wrongly set as a global variable shared across all documents
 
 ## 3.0.2
 
@@ -110,8 +108,8 @@ Solved many reported issues in the first release based on Treesitter
 
 ### Tree-sitter
 
-From version 3.0.0 the plugin replaces the approach to detect coding text objects from PSI-based approach with Tree-sitter.
-This provides a more consistent model across different languages.
+From version 3.0.0 the plugin replaces the approach to detect coding text objects from PSI-based approach with Tree-sitter. This provides a more consistent model across different
+languages.
 
 Removed AnyBlockComment in favor of more generic AnyComment.
 
@@ -131,8 +129,8 @@ Fixed multiple issues detecting C# text objects.
 
 ## 2.0.4
 
-If the current cursor position is within a text object, it will be selected. Otherwise, the nearest text object in the specified direction will be selected.
-This is a standard behavior of Vim's text objects that was not properly implemented in this plugin. Kudos to **@kbilsted** for reporting this issue.
+If the current cursor position is within a text object, it will be selected. Otherwise, the nearest text object in the specified direction will be selected. This is a standard
+behavior of Vim's text objects that was not properly implemented in this plugin. Kudos to **@kbilsted** for reporting this issue.
 
 ## 2.0.3
 

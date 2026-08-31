@@ -72,7 +72,7 @@ class TSLanguageUtils {
             "GO" to TSLanguageInfo("GO", "goland", { TreeSitterGo() }, setOf("go"), TSBlockType.BRACES),
             "PYTHON" to PYTHON,
             "PHP" to PHP,
-            "HTML" to TSLanguageInfo("HTML", "webstorm", { TreeSitterHtml() }, setOf("html", "htm"), TSBlockType.UNKNOWN),
+            "HTML" to TSLanguageInfo("HTML", "webstorm", { TreeSitterHtml() }, setOf("html", "htm","xhtml"), TSBlockType.UNKNOWN),
             "CSS" to TSLanguageInfo("CSS", "webstorm", { TreeSitterCss() }, setOf("css"), TSBlockType.BRACES),
             "ECMAScript 6" to TSLanguageInfo("ECMAScript 6", "webstorm", { TreeSitterJavascript() }, setOf("js"), TSBlockType.BRACES),
             "TYPESCRIPT" to TSLanguageInfo("TYPESCRIPT", "webstorm", { TreeSitterTypescript() }, setOf("ts"), TSBlockType.BRACES),
@@ -82,6 +82,7 @@ class TSLanguageUtils {
             "R" to TSLanguageInfo("R", "", { TreeSitterR() }, setOf("r"), TSBlockType.BRACES),
             "SQL" to TSLanguageInfo("SQL", "", { TreeSitterSql() }, setOf("sql"), TSBlockType.UNKNOWN),
             "JSON" to TSLanguageInfo("JSON", "", { TreeSitterJson() }, setOf("json"), TSBlockType.BRACES),
+            "XML" to TSLanguageInfo("XML", "", { TreeSitterHtml() }, setOf("xml", "xbrl","xbri"), TSBlockType.UNKNOWN),
             "YAML" to TSLanguageInfo("YAML", "", { TreeSitterYaml() }, setOf("yaml", "yml"), TSBlockType.INDENTED)
         )
 

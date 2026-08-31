@@ -11,13 +11,17 @@ import org.treesitter.TSNode
  * Handler for targeting any item within a collection (array, list, tuple, dictionary, etc.).
  */
 open class AnyItemHandler : TSBasedHandler() {
+    companion object {
+        val targetTypes = setOf("pair", "flow_node")
+        val parentTargetTypes: Set<String> = setOf(
+            "array", "array_initializer", "list", "tuple", "initializer_expression", "composite_literal", "list_literal",
+            "literal_value", "dictionary", "set", "element_list", "sequence", "collection", "object", "array_literal",
+            "tuple_expression", "token_tree", "array_creation_expression", "initializer_list", "dictionary_literal"
+        )
+    }
 
-    open val parentTargetTypes: Set<String> = setOf(
-        "array", "array_initializer", "list", "tuple", "initializer_expression", "composite_literal", "list_literal",
-        "literal_value", "dictionary", "set", "element_list", "sequence", "collection", "object", "array_literal",
-        "tuple_expression", "token_tree", "array_creation_expression", "initializer_list", "dictionary_literal"
-    )
-    override val targetTypes: Set<String> = setOf("pair", "flow_node")
+    open val parentTargetTypes: Set<String> = Companion.parentTargetTypes
+    override val targetTypes: Set<String> = Companion.targetTypes
 
     override fun acceptNode(node: TSNode, document: TSDocument): Boolean {
         return super.acceptNode(node, document)
@@ -43,7 +47,8 @@ open class AnyItemHandler : TSBasedHandler() {
             else
                 firstNode.prevSibling?.takeIf { !it.isNull && it.grammarType == "," }?.let { nodes.add(0, it) }
         }
-        return tsDocument.toTextRange(nodes.first(), nodes.last())
+        if (nodes.size > 1) return tsDocument.toTextRange(nodes.first(), nodes.last())
+        return findInnerBlockRange(currentNode = firstNode, objectNode = firstNode, 0, tsDocument = tsDocument)
     }
 }
 
