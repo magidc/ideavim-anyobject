@@ -59,7 +59,7 @@ class AnyCommentHandler : TSBasedHandler() {
         val outerContent = objectNode.toText(editor = tsDocument.editor, Int.MAX_VALUE)
         commentTags.blockTags.firstOrNull { outerContent.startsWith(it.first) && outerContent.endsWith(it.second) }?.let {
             return TextRange(
-                outerRange.startOffset - outerContent.indexOf(it.first) + it.first.length,
+                outerRange.startOffset + outerContent.indexOf(it.first) + it.first.length,
                 outerRange.endOffset - (outerContent.length - outerContent.lastIndexOf(it.second))
             )
         }
