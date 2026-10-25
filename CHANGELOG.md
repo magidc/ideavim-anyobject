@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.6
+
+Handling inner and outer selections in line and block comments. [#40](https://github.com/magidc/ideavim-anyobject/issues/40)
+
 ## 3.1.5
 
 - Added support for comments in SQL and XML. [#33](https://github.com/magidc/ideavim-anyobject/issues/33), [#34](https://github.com/magidc/ideavim-anyobject/issues/34)
