@@ -1,0 +1,34 @@
+{
+  "extension": "dart",
+  "code": "void main() {\n  foo(1, <caret_1>2);\n  obj.run(<caret_2>'a', b);\n  obj?.run(<caret_3>x);\n  foo(a: 1, <caret_4>b: 2);\n  foo<int>(<caret_5>x);\n  builder.add(<caret_6>1).build();\n  builder.add(1).bu<caret_7>ild();\n  super.run(<caret_8>x);\n  foo(bar(<caret_9>1), 2);\n  list.forEach(<caret_10>(x) { print(x); });\n  list.map((x) => x * <caret_11>2);\n  final r = await fetch(<caret_12>url);\n  call(\n    <caret_13>first,\n    second,\n  );\n}",
+  "inner": {
+    "1": "1, 2",
+    "2": "'a', b",
+    "3": "x",
+    "4": "a: 1, b: 2",
+    "5": "x",
+    "6": "1",
+    "7": "",
+    "8": "x",
+    "9": "1",
+    "10": "(x) { print(x); }",
+    "11": "(x) => x * 2",
+    "12": "url",
+    "13": "first,\n    second,"
+  },
+  "around": {
+    "1": "foo(1, 2)",
+    "2": "obj.run('a', b)",
+    "3": "obj?.run(x)",
+    "4": "foo(a: 1, b: 2)",
+    "5": "foo<int>(x)",
+    "6": "builder.add(1)",
+    "7": "builder.add(1).build()",
+    "8": "super.run(x)",
+    "9": "bar(1)",
+    "10": "list.forEach((x) { print(x); })",
+    "11": "list.map((x) => x * 2)",
+    "12": "fetch(url)",
+    "13": "call(\n    first,\n    second,\n  )"
+  }
+}

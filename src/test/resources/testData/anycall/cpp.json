@@ -1,0 +1,34 @@
+{
+  "extension": "cpp",
+  "code": "int main() {\n    foo(1, <caret_1>2);\n    obj.run(<caret_2>\"a\", b);\n    ptr->run(<caret_3>x);\n    ns::foo(<caret_4>x);\n    Widget::create(<caret_5>x);\n    std::max<int>(<caret_6>a, b);\n    builder.add(<caret_7>1).build();\n    builder.add(1).bu<caret_8>ild();\n    (*fp)(<caret_9>x);\n    foo(bar(<caret_10>1), 2);\n    std::for_each(v.begin(), v.end(), <caret_11>[](int x) { print(x); });\n    this->run(<caret_12>x);\n    call(\n        <caret_13>first,\n        second\n    );\n}",
+  "inner": {
+    "1": "1, 2",
+    "2": "\"a\", b",
+    "3": "x",
+    "4": "x",
+    "5": "x",
+    "6": "a, b",
+    "7": "1",
+    "8": "",
+    "9": "x",
+    "10": "1",
+    "11": "v.begin(), v.end(), [](int x) { print(x); }",
+    "12": "x",
+    "13": "first,\n        second"
+  },
+  "around": {
+    "1": "foo(1, 2)",
+    "2": "obj.run(\"a\", b)",
+    "3": "ptr->run(x)",
+    "4": "ns::foo(x)",
+    "5": "Widget::create(x)",
+    "6": "std::max<int>(a, b)",
+    "7": "builder.add(1)",
+    "8": "builder.add(1).build()",
+    "9": "(*fp)(x)",
+    "10": "bar(1)",
+    "11": "std::for_each(v.begin(), v.end(), [](int x) { print(x); })",
+    "12": "this->run(x)",
+    "13": "call(\n        first,\n        second\n    )"
+  }
+}

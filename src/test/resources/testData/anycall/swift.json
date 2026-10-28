@@ -1,0 +1,36 @@
+{
+  "extension": "swift",
+  "code": "func main() {\n    foo(1, <caret_1>2)\n    obj.run(<caret_2>\"a\", b)\n    move(x: 1, <caret_3>y: 2)\n    obj?.run(<caret_4>x)\n    xs.reduce(<caret_5>0) { $0 + $1 }\n    xs.map { <caret_6>$0 * 2 }\n    let r = try parse(<caret_7>data)\n    let s = await fetch(<caret_8>url)\n    builder.add(<caret_9>1).build()\n    builder.add(1).bu<caret_10>ild()\n    super.run(<caret_11>x)\n    foo(bar(<caret_12>1), 2)\n    swap(&a, &<caret_13>b)\n    call(\n        <caret_14>first,\n        second\n    )\n}",
+  "inner": {
+    "1": "1, 2",
+    "2": "\"a\", b",
+    "3": "x: 1, y: 2",
+    "4": "x",
+    "5": "0",
+    "6": "{ $0 * 2 }",
+    "7": "data",
+    "8": "url",
+    "9": "1",
+    "10": "",
+    "11": "x",
+    "12": "1",
+    "13": "&a, &b",
+    "14": "first,\n        second"
+  },
+  "around": {
+    "1": "foo(1, 2)",
+    "2": "obj.run(\"a\", b)",
+    "3": "move(x: 1, y: 2)",
+    "4": "obj?.run(x)",
+    "5": "xs.reduce(0) { $0 + $1 }",
+    "6": "xs.map { $0 * 2 }",
+    "7": "parse(data)",
+    "8": "fetch(url)",
+    "9": "builder.add(1)",
+    "10": "builder.add(1).build()",
+    "11": "super.run(x)",
+    "12": "bar(1)",
+    "13": "swap(&a, &b)",
+    "14": "call(\n        first,\n        second\n    )"
+  }
+}

@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.7
+
+Added AnyCall handler to target function call expressions [#42](https://github.com/magidc/ideavim-anyobject/discussions/42)
+
 ## 3.1.6
 
 Handling inner and outer selections in line and block comments. [#40](https://github.com/magidc/ideavim-anyobject/issues/40)

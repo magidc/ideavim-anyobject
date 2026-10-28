@@ -1,0 +1,20 @@
+{
+  "extension": "m",
+  "code": "void test() {\n    NSLog(@\"%@\", <caret_1>value);\n    foo(bar(<caret_2>1), 2);\n    [obj <caret_3>run];\n    [obj runWith:1 <caret_4>and:2];\n    [[Foo alloc] in<caret_5>it];\n    [[Foo al<caret_6>loc] init];\n    [obj runWith:compute(<caret_7>1)];\n    call(\n        <caret_8>first,\n        second\n    );\n}",
+  "inner": {
+    "1": "@\"%@\", value",
+    "2": "1",
+    "7": "1",
+    "8": "first,\n        second"
+  },
+  "around": {
+    "1": "NSLog(@\"%@\", value)",
+    "2": "bar(1)",
+    "3": "[obj run]",
+    "4": "[obj runWith:1 and:2]",
+    "5": "[[Foo alloc] init]",
+    "6": "[Foo alloc]",
+    "7": "compute(1)",
+    "8": "call(\n        first,\n        second\n    )"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "extension": "scala",
+  "code": "object Test {\n  def main(): Unit = {\n    foo(1, <caret_1>2)\n    obj.run(<caret_2>\"a\", b)\n    List(<caret_3>1, 2, 3)\n    foo[Int](<caret_4>x)\n    foo(a = 1, <caret_5>b = 2)\n    xs.foldLeft(<caret_6>0)(_ + _)\n    xs.foldLeft(0)(_ + <caret_7>_)\n    xs.map { x => x * <caret_8>2 }\n    builder.add(<caret_9>1).build()\n    builder.add(1).bu<caret_10>ild()\n    foo(bar(<caret_11>1), 2)\n    xs.foreach(<caret_12>x => println(x))\n    call(\n      <caret_13>first,\n      second\n    )\n  }\n}",
+  "inner": {
+    "1": "1, 2",
+    "2": "\"a\", b",
+    "3": "1, 2, 3",
+    "4": "x",
+    "5": "a = 1, b = 2",
+    "6": "0",
+    "7": "_ + _",
+    "8": "{ x => x * 2 }",
+    "9": "1",
+    "10": "",
+    "11": "1",
+    "12": "x => println(x)",
+    "13": "first,\n      second"
+  },
+  "around": {
+    "1": "foo(1, 2)",
+    "2": "obj.run(\"a\", b)",
+    "3": "List(1, 2, 3)",
+    "4": "foo[Int](x)",
+    "5": "foo(a = 1, b = 2)",
+    "6": "xs.foldLeft(0)",
+    "7": "xs.foldLeft(0)(_ + _)",
+    "8": "xs.map { x => x * 2 }",
+    "9": "builder.add(1)",
+    "10": "builder.add(1).build()",
+    "11": "bar(1)",
+    "12": "xs.foreach(x => println(x))",
+    "13": "call(\n      first,\n      second\n    )"
+  }
+}

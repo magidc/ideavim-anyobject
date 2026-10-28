@@ -1,0 +1,36 @@
+{
+  "extension": "kt",
+  "code": "fun main() {\n    foo(1, <caret_1>2)\n    obj.run(<caret_2>\"a\", b)\n    obj?.run(<caret_3>x)\n    foo(a = 1, <caret_4>b = 2)\n    listOf<Int>(<caret_5>1, 2)\n    builder.add(<caret_6>1).build()\n    builder.add(1).bu<caret_7>ild()\n    list.fold(<caret_8>0) { acc, x -> acc + x }\n    list.map { <caret_9>it * 2 }\n    super.run(<caret_10>x)\n    foo(*<caret_11>args)\n    foo(bar(<caret_12>1), 2)\n    list.forEach(<caret_13>{ x -> println(x) })\n    call(\n        <caret_14>first,\n        second\n    )\n}",
+  "inner": {
+    "1": "1, 2",
+    "2": "\"a\", b",
+    "3": "x",
+    "4": "a = 1, b = 2",
+    "5": "1, 2",
+    "6": "1",
+    "7": "",
+    "8": "0",
+    "9": "{ it * 2 }",
+    "10": "x",
+    "11": "*args",
+    "12": "1",
+    "13": "{ x -> println(x) }",
+    "14": "first,\n        second"
+  },
+  "around": {
+    "1": "foo(1, 2)",
+    "2": "obj.run(\"a\", b)",
+    "3": "obj?.run(x)",
+    "4": "foo(a = 1, b = 2)",
+    "5": "listOf<Int>(1, 2)",
+    "6": "builder.add(1)",
+    "7": "builder.add(1).build()",
+    "8": "list.fold(0) { acc, x -> acc + x }",
+    "9": "list.map { it * 2 }",
+    "10": "super.run(x)",
+    "11": "foo(*args)",
+    "12": "bar(1)",
+    "13": "list.forEach({ x -> println(x) })",
+    "14": "call(\n        first,\n        second\n    )"
+  }
+}

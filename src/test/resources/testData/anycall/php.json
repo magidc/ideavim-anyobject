@@ -1,0 +1,36 @@
+{
+  "extension": "php",
+  "code": "<?php\nfoo(1, <caret_1>2);\n$obj->run(<caret_2>'a', $b);\n$obj?->run(<caret_3>$x);\nFoo::bar(<caret_4>$x);\nparent::__construct(<caret_5>$x);\n$fn(<caret_6>$x);\n$q->where('a', <caret_7>1)->get();\n$q->where('a', 1)->g<caret_8>et();\nfoo(a: 1, <caret_9>b: 2);\nfoo(...<caret_10>$args);\nfoo(bar(<caret_11>1), 2);\narray_map(<caret_12>function ($x) { return $x * 2; }, $xs);\narray_map(fn($x) => $x * <caret_13>2, $xs);\ncall(\n    <caret_14>$first,\n    $second\n);",
+  "inner": {
+    "1": "1, 2",
+    "2": "'a', $b",
+    "3": "$x",
+    "4": "$x",
+    "5": "$x",
+    "6": "$x",
+    "7": "'a', 1",
+    "8": "",
+    "9": "a: 1, b: 2",
+    "10": "...$args",
+    "11": "1",
+    "12": "function ($x) { return $x * 2; }, $xs",
+    "13": "fn($x) => $x * 2, $xs",
+    "14": "$first,\n    $second"
+  },
+  "around": {
+    "1": "foo(1, 2)",
+    "2": "$obj->run('a', $b)",
+    "3": "$obj?->run($x)",
+    "4": "Foo::bar($x)",
+    "5": "parent::__construct($x)",
+    "6": "$fn($x)",
+    "7": "$q->where('a', 1)",
+    "8": "$q->where('a', 1)->get()",
+    "9": "foo(a: 1, b: 2)",
+    "10": "foo(...$args)",
+    "11": "bar(1)",
+    "12": "array_map(function ($x) { return $x * 2; }, $xs)",
+    "13": "array_map(fn($x) => $x * 2, $xs)",
+    "14": "call(\n    $first,\n    $second\n)"
+  }
+}

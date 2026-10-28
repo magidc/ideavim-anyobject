@@ -1,0 +1,32 @@
+{
+  "extension": "r",
+  "code": "foo(1, <caret_1>2)\nstats::median(<caret_2>x)\nseq(1, 10, <caret_3>by = 2)\nx |> f(<caret_4>y)\nf(1)(<caret_5>2)\nobj$method(<caret_6>x)\ndo.call(f, list(<caret_7>1, 2))\nfoo(bar(<caret_8>1), 2)\nsapply(xs, <caret_9>function(x) { x * 2 })\nsapply(xs, \\(x) x * <caret_10>2)\npaste(..., <caret_11>sep = \"\")\ncall(\n  <caret_12>first,\n  second\n)",
+  "inner": {
+    "1": "1, 2",
+    "2": "x",
+    "3": "1, 10, by = 2",
+    "4": "y",
+    "5": "2",
+    "6": "x",
+    "7": "1, 2",
+    "8": "1",
+    "9": "xs, function(x) { x * 2 }",
+    "10": "xs, \\(x) x * 2",
+    "11": "..., sep = \"\"",
+    "12": "first,\n  second"
+  },
+  "around": {
+    "1": "foo(1, 2)",
+    "2": "stats::median(x)",
+    "3": "seq(1, 10, by = 2)",
+    "4": "f(y)",
+    "5": "f(1)(2)",
+    "6": "obj$method(x)",
+    "7": "list(1, 2)",
+    "8": "bar(1)",
+    "9": "sapply(xs, function(x) { x * 2 })",
+    "10": "sapply(xs, \\(x) x * 2)",
+    "11": "paste(..., sep = \"\")",
+    "12": "call(\n  first,\n  second\n)"
+  }
+}

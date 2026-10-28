@@ -1,0 +1,38 @@
+{
+  "extension": "rb",
+  "code": "foo(1, <caret_1>2)\nobj.run(<caret_2>\"a\", b)\nobj.run <caret_3>1, 2\nputs <caret_4>\"hello\"\nobj&.run(<caret_5>x)\nFoo::bar(<caret_6>x)\nbuilder.add(<caret_7>1).build\nbuilder.add(1).bu<caret_8>ild\nlist.map(&<caret_9>:to_s)\nlist.each_with_index(<caret_10>1) { |x, i| p x }\nlist.each { |x| <caret_11>p x }\nfoo(bar(<caret_12>1), 2)\nfoo(a: 1, <caret_13>b: 2)\nfoo(*args, **<caret_14>opts, &blk)\ncall(\n  <caret_15>first,\n  second\n)",
+  "inner": {
+    "1": "1, 2",
+    "2": "\"a\", b",
+    "3": "1, 2",
+    "4": "\"hello\"",
+    "5": "x",
+    "6": "x",
+    "7": "1",
+    "8": "",
+    "9": "&:to_s",
+    "10": "1",
+    "11": "x",
+    "12": "1",
+    "13": "a: 1, b: 2",
+    "14": "*args, **opts, &blk",
+    "15": "first,\n  second"
+  },
+  "around": {
+    "1": "foo(1, 2)",
+    "2": "obj.run(\"a\", b)",
+    "3": "obj.run 1, 2",
+    "4": "puts \"hello\"",
+    "5": "obj&.run(x)",
+    "6": "Foo::bar(x)",
+    "7": "builder.add(1)",
+    "8": "builder.add(1).build",
+    "9": "list.map(&:to_s)",
+    "10": "list.each_with_index(1) { |x, i| p x }",
+    "11": "p x",
+    "12": "bar(1)",
+    "13": "foo(a: 1, b: 2)",
+    "14": "foo(*args, **opts, &blk)",
+    "15": "call(\n  first,\n  second\n)"
+  }
+}

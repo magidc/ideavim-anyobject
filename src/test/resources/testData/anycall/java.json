@@ -1,0 +1,36 @@
+{
+  "extension": "java",
+  "code": "public class Test {\n    void main() {\n        foo(1, <caret_1>2);\n        obj.run(<caret_2>\"a\", b);\n        Math.<caret_3>max(x, y);\n        builder.add(<caret_4>1).build();\n        builder.add(1).bu<caret_5>ild();\n        Collections.<String>empty<caret_6>List();\n        this.run(<caret_7>x);\n        super.run(<caret_8>x);\n        foo(bar(<caret_9>1), 2);\n        list.forEach(x -> System.out.println(<caret_10>x));\n        list.forEach(<caret_11>x -> { process(x); });\n        String.format(<caret_12>\"%s-%s\", a, b);\n        getList().get(<caret_13>0);\n        call(\n            <caret_14>first,\n            second\n        );\n    }\n}",
+  "inner": {
+    "1": "1, 2",
+    "2": "\"a\", b",
+    "3": "x, y",
+    "4": "1",
+    "5": "",
+    "6": "",
+    "7": "x",
+    "8": "x",
+    "9": "1",
+    "10": "x",
+    "11": "x -> { process(x); }",
+    "12": "\"%s-%s\", a, b",
+    "13": "0",
+    "14": "first,\n            second"
+  },
+  "around": {
+    "1": "foo(1, 2)",
+    "2": "obj.run(\"a\", b)",
+    "3": "Math.max(x, y)",
+    "4": "builder.add(1)",
+    "5": "builder.add(1).build()",
+    "6": "Collections.<String>emptyList()",
+    "7": "this.run(x)",
+    "8": "super.run(x)",
+    "9": "bar(1)",
+    "10": "System.out.println(x)",
+    "11": "list.forEach(x -> { process(x); })",
+    "12": "String.format(\"%s-%s\", a, b)",
+    "13": "getList().get(0)",
+    "14": "call(\n            first,\n            second\n        )"
+  }
+}

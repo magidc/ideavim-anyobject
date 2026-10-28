@@ -1,0 +1,38 @@
+{
+  "extension": "cs",
+  "code": "class Test {\n    async void Main() {\n        Foo(1, <caret_1>2);\n        obj.Run(<caret_2>\"a\", b);\n        obj?.Run(<caret_3>x);\n        Get<int>(<caret_4>x);\n        Foo(a: 1, <caret_5>b: 2);\n        int.TryParse(s, out <caret_6>var n);\n        Swap(ref a, ref <caret_7>b);\n        list.Where(x => x > 0).Select(<caret_8>x => x * 2);\n        list.Where(x => x > 0).Sel<caret_9>ect(x => x * 2);\n        base.Run(<caret_10>x);\n        this.Run(<caret_11>x);\n        var r = await client.GetAsync(<caret_12>url);\n        Foo(Bar(<caret_13>1), 2);\n        list.ForEach(<caret_14>x => { Process(x); });\n        Call(\n            <caret_15>first,\n            second\n        );\n    }\n}",
+  "inner": {
+    "1": "1, 2",
+    "2": "\"a\", b",
+    "3": "x",
+    "4": "x",
+    "5": "a: 1, b: 2",
+    "6": "s, out var n",
+    "7": "ref a, ref b",
+    "8": "x => x * 2",
+    "9": "x => x * 2",
+    "10": "x",
+    "11": "x",
+    "12": "url",
+    "13": "1",
+    "14": "x => { Process(x); }",
+    "15": "first,\n            second"
+  },
+  "around": {
+    "1": "Foo(1, 2)",
+    "2": "obj.Run(\"a\", b)",
+    "3": "obj?.Run(x)",
+    "4": "Get<int>(x)",
+    "5": "Foo(a: 1, b: 2)",
+    "6": "int.TryParse(s, out var n)",
+    "7": "Swap(ref a, ref b)",
+    "8": "list.Where(x => x > 0).Select(x => x * 2)",
+    "9": "list.Where(x => x > 0).Select(x => x * 2)",
+    "10": "base.Run(x)",
+    "11": "this.Run(x)",
+    "12": "client.GetAsync(url)",
+    "13": "Bar(1)",
+    "14": "list.ForEach(x => { Process(x); })",
+    "15": "Call(\n            first,\n            second\n        )"
+  }
+}
