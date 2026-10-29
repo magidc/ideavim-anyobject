@@ -54,7 +54,7 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
             ?.let { getCodeBlock(it, tsDocument) }
     }
 
-    protected fun getCodeBlock(node: TSNode, tsDocument: TSDocument): TextRange? {
+    protected open fun getCodeBlock(node: TSNode, tsDocument: TSDocument): TextRange? {
         if (node.childCount == 0) return null
         if (node.childCount >= 2 && assigmentSymbols.contains(node.getChild(0).grammarType))
             return tsDocument.toTextRange(node.getChild(1), node)

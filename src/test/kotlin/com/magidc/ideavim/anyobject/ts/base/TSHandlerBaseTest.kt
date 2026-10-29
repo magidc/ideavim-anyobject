@@ -116,11 +116,11 @@ abstract class TSHandlerBaseTest(handler: TSBasedHandler) : BasePlatformTestCase
         val assertions = if (inner) testData.inner else testData.around
         val editor = MockVimEditor(testData.code, testData.filePath, 0)
 
-        for (caretPositionEntry in testData.caretPositions.entries) {
-            editor.currentCaretOffset = caretPositionEntry.value
-            val expected = assertions[caretPositionEntry.key]?.trim() ?: continue
+        for ((caretId, caretOffSet) in testData.caretPositions) {
+            editor.currentCaretOffset = caretOffSet
+            val expected = assertions[caretId]?.trim() ?: continue
             val actual = handlerWrapper.findSelection(editor, inner, 1)?.let { editor.text().substring(it.startOffset, it.endOffset) }?.trim() ?: ""
-            testResults.add(testData, inner, caretPositionEntry.key, caretPositionEntry.value, actual, expected)
+            testResults.add(testData, inner, caretId, caretOffSet, actual, expected)
         }
     }
 
@@ -128,6 +128,7 @@ abstract class TSHandlerBaseTest(handler: TSBasedHandler) : BasePlatformTestCase
 //        doTestLanguageHandler()
 //        println("Sorted target types: ${handlerWrapper.sortedTargetTypes.joinToString(", ") { "\"$it\"" }}")
 //    }
+    //    open fun testObjectivec() = doTestLanguageHandler("objectivec.json")
 
     open fun testCpp() = doTestLanguageHandler("cpp.json")
     open fun testCsharp() = doTestLanguageHandler("csharp.json")
@@ -135,8 +136,6 @@ abstract class TSHandlerBaseTest(handler: TSBasedHandler) : BasePlatformTestCase
     open fun testJava() = doTestLanguageHandler("java.json")
     open fun testJavascript() = doTestLanguageHandler("javascript.json")
     open fun testKotlin() = doTestLanguageHandler("kotlin.json")
-
-    //    open fun testObjectivec() = doTestLanguageHandler("objectivec.json")
     open fun testPhp() = doTestLanguageHandler("php.json")
     open fun testPython() = doTestLanguageHandler("python.json")
     open fun testDart() = doTestLanguageHandler("dart.json")
