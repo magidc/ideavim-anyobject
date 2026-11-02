@@ -22,6 +22,7 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
     protected open val innerBlockTypes: Set<String> = setOf("block")
     abstract val targetTypes: Set<String>
 
+    // To define specific target types for a language
     protected open val languageTargetTypes: Map<KClass<*>, Set<String>> = emptyMap()
 
     protected fun getTSDocument(editor: VimEditor): TSDocument {

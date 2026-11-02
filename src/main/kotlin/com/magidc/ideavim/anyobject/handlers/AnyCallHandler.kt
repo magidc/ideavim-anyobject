@@ -7,6 +7,8 @@ import com.magidc.ideavim.anyobject.utils.TSDocument
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.getFirstNamedChildWithGrammar
 import com.magidc.ideavim.anyobject.utils.TSModelExtensions.Companion.toText
 import org.treesitter.TSNode
+import org.treesitter.TreeSitterDart
+import kotlin.reflect.KClass
 
 /**
  * Handler for targeting any function call expression
@@ -17,8 +19,9 @@ class AnyCallHandler : TSBasedHandler() {
 
     override val targetTypes = setOf(
         "call", "_call", "call_expression", "method_invocation", "member_call_expression", "function_call_expression", "scoped_call_expression", "invocation_expression",
-        "nullsafe_member_call_expression", "expression_statement", "await_expression"
+        "nullsafe_member_call_expression", "await_expression"
     )
+    override val languageTargetTypes: Map<KClass<*>, Set<String>> = mapOf(TreeSitterDart::class to setOf("expression_statement"))
 
     override fun findSelection(editor: VimEditor, inner: Boolean, size: Int): TextRange? {
         val tsDocument = getTSDocument(editor)
