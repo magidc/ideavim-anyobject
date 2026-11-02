@@ -172,6 +172,9 @@ Extends AnyFunction to include lambda or arrow functions.
 
 Function call expressions
 
+- **Inner selection (`ih`)**: Selects the call arguments
+- **Outer selection (`ah`)**: Selects the call including its arguments. If the target is an object method, the object is also selected
+
 ### AnyClass (`c`)
 
 Class, interface, struct, and similar type definitions.
