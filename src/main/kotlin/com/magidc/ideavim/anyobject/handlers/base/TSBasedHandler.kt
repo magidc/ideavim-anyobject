@@ -67,7 +67,7 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
     }
 
     protected fun getBracesCodeBlock(node: TSNode, tsDocument: TSDocument): TextRange? {
-        val nodeText = node.toText(tsDocument.editor, Int.MAX_VALUE)
+        val nodeText = node.toText(tsDocument.editor)
         val openBraceOffset = nodeText.indexOf('{').takeIf { it > -1 } ?: return null
         val closeBraceOffset = nodeText.lastIndexOf('}').takeIf { it > -1 } ?: return null
         val textOffset = tsDocument.toCharOffset(node.startByte)
@@ -76,7 +76,7 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
     private fun getEndCodeBlock(node: TSNode, tsDocument: TSDocument): TextRange? {
         if (node.lastLeafOrSelf().grammarType != "end") return null
-        val nodeText = node.toText(tsDocument.editor, Int.MAX_VALUE)
+        val nodeText = node.toText(tsDocument.editor)
         val firstLineEnd = nodeText.indexOf('\n').takeIf { it > -1 } ?: return null
         return TextRange(
             tsDocument.toCharOffset(node.startByte) + firstLineEnd,

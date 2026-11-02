@@ -6,7 +6,7 @@ import java.util.stream.IntStream
 
 class TSModelExtensions {
     companion object {
-        fun TSNode.toText(editor: VimEditor, maxSize: Int = 50): String {
+        fun TSNode.toText(editor: VimEditor, maxSize: Int = Int.MAX_VALUE): String {
             val string = String(editor.text().toString().toByteArray().copyOfRange(startByte, endByte))
             return string.take(maxSize)
         }

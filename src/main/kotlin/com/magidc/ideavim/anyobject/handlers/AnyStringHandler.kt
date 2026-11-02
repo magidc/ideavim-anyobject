@@ -21,7 +21,7 @@ class AnyStringHandler : TSBasedHandler() {
     )
 
     override fun findInnerBlockRange(currentNode: TSNode, objectNode: TSNode, byteOffset: Int, tsDocument: TSDocument): TextRange? {
-        val string = objectNode.toText(tsDocument.editor, maxSize = Int.MAX_VALUE)
+        val string = objectNode.toText(tsDocument.editor)
         if (string.isEmpty()) return null
         val prefix = string.takeWhile { it !in quotes }
         val startQuotes = string.substring(prefix.length).takeWhile { it in quotes }

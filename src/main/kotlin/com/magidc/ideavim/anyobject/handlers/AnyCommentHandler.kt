@@ -56,7 +56,7 @@ class AnyCommentHandler : TSBasedHandler() {
     override fun findInnerBlockRange(currentNode: TSNode, objectNode: TSNode, byteOffset: Int, tsDocument: TSDocument): TextRange {
         val outerRange = tsDocument.toTextRange(objectNode)
         val commentTags = commentTagsMap[tsDocument.languageInfo.name] ?: return outerRange
-        val outerContent = objectNode.toText(editor = tsDocument.editor, Int.MAX_VALUE)
+        val outerContent = objectNode.toText(editor = tsDocument.editor)
         commentTags.blockTags.firstOrNull { outerContent.startsWith(it.first) && outerContent.endsWith(it.second) }?.let {
             return TextRange(
                 outerRange.startOffset + outerContent.indexOf(it.first) + it.first.length,
