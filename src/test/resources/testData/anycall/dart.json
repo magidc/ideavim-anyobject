@@ -10,7 +10,7 @@
     "6": "1",
     "7": "",
     "8": "x",
-    "9": "1",
+    "9": "bar(1), 2",
     "10": "(x) { print(x); }",
     "11": "(x) => x * 2",
     "12": "url",
@@ -22,13 +22,13 @@
     "3": "obj?.run(x)",
     "4": "foo(a: 1, b: 2)",
     "5": "foo<int>(x)",
-    "6": "builder.add(1)",
+    "6": "builder.add(1).build()",
     "7": "builder.add(1).build()",
     "8": "super.run(x)",
-    "9": "bar(1)",
+    "9": "foo(bar(1), 2)",
     "10": "list.forEach((x) { print(x); })",
     "11": "list.map((x) => x * 2)",
-    "12": "fetch(url)",
+    "12": "await fetch(url)",
     "13": "call(\n    first,\n    second,\n  )"
   }
 }

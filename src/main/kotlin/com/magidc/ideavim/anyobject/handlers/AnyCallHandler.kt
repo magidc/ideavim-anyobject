@@ -13,11 +13,11 @@ import org.treesitter.TSNode
  */
 class AnyCallHandler : TSBasedHandler() {
 
-    override val innerBlockTypes = AnyArgumentHandler.parentTargetTypes + setOf("generator_expression", "block", "annotated_lambda")
+    override val innerBlockTypes = AnyArgumentHandler.parentTargetTypes + setOf("generator_expression", "block", "annotated_lambda", "lambda_literal")
 
     override val targetTypes = setOf(
-        "call", "call_expression", "method_invocation", "member_call_expression", "function_call_expression", "scoped_call_expression", "invocation_expression",
-        "nullsafe_member_call_expression", "expression_statement"
+        "call", "_call", "call_expression", "method_invocation", "member_call_expression", "function_call_expression", "scoped_call_expression", "invocation_expression",
+        "nullsafe_member_call_expression", "expression_statement", "await_expression"
     )
 
     override fun findSelection(editor: VimEditor, inner: Boolean, size: Int): TextRange? {
