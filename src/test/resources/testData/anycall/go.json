@@ -1,0 +1,34 @@
+{
+  "extension": "go",
+  "code": "package main\n\nfunc main() {\n\tfoo(1, <caret_1>2)\n\tfmt.Println(<caret_2>\"a\", b)\n\tbuilder.Add(<caret_3>1).Build()\n\tbuilder.Add(1).Bu<caret_4>ild()\n\txs = append(xs, <caret_5>ys...)\n\tm := make([]int, 0, <caret_6>10)\n\tr := Map[int, string](<caret_7>xs, f)\n\tgo worker(<caret_8>ch)\n\tdefer f.Clo<caret_9>se()\n\tfunc(n int) { process(n) }(<caret_10>5)\n\tfoo(bar(<caret_11>1), 2)\n\tsort.Slice(xs, <caret_12>func(i, j int) bool { return xs[i] < xs[j] })\n\tcall(\n\t\t<caret_13>first,\n\t\tsecond,\n\t)\n}",
+  "inner": {
+    "1": "1, 2",
+    "2": "\"a\", b",
+    "3": "1",
+    "4": "",
+    "5": "xs, ys...",
+    "6": "[]int, 0, 10",
+    "7": "xs, f",
+    "8": "ch",
+    "9": "",
+    "10": "5",
+    "11": "1",
+    "12": "xs, func(i, j int) bool { return xs[i] < xs[j] }",
+    "13": "first,\n\t\tsecond,"
+  },
+  "around": {
+    "1": "foo(1, 2)",
+    "2": "fmt.Println(\"a\", b)",
+    "3": "builder.Add(1)",
+    "4": "builder.Add(1).Build()",
+    "5": "append(xs, ys...)",
+    "6": "make([]int, 0, 10)",
+    "7": "Map[int, string](xs, f)",
+    "8": "worker(ch)",
+    "9": "f.Close()",
+    "10": "func(n int) { process(n) }(5)",
+    "11": "bar(1)",
+    "12": "sort.Slice(xs, func(i, j int) bool { return xs[i] < xs[j] })",
+    "13": "call(\n\t\tfirst,\n\t\tsecond,\n\t)"
+  }
+}

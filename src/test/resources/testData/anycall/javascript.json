@@ -1,0 +1,38 @@
+{
+  "extension": "js",
+  "code": "foo(1, <caret_1>2);\nobj.run(<caret_2>'a', b);\nobj?.run(<caret_3>x);\nobj.run?.(<caret_4>x);\nobj['run'](<caret_5>x);\nbuilder.add(<caret_6>1).build();\nbuilder.add(1).bu<caret_7>ild();\nfn.call(this, <caret_8>a);\nfoo(...<caret_9>args);\nfoo(bar(<caret_10>1), 2);\narr.map(<caret_11>(x) => { return x * 2; });\narr.filter(x => x > <caret_12>0);\nconst res = await fetch(<caret_13>url);\n(function () { init(); })(<caret_14>config);\ncall(\n  <caret_15>first,\n  second\n);",
+  "inner": {
+    "1": "1, 2",
+    "2": "'a', b",
+    "3": "x",
+    "4": "x",
+    "5": "x",
+    "6": "1",
+    "7": "",
+    "8": "this, a",
+    "9": "...args",
+    "10": "1",
+    "11": "(x) => { return x * 2; }",
+    "12": "x => x > 0",
+    "13": "url",
+    "14": "config",
+    "15": "first,\n  second"
+  },
+  "around": {
+    "1": "foo(1, 2)",
+    "2": "obj.run('a', b)",
+    "3": "obj?.run(x)",
+    "4": "obj.run?.(x)",
+    "5": "obj['run'](x)",
+    "6": "builder.add(1)",
+    "7": "builder.add(1).build()",
+    "8": "fn.call(this, a)",
+    "9": "foo(...args)",
+    "10": "bar(1)",
+    "11": "arr.map((x) => { return x * 2; })",
+    "12": "arr.filter(x => x > 0)",
+    "13": "fetch(url)",
+    "14": "(function () { init(); })(config)",
+    "15": "call(\n  first,\n  second\n)"
+  }
+}

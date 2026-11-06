@@ -22,6 +22,7 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
     protected open val innerBlockTypes: Set<String> = setOf("block")
     abstract val targetTypes: Set<String>
 
+    // To define specific target types for a language
     protected open val languageTargetTypes: Map<KClass<*>, Set<String>> = emptyMap()
 
     protected fun getTSDocument(editor: VimEditor): TSDocument {
@@ -54,7 +55,7 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
             ?.let { getCodeBlock(it, tsDocument) }
     }
 
-    protected fun getCodeBlock(node: TSNode, tsDocument: TSDocument): TextRange? {
+    protected open fun getCodeBlock(node: TSNode, tsDocument: TSDocument): TextRange? {
         if (node.childCount == 0) return null
         if (node.childCount >= 2 && assigmentSymbols.contains(node.getChild(0).grammarType))
             return tsDocument.toTextRange(node.getChild(1), node)
@@ -66,7 +67,7 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
     }
 
     protected fun getBracesCodeBlock(node: TSNode, tsDocument: TSDocument): TextRange? {
-        val nodeText = node.toText(tsDocument.editor, Int.MAX_VALUE)
+        val nodeText = node.toText(tsDocument.editor)
         val openBraceOffset = nodeText.indexOf('{').takeIf { it > -1 } ?: return null
         val closeBraceOffset = nodeText.lastIndexOf('}').takeIf { it > -1 } ?: return null
         val textOffset = tsDocument.toCharOffset(node.startByte)
@@ -75,7 +76,7 @@ abstract class TSBasedHandler : BaseSelectionHandler, BaseJumpHandler {
 
     private fun getEndCodeBlock(node: TSNode, tsDocument: TSDocument): TextRange? {
         if (node.lastLeafOrSelf().grammarType != "end") return null
-        val nodeText = node.toText(tsDocument.editor, Int.MAX_VALUE)
+        val nodeText = node.toText(tsDocument.editor)
         val firstLineEnd = nodeText.indexOf('\n').takeIf { it > -1 } ?: return null
         return TextRange(
             tsDocument.toCharOffset(node.startByte) + firstLineEnd,
